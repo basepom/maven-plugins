@@ -1,0 +1,11 @@
+(C) 2014 Henning Schmiedehausen
+
+Licensed under the Apache License, Version 2.0 (the "License").
+See LICENSE.txt for details.
+
+Contains software that is copyrighted and licensed as follows:
+
+----
+NessComputing Maven Numbers Plugin
+Copyright (C) 2011 Ness Computing, Inc.
+Licensed under the Apache License, Version 2.0
