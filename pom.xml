@@ -16,14 +16,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.basepom</groupId>
-        <artifactId>basepom-oss</artifactId>
-        <version>45-SNAPSHOT</version>
+        <groupId>org.kitei.internal</groupId>
+        <artifactId>kitei-root</artifactId>
+        <version>7</version>
     </parent>
 
     <groupId>org.basepom.maven</groupId>
     <artifactId>basepom-maven-plugins-root</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Basepom Maven Plugins</name>
 
@@ -63,9 +63,6 @@
 
     <properties>
         <project.build.targetJdk>11</project.build.targetJdk>
-        <!-- site requires full javadoc generation -->
-        <basepom.javadoc.skip>false</basepom.javadoc.skip>
-        <basepom.release.profiles>basepom.oss-release,basepom-plugin-release</basepom.release.profiles>
         <basepom.release.tag-name-format>maven-plugins-@{project.version}</basepom.release.tag-name-format>
         <!-- site is built in the plugin subdirectory -->
         <basepom.site.skip>true</basepom.site.skip>
@@ -122,22 +119,48 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.skins</groupId>
+                            <artifactId>maven-fluido-skin</artifactId>
+                            <version>1.11.0</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <configuration>
+                        <excludeRoots combine.children="append">
+                            <excludeRoot>target/generated-sources/plugin</excludeRoot>
+                        </excludeRoots>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.skins</groupId>
-                        <artifactId>maven-fluido-skin</artifactId>
-                        <version>1.11.0</version>
-                    </dependency>
-                </dependencies>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <rulesets>
+                        <ruleset>pmd/kitei.xml</ruleset>
+                    </rulesets>
+                    <minimumTokens>100</minimumTokens>
+                    <excludeRoots>
+                        <excludeRoot>*/target/generated-sources/**</excludeRoot>
+                    </excludeRoots>
+                </configuration>
             </plugin>
-        </plugins>
-    </build>
-    <reporting>
-        <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>

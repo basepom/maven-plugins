@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test-group</groupId>
+    <artifactId>test-artifact</artifactId>
+    <version>1.0</version>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>property-helper-maven-plugin</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <id>fetchValues</id>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <strings>
+                                <string>
+                                    <id>value</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                </string>
+                                <string>
+                                    <id>lowercase</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>lowercase</transformers>
+                                </string>
+                                <string>
+                                    <id>uppercase</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>uppercase</transformers>
+                                </string>
+                                <string>
+                                    <id>remove_whitespace</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>remove_whitespace</transformers>
+                                </string>
+                                <string>
+                                    <id>underscore_for_whitespace</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>underscore_for_whitespace</transformers>
+                                </string>
+                                <string>
+                                    <id>dash_for_whitespace</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>dash_for_whitespace</transformers>
+                                </string>
+                                <string>
+                                    <id>use_underscore</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>use_underscore</transformers>
+                                </string>
+                                <string>
+                                    <id>use_dash</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>use_dash</transformers>
+                                </string>
+                                <string>
+                                    <id>trim</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>trim</transformers>
+                                </string>
+                                <string>
+                                    <id>combined</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>uppercase,use_dash,remove_whitespace</transformers>
+                                </string>
+                                <string>
+                                    <id>trim_first</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>trim,use_underscore</transformers>
+                                </string>
+                                <string>
+                                    <id>trim_last</id>
+                                    <propertyFile>strings.properties</propertyFile>
+                                    <propertyName>value</propertyName>
+                                    <export>true</export>
+                                    <onMissingProperty>FAIL</onMissingProperty>
+                                    <onMissingFile>FAIL</onMissingFile>
+                                    <transformers>use_underscore,trim</transformers>
+                                </string>
+                            </strings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

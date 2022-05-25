@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test-group</groupId>
+    <artifactId>test-artifact</artifactId>
+    <version>1.0</version>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>property-helper-maven-plugin</artifactId>
+                <version>@project.version@</version>
+                <configuration>
+                    <persist>true</persist>
+                    <uuids>
+                        <uuid>
+                            <id>build.id</id>
+                            <export>true</export>
+                            <propertyFile>target/build.properties</propertyFile>
+                            <propertyName>build.id</propertyName>
+                            <onMissingFile>create</onMissingFile>
+                            <onMissingProperty>create</onMissingProperty>
+                        </uuid>
+                    </uuids>
+                    <dates>
+                        <date>
+                            <id>build.time</id>
+                            <export>true</export>
+                            <propertyFile>target/build.properties</propertyFile>
+                            <timezone>UTC</timezone>
+                            <format>yyyyMMdd'T'HHmmssZ</format>
+                            <onMissingFile>create</onMissingFile>
+                            <onMissingProperty>create</onMissingProperty>
+                        </date>
+                        <date>
+                            <id>unformatted.time</id>
+                            <export>true</export>
+                            <propertyFile>target/build.properties</propertyFile>
+                            <onMissingFile>create</onMissingFile>
+                            <onMissingProperty>create</onMissingProperty>
+                        </date>
+                    </dates>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>fetchUuids</id>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                        <phase>validate</phase>
+                    </execution>
+                    <execution>
+                        <id>fetchTestUuids</id>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                        <phase>generate-test-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

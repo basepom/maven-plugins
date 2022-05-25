@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test-group</groupId>
+    <artifactId>test-artifact</artifactId>
+    <version>1.0</version>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>property-helper-maven-plugin</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <id>fetchUuids</id>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <uuids>
+                                <uuid>
+                                    <id>random</id>
+                                    <export>true</export>
+                                </uuid>
+                                <uuid>
+                                    <id>from-default</id>
+                                    <value>059cf1d0-435a-49ca-b813-9aad6b56ab39</value>
+                                    <export>true</export>
+                                </uuid>
+                                <uuid>
+                                    <id>prop-value</id>
+                                    <propertyFile>uuid.properties</propertyFile>
+                                    <export>true</export>
+                                </uuid>
+                                <uuid>
+                                    <id>prop-default</id>
+                                    <onMissingProperty>IGNORE</onMissingProperty>
+                                    <propertyFile>uuid.properties</propertyFile>
+                                    <export>true</export>
+                                    <value>03f87dd5-4bca-4d3c-af54-d02e1acd5563</value>
+                                </uuid>
+                                <uuid>
+                                    <id>format1</id>
+                                    <value>52a78430-144c-4706-b8e8-92c189342f38</value>
+                                    <export>true</export>
+                                    <format>Formatted: %s</format>
+                                </uuid>
+                                <uuid>
+                                    <id>format2</id>
+                                    <value>e613882d-d4fd-4164-8775-84733e406877</value>
+                                    <export>true</export>
+                                    <format>%8.8s</format>
+                                </uuid>
+                            </uuids>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
