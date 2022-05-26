@@ -36,6 +36,7 @@
         <dep.plugin.plugin.version>3.6.4</dep.plugin.plugin.version>
 
         <basepom.site.skip>false</basepom.site.skip>
+        <basepom.javadoc.skip>false</basepom.javadoc.skip>
     </properties>
 
     <dependencies>
