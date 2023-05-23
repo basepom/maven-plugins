@@ -28,112 +28,60 @@
     <version>3.1-SNAPSHOT</version>
     <name>Property Helper Maven Plugin</name>
     <description>Property generation and manipulation in the maven pom.</description>
+    <inceptionYear>2014</inceptionYear>
 
     <properties>
-        <dep.maven-api.version>3.6.0</dep.maven-api.version>
-        <dep.plexus.version>2.1.1</dep.plexus.version>
-        <dep.plexus-interpolation.version>1.26</dep.plexus-interpolation.version>
-        <dep.plugin.plugin.version>3.6.4</dep.plugin.plugin.version>
+        <project.module-name>org.basepom.mojo.propertyhelper</project.module-name>
 
         <basepom.site.skip>false</basepom.site.skip>
-        <basepom.javadoc.skip>false</basepom.javadoc.skip>
+        <basepom.site.scm.skip-deploy>false</basepom.site.scm.skip-deploy>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>${dep.maven-api.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>${dep.plugin.plugin.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
-            <version>${dep.maven-api.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings</artifactId>
-            <version>${dep.maven-api.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
-            <version>${dep.maven-api.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>${dep.maven-api.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-component-annotations</artifactId>
-            <version>${dep.plexus.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
-            <version>${dep.plexus.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-interpolation</artifactId>
-            <version>${dep.plexus-interpolation.version}</version>
         </dependency>
 
         <dependency>
@@ -184,6 +132,7 @@
                     <version>${dep.plugin.plugin.version}</version>
                     <configuration>
                         <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                        <helpPackageName>org.basepom.mojo.propertyhelper</helpPackageName>
                     </configuration>
                 </plugin>
 
@@ -192,7 +141,6 @@
                     <artifactId>plexus-component-metadata</artifactId>
                     <version>${dep.plexus.version}</version>
                 </plugin>
-
             </plugins>
         </pluginManagement>
 
@@ -244,5 +192,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

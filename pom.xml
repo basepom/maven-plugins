@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.kitei.internal</groupId>
         <artifactId>kitei-root</artifactId>
-        <version>8</version>
+        <version>9</version>
     </parent>
 
     <groupId>org.basepom.maven</groupId>
@@ -63,15 +63,41 @@
     </issueManagement>
 
     <properties>
+        <!-- maven 3.9.x insanity -->
+        <maven.plugin.validation>BRIEF</maven.plugin.validation>
+
         <project.build.targetJdk>11</project.build.targetJdk>
+
+        <basepom.release.profiles>basepom.deploy-release,plugin-release</basepom.release.profiles>
         <basepom.release.tag-name-format>maven-plugins-v@{project.version}</basepom.release.tag-name-format>
-        <!-- site is built in the plugin subdirectory -->
+
+        <!-- sites requires full javadoc generation -->
+        <basepom.javadoc.skip>false</basepom.javadoc.skip>
+        <!-- sites are built in the plugin subdirectories -->
         <basepom.site.skip>true</basepom.site.skip>
+        <basepom.site.scm.skip-deploy>true</basepom.site.scm.skip-deploy>
+        <basepom.site.scm.id>github</basepom.site.scm.id>
+        <basepom.site.scm.url>scm:git:https://github.com/basepom/basepom.github.io.git</basepom.site.scm.url>
+        <basepom.site.scm.site-path>${project.artifactId}/development</basepom.site.scm.site-path>
+
+        <basepom.it.skip>true</basepom.it.skip>
 
         <dep.slf4j.version>1.7.36</dep.slf4j.version>
         <dep.guava.version>31.0.1-jre</dep.guava.version>
-        <dep.junit5.version>5.8.2</dep.junit5.version>
+        <dep.junit5.version>5.9.3</dep.junit5.version>
         <dep.joda-time.version>2.10.14</dep.joda-time.version>
+
+        <!-- Maven API version. Keep on 3.8.x for now -->
+        <dep.maven-api.version>3.8.7</dep.maven-api.version>
+
+        <!-- other maven stuff -->
+        <dep.plexus.version>2.1.1</dep.plexus.version>
+        <dep.plexus-interpolation.version>1.26</dep.plexus-interpolation.version>
+        <dep.maven-shared-utils.version>3.4.2</dep.maven-shared-utils.version>
+        <dep.sisu.version>0.3.5</dep.sisu.version>
+
+        <!-- plugin tooling -->
+        <dep.plugin.plugin.version>3.9.0</dep.plugin.plugin.version>
     </properties>
 
     <modules>
@@ -110,6 +136,95 @@
                 <version>${dep.spotbugs.version}</version>
             </dependency>
 
+            <!-- Maven API -->
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${dep.maven-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model</artifactId>
+                <version>${dep.maven-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact</artifactId>
+                <version>${dep.maven-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings</artifactId>
+                <version>${dep.maven-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${dep.maven-api.version}</version>
+                <exclusions>
+                    <!-- weird no_aop classifier prevents dep convergence -->
+                    <exclusion>
+                        <groupId>com.google.inject</groupId>
+                        <artifactId>guice</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- other maven stuff -->
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-shared-utils</artifactId>
+                <version>${dep.maven-shared-utils.version}</version>
+            </dependency>
+
+            <!-- maven plugin tooling -->
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${dep.plugin.plugin.version}</version>
+            </dependency>
+
+            <!-- plexus -->
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-annotations</artifactId>
+                <version>${dep.plexus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-interpolation</artifactId>
+                <version>${dep.plexus-interpolation.version}</version>
+            </dependency>
+
+            <!-- dependency convergence help -->
+            <!-- versions were chosen based on the dependency convergence report.
+                 comment out this section and rerun report for updates -->
+
+            <dependency>
+                <groupId>org.eclipse.sisu</groupId>
+                <artifactId>org.eclipse.sisu.inject</artifactId>
+                <version>${dep.sisu.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-classworlds</artifactId>
+                <version>2.6.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>3.5.1</version>
+            </dependency>
+
+            <!-- end dependency convergence help -->
+
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
@@ -142,7 +257,60 @@
                         </excludeRoots>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifestEntries combine.children="append">
+                                <Automatic-Module-Name>${project.module-name}</Automatic-Module-Name>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>plugin-release</id>
+            <properties>
+                <basepom.site.scm.site-path>${project.artifactId}/release-${project.version}</basepom.site.scm.site-path>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-java17</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>[17,)</version>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Profile to skip time-consuming steps. -->
+            <id>fast</id>
+            <properties>
+                <basepom.test.skip>true</basepom.test.skip>
+                <basepom.it.skip>true</basepom.it.skip>
+                <basepom.check.skip-all>true</basepom.check.skip-all>
+            </properties>
+        </profile>
+    </profiles>
 </project>
