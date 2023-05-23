@@ -24,9 +24,11 @@ import org.basepom.mojo.propertyhelper.beans.NumberDefinition;
 import org.basepom.mojo.propertyhelper.beans.PropertyGroup;
 import org.basepom.mojo.propertyhelper.beans.StringDefinition;
 import org.basepom.mojo.propertyhelper.beans.UuidDefinition;
+import org.basepom.mojo.propertyhelper.macros.MacroType;
 import org.basepom.mojo.propertyhelper.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +36,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.CheckForNull;
+import javax.inject.Inject;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
@@ -43,94 +45,99 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * Base code for all the mojos.
  */
 public abstract class AbstractPropertyHelperMojo
-        extends AbstractMojo
-        implements Contextualizable {
+        extends AbstractMojo {
 
     protected static final Log LOG = Log.findLog();
     protected final ValueCache valueCache = new ValueCache();
     private final Map<String, String> values = Maps.newHashMap();
+
     /**
      * Defines the action to take if a property is present multiple times.
      */
     @Parameter(defaultValue = "fail")
-    String onDuplicateProperty = "fail";
+    public String onDuplicateProperty = "fail";
+
     /**
      * Defines the action to take if a referenced property is missing.
      */
     @Parameter(defaultValue = "fail")
-    String onMissingProperty = "fail";
+    public String onMissingProperty = "fail";
+
     /**
      * List of the property group ids to activate for a plugin execution.
      */
     @Parameter
-    String[] activeGroups = new String[0];
+    public String[] activeGroups = new String[0];
+
     /**
      * List of available property groups. A property group contains one or more property definitions and must be activated with activeGroups.
      */
     @Parameter
-    PropertyGroup[] propertyGroups = new PropertyGroup[0];
+    public PropertyGroup[] propertyGroups = new PropertyGroup[0];
+
     /**
      * Number property definitions.
      */
     @Parameter
-    NumberDefinition[] numbers = new NumberDefinition[0];
+    public NumberDefinition[] numbers = new NumberDefinition[0];
+
     /**
      * String property definitions.
      */
     @Parameter
-    StringDefinition[] strings = new StringDefinition[0];
+    public StringDefinition[] strings = new StringDefinition[0];
+
     /**
      * Date property definitions.
      */
     @Parameter
-    DateDefinition[] dates = new DateDefinition[0];
+    public DateDefinition[] dates = new DateDefinition[0];
+
     /**
      * Macro definitions.
      */
     @Parameter
-    MacroDefinition[] macros = new MacroDefinition[0];
+    public MacroDefinition[] macros = new MacroDefinition[0];
+
     /**
      * Uuid definitions.
      */
     @Parameter
-    UuidDefinition[] uuids = new UuidDefinition[0];
+    public UuidDefinition[] uuids = new UuidDefinition[0];
+
     /**
      * The maven project (effective pom).
      */
     @Parameter(defaultValue = "${project}", readonly = true)
-    MavenProject project;
+    public MavenProject project;
     @Parameter(defaultValue = "${settings}", readonly = true)
-    Settings settings;
+    public Settings settings;
+
     @Parameter(required = true, readonly = true, defaultValue = "${project.basedir}")
-    File basedir;
+    public File basedir;
     /**
      * If set to true, goal execution is skipped.
      */
     @Parameter(defaultValue = "false")
     boolean skip;
-    private List<NumberField> numberFields = null;
+    public List<NumberField> numberFields = null;
 
-    private PlexusContainer container = null;
+    @Inject
+    public Map<String, MacroType> macroMap = null;
 
     private boolean isSnapshot;
 
     @Override
     public void execute()
-            throws MojoExecutionException, MojoFailureException {
+            throws MojoExecutionException {
         isSnapshot = project.getArtifact().isSnapshot();
         LOG.debug("Project is a %s.", isSnapshot ? "snapshot" : "release");
         LOG.trace("%s on duplicate, %s on missing", onDuplicateProperty, onMissingProperty);
@@ -141,10 +148,7 @@ public abstract class AbstractPropertyHelperMojo
             } else {
                 doExecute();
             }
-        } catch (Exception e) {
-            Throwables.throwIfInstanceOf(e, MojoExecutionException.class);
-            Throwables.throwIfInstanceOf(e, MojoFailureException.class);
-            Throwables.throwIfUnchecked(e);
+        } catch (IOException e) {
             throw new MojoExecutionException("While running mojo: ", e);
         } finally {
             LOG.debug("Ended %s mojo run!", this.getClass().getSimpleName());
@@ -166,9 +170,9 @@ public abstract class AbstractPropertyHelperMojo
         return basedir;
     }
 
-    public PlexusContainer getContainer() {
-        checkNotNull(container, "container is null");
-        return container;
+    public Map<String, MacroType> getMacros() {
+        checkNotNull(macroMap, "macroMap is null");
+        return macroMap;
     }
 
     @CheckForNull
@@ -176,20 +180,12 @@ public abstract class AbstractPropertyHelperMojo
         return numberFields;
     }
 
-    @Override
-    public void contextualize(final Context context)
-            throws ContextException {
-        this.container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
-    }
-
     /**
      * Subclasses need to implement this method.
      */
-    protected abstract void doExecute()
-            throws Exception;
+    protected abstract void doExecute() throws IOException, MojoExecutionException;
 
-    protected void loadPropertyElements()
-            throws Exception {
+    protected void loadPropertyElements() throws MojoExecutionException, IOException {
         final Builder<PropertyElement> propertyElements = ImmutableList.builder();
 
         numberFields = NumberField.createNumbers(valueCache, numbers);

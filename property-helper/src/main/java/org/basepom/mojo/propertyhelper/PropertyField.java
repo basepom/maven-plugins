@@ -15,6 +15,7 @@
 package org.basepom.mojo.propertyhelper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.beans.PropertyGroup;
 
@@ -26,6 +27,7 @@ import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.interpolation.InterpolationException;
 
 public class PropertyField
@@ -40,7 +42,7 @@ public class PropertyField
     }
 
     public static List<PropertyElement> createProperties(final Model model, final Map<String, String> values, final PropertyGroup propertyGroup)
-            throws IOException, InterpolationException {
+            throws MojoExecutionException, IOException {
         checkNotNull(model, "model is null");
         checkNotNull(values, "values is null");
         checkNotNull(propertyGroup, "propertyGroup is null");
@@ -51,8 +53,12 @@ public class PropertyField
         final Map<String, String> properties = propertyGroup.getProperties();
 
         for (String name : properties.keySet()) {
-            final String value = propertyGroup.getPropertyValue(interpolatorFactory, name, values);
-            result.add(new PropertyField(name, value));
+            try {
+                final String value = propertyGroup.getPropertyValue(interpolatorFactory, name, values);
+                result.add(new PropertyField(name, value));
+            } catch (InterpolationException e) {
+                throw new MojoExecutionException(format("Could not interpolate '%s", model), e);
+            }
         }
         return result.build();
     }

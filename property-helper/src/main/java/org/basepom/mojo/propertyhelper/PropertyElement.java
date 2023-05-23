@@ -15,7 +15,10 @@
 package org.basepom.mojo.propertyhelper;
 
 
+import java.io.IOException;
 import java.util.Optional;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Defines a property element.
@@ -30,8 +33,7 @@ public interface PropertyElement {
     /**
      * The value of the property. {@link Optional#empty()} can be returned if the value is not defined.
      */
-    Optional<String> getPropertyValue()
-            throws Exception;
+    Optional<String> getPropertyValue() throws MojoExecutionException, IOException;
 
     /**
      * True if the value of this element should be exposed as a maven property.

@@ -14,6 +14,9 @@
 
 package org.basepom.mojo.propertyhelper;
 
+import java.io.IOException;
+
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -31,8 +34,7 @@ public final class GetPropertiesMojo
     boolean persist = false;
 
     @Override
-    protected void doExecute()
-            throws Exception {
+    protected void doExecute() throws MojoExecutionException, IOException {
         LOG.debug("Running GetProperties");
 
         loadPropertyElements();

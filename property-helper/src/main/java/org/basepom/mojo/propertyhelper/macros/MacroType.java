@@ -26,6 +26,5 @@ public interface MacroType {
 
     Optional<String> getValue(MacroDefinition macroDefinition,
             ValueProvider valueProvider,
-            AbstractPropertyHelperMojo mojo)
-            throws Exception;
+            AbstractPropertyHelperMojo mojo);
 }

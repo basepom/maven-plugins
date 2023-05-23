@@ -14,8 +14,10 @@
 
 package org.basepom.mojo.propertyhelper;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -33,8 +35,7 @@ public final class IncrementNumbersMojo
     boolean persist = true;
 
     @Override
-    protected void doExecute()
-            throws Exception {
+    protected void doExecute() throws IOException, MojoExecutionException {
         LOG.debug("Running IncrementNumbers");
 
         loadPropertyElements();
