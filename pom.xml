@@ -54,8 +54,8 @@
         <connection>scm:git:git://github.com/basepom/maven-plugins.git</connection>
         <developerConnection>scm:git:git://github.com/basepom/maven-plugins.git</developerConnection>
         <url>https://github.com/basepom/maven-plugins</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>Github</system>
@@ -67,6 +67,8 @@
         <maven.plugin.validation>BRIEF</maven.plugin.validation>
 
         <project.build.targetJdk>11</project.build.targetJdk>
+
+        <basepom.maven-plugins.main-package>--UNSET--</basepom.maven-plugins.main-package>
 
         <basepom.release.profiles>basepom.deploy-release,plugin-release</basepom.release.profiles>
         <basepom.release.tag-name-format>maven-plugins-v@{project.version}</basepom.release.tag-name-format>
@@ -89,11 +91,15 @@
 
         <!-- Maven API version. Keep on 3.8.x for now -->
         <dep.maven-api.version>3.8.7</dep.maven-api.version>
+        <!-- keep on 1.6 for maven 3.8 compatibility - see https://maven.apache.org/resolver/maven-3.8.x.html -->
+        <dep.maven-resolver.version>1.6.3</dep.maven-resolver.version>
 
         <!-- other maven stuff -->
         <dep.plexus.version>2.1.1</dep.plexus.version>
         <dep.plexus-interpolation.version>1.26</dep.plexus-interpolation.version>
+        <dep.plexus-utils.version>3.5.1</dep.plexus-utils.version>
         <dep.maven-shared-utils.version>3.4.2</dep.maven-shared-utils.version>
+        <dep.maven-dependency-tree.version>3.2.1</dep.maven-dependency-tree.version>
         <dep.sisu.version>0.3.5</dep.sisu.version>
 
         <!-- plugin tooling -->
@@ -101,6 +107,8 @@
     </properties>
 
     <modules>
+        <module>dependency-management</module>
+        <module>dependency-scope</module>
         <module>property-helper</module>
     </modules>
 
@@ -181,11 +189,36 @@
                 <version>${dep.maven-shared-utils.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-dependency-tree</artifactId>
+                <version>${dep.maven-dependency-tree.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.aether</groupId>
+                        <artifactId>aether-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <!-- maven plugin tooling -->
             <dependency>
                 <groupId>org.apache.maven.plugin-tools</groupId>
                 <artifactId>maven-plugin-annotations</artifactId>
                 <version>${dep.plugin.plugin.version}</version>
+            </dependency>
+
+            <!-- maven resolver -->
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-api</artifactId>
+                <version>${dep.maven-resolver.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-util</artifactId>
+                <version>${dep.maven-resolver.version}</version>
             </dependency>
 
             <!-- plexus -->
@@ -199,6 +232,12 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-interpolation</artifactId>
                 <version>${dep.plexus-interpolation.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${dep.plexus-utils.version}</version>
             </dependency>
 
             <!-- dependency convergence help -->
@@ -215,12 +254,6 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-classworlds</artifactId>
                 <version>2.6.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-utils</artifactId>
-                <version>3.5.1</version>
             </dependency>
 
             <!-- end dependency convergence help -->
@@ -247,6 +280,34 @@
                     </configuration>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>${dep.plugin.plugin.version}</version>
+                    <configuration>
+                        <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                        <helpPackageName>${basepom.maven-plugins.main-package}</helpPackageName>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-component-metadata</artifactId>
+                    <version>${dep.plexus.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifestEntries combine.children="append">
+                                <Automatic-Module-Name>${basepom.maven-plugins.main-package}</Automatic-Module-Name>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+
                 <!-- ignore the generated helpmojo file -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -259,18 +320,69 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
+                    <groupId>org.basepom.maven</groupId>
+                    <artifactId>duplicate-finder-maven-plugin</artifactId>
                     <configuration>
-                        <archive>
-                            <manifestEntries combine.children="append">
-                                <Automatic-Module-Name>${project.module-name}</Automatic-Module-Name>
-                            </manifestEntries>
-                        </archive>
+                        <exceptions>
+                            <!--
+                                different parts of maven use different things to resolve dependencies.
+                                Classworlds somehow sorts that out, but the duplicate finder does not know that.
+                                So exclude this conflict.
+                            -->
+                            <exception>
+                                <conflictingDependencies>
+                                    <dependency>
+                                        <groupId>org.apache.maven.resolver</groupId>
+                                        <artifactId>maven-resolver-util</artifactId>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>org.eclipse.aether</groupId>
+                                        <artifactId>aether-util</artifactId>
+                                    </dependency>
+                                </conflictingDependencies>
+                                <packages>
+                                    <package>org.eclipse.aether.util</package>
+                                </packages>
+                            </exception>
+                        </exceptions>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>mojo-descriptor</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>help-goal</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
