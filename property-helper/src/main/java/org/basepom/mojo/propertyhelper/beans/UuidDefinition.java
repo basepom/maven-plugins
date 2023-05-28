@@ -32,8 +32,8 @@ public class UuidDefinition
     public UuidDefinition() {
     }
 
-    public java.util.Optional<UUID> getValue() {
-        return value == null ? Optional.empty() : Optional.of(UUID.fromString(value));
+    public Optional<UUID> getValue() {
+        return Optional.ofNullable(value).map(UUID::fromString);
     }
 
     @VisibleForTesting
