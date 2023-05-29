@@ -1,0 +1,17 @@
+repack maven plugin
+(C) 2021- by the authors
+
+This product is based on the spring-boot maven plugin
+(C) 2012-2021 by the original authors:
+
+* @author Andy Wilkinson
+* @author Björn Lindström
+* @author Dave Syer
+* @author David Turanski
+* @author Madhura Bhave
+* @author Mark Ingram
+* @author Phillip Webb
+* @author Scott Frederick
+* @author Stephane Nicoll
+
+Licensed under the Apache License Version 2.0

@@ -85,9 +85,9 @@
         <basepom.it.skip>true</basepom.it.skip>
 
         <dep.slf4j.version>1.7.36</dep.slf4j.version>
-        <dep.guava.version>31.0.1-jre</dep.guava.version>
+        <dep.guava.version>32.0.0-jre</dep.guava.version>
         <dep.junit5.version>5.9.3</dep.junit5.version>
-        <dep.joda-time.version>2.10.14</dep.joda-time.version>
+        <dep.joda-time.version>2.12.5</dep.joda-time.version>
 
         <!-- Maven API version. Keep on 3.8.x for now -->
         <dep.maven-api.version>3.8.7</dep.maven-api.version>
@@ -97,9 +97,10 @@
         <!-- other maven stuff -->
         <dep.plexus.version>2.1.1</dep.plexus.version>
         <dep.plexus-interpolation.version>1.26</dep.plexus-interpolation.version>
-        <dep.plexus-utils.version>3.5.1</dep.plexus-utils.version>
+        <dep.plexus-utils.version>4.0.0</dep.plexus-utils.version>
         <dep.maven-shared-utils.version>3.4.2</dep.maven-shared-utils.version>
         <dep.maven-dependency-tree.version>3.2.1</dep.maven-dependency-tree.version>
+        <dep.maven-artifact-filter.version>3.3.2</dep.maven-artifact-filter.version>
         <dep.sisu.version>0.3.5</dep.sisu.version>
 
         <!-- plugin tooling -->
@@ -107,6 +108,7 @@
     </properties>
 
     <modules>
+        <module>repack</module>
         <module>dependency-management</module>
         <module>dependency-scope</module>
         <module>property-helper</module>
@@ -191,6 +193,12 @@
 
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-common-artifact-filters</artifactId>
+                <version>${dep.maven-artifact-filter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-dependency-tree</artifactId>
                 <version>${dep.maven-dependency-tree.version}</version>
                 <exclusions>
@@ -253,7 +261,7 @@
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-classworlds</artifactId>
-                <version>2.6.0</version>
+                <version>2.7.0</version>
             </dependency>
 
             <!-- end dependency convergence help -->
@@ -329,6 +337,21 @@
                                 Classworlds somehow sorts that out, but the duplicate finder does not know that.
                                 So exclude this conflict.
                             -->
+                            <exception>
+                                <conflictingDependencies>
+                                    <dependency>
+                                        <groupId>org.apache.maven.resolver</groupId>
+                                        <artifactId>maven-resolver-api</artifactId>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>org.eclipse.aether</groupId>
+                                        <artifactId>aether-api</artifactId>
+                                    </dependency>
+                                </conflictingDependencies>
+                                <packages>
+                                    <package>org.eclipse.aether</package>
+                                </packages>
+                            </exception>
                             <exception>
                                 <conflictingDependencies>
                                     <dependency>
