@@ -385,6 +385,27 @@
         </plugins>
     </build>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration combine.children="append">
+                    <author>false</author>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <linksource>true</linksource>
+                    <nodeprecated>false</nodeprecated>
+                    <nohelp>true</nohelp>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-report-plugin</artifactId>
+                <version>${dep.plugin.plugin.version}</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
     <profiles>
         <profile>
             <id>plugin-release</id>
