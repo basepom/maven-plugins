@@ -26,6 +26,9 @@
 
     <version>1.0.1-SNAPSHOT</version>
 
+    <name>Dependency Scope Maven Plugin</name>
+    <description>This plugin aims to mitigate a particular pesky problem with Maven which is that if you declare a dependency with test scope, that will take precedence over a transitive dependency with compile scope.</description>
+
     <developers>
         <developer>
             <name>Jonathan Haber</name>

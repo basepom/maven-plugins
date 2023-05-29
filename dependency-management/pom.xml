@@ -26,6 +26,9 @@
 
     <version>1.0.1-SNAPSHOT</version>
 
+    <name>Dependency Management Maven Plugin</name>
+    <description>Maven Plugin for validating that the versions in dependency management and plugin management match the resolved versions.</description>
+
     <developers>
         <developer>
             <name>Jonathan Haber</name>

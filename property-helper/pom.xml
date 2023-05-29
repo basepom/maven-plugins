@@ -26,8 +26,10 @@
     <packaging>maven-plugin</packaging>
 
     <version>3.2-SNAPSHOT</version>
+
     <name>Property Helper Maven Plugin</name>
     <description>Property generation and manipulation in the maven pom.</description>
+    <url>https://basepom.github.io/property-helper-maven-plugin/</url>
     <inceptionYear>2014</inceptionYear>
 
     <properties>
