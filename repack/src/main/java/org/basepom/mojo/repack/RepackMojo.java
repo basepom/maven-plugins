@@ -107,7 +107,7 @@ public final class RepackMojo extends AbstractMojo {
     /**
      * Directory containing the generated archive.
      */
-    @Parameter(defaultValue = "${project.build.directory}", required = true, property = "repack.output-directory")
+    @Parameter(defaultValue = "${project.build.directory}", property = "repack.output-directory")
     public File outputDirectory;
 
     /**
@@ -143,8 +143,8 @@ public final class RepackMojo extends AbstractMojo {
     /**
      * Attach the repacked archive to the build cycle.
      */
-    @Parameter(defaultValue = "true", property = "repack.artifact-attached")
-    public boolean repackArtifactAttached = true;
+    @Parameter(defaultValue = "true", property = "repack.attach-artifact")
+    public boolean attachRepackedArtifact = true;
 
     /**
      * A list of the libraries that must be unpacked at runtime (do not work within the fat jar).
@@ -238,16 +238,16 @@ public final class RepackMojo extends AbstractMojo {
 
         if (Strings.nullToEmpty(repackClassifier).isBlank()) {
             if (Strings.nullToEmpty(project.getArtifact().getClassifier()).isBlank()) {
-                LOG.report(quiet, "Repacked archive will replace main artifact!");
+                LOG.report(quiet, "Repacked archive will replace main artifact");
             } else {
-                LOG.report(quiet, "Repacked archive will have no classifier (main artifact has '%s' classifier)!", project.getArtifact().getClassifier());
+                LOG.report(quiet, "Repacked archive will have no classifier, main artifact has classifier '%s'", project.getArtifact().getClassifier());
             }
         } else {
             if (repackClassifier.equals(project.getArtifact().getClassifier())) {
-                LOG.report(quiet, "Repacked archive will replace main artifact using classifier '%s'!", repackClassifier);
+                LOG.report(quiet, "Repacked archive will replace main artifact using classifier '%s'", repackClassifier);
             } else {
                 LOG.report(quiet, "Repacked archive will use classifier '%s', main artifact has %s", repackClassifier,
-                        project.getArtifact().getClassifier() == null ? "no classifier" : "classifier '" + project.getArtifact().getClassifier() + "'!");
+                        project.getArtifact().getClassifier() == null ? "no classifier" : "classifier '" + project.getArtifact().getClassifier() + "'");
             }
         }
 
@@ -286,7 +286,7 @@ public final class RepackMojo extends AbstractMojo {
 
             boolean repackReplacesSource = source.getFile().equals(targetFile);
 
-            if (repackArtifactAttached) {
+            if (attachRepackedArtifact) {
                 if (repackReplacesSource) {
                     source.setFile(targetFile);
                 } else {
