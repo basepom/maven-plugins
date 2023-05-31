@@ -111,7 +111,7 @@ Without any configuration, it will create a new artifact with the same name as t
 
 The `includedDependencies`, `excludedDependencies`, `optionalDependencies` and `runtimeUnpackDependencies` parameters all define elements for dependency matchers that are applied to the dependencies of the main artifact. The matchers can only include or exclude dependencies that are defined by the artifact, they can not add any additional dependencies.
 
-| matcher                     | function                                                                                                                                                                                                               |
+| property                    | function                                                                                                                                                                                                               |
 |-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `includedDependencies`      | defines which artifact dependencies are included in the final archive. The default is the empty list; this includes all dependencies scope that the artifact has declared.                                             |
 | `excludedDependencies`      | defines which artifact dependencies are excluded from the final archive. The default is the empty list; no dependencies are excluded.                                                                                  |
@@ -127,4 +127,4 @@ A dependency is defined as `<group-id>:<artifact-id>:<type>:<classifier>`. Only 
 | type        | `jar`         | The artifact type.                                                       |
 | classifier  | &lt;empty&gt; | Matches a dependency classifier. Most jars do not use classifiers.       |
 
-See the plugin goals documentation for additional details on how to use this plugin.
+See the [plugin goals documentation](plugin-info.html) for additional details on how to use this plugin.

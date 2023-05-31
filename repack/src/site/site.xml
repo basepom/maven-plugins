@@ -33,6 +33,7 @@
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
             <item name="Goals" href="plugin-info.html"/>
+            <item name="Dependency inclusion and exclusion" href="dependencies.html"/>
             <item name="Why Repack?" href="why-repack.html"/>
             <item name="License" href="https://www.apache.org/licenses/LICENSE-2.0" />
         </menu>
