@@ -63,9 +63,6 @@
     </issueManagement>
 
     <properties>
-        <!-- maven 3.9.x insanity -->
-        <maven.plugin.validation>BRIEF</maven.plugin.validation>
-
         <project.build.targetJdk>11</project.build.targetJdk>
 
         <basepom.maven-plugins.main-package>--UNSET--</basepom.maven-plugins.main-package>
@@ -90,7 +87,7 @@
         <dep.joda-time.version>2.12.5</dep.joda-time.version>
 
         <!-- Maven API version. Keep on 3.8.x for now -->
-        <dep.maven-api.version>3.8.7</dep.maven-api.version>
+        <dep.maven-api.version>3.8.8</dep.maven-api.version>
         <!-- keep on 1.6 for maven 3.8 compatibility - see https://maven.apache.org/resolver/maven-3.8.x.html -->
         <dep.maven-resolver.version>1.6.3</dep.maven-resolver.version>
 
