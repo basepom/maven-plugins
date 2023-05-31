@@ -160,7 +160,7 @@ When combining with excludes, the excludes will be applied after included artifa
 Note: `system` scope is deprecated and may not be supported in future Apache Maven versions.
 
 The special configuration options `includeProvidedScope` and `includeSystemScope` allow the additional inclusion of artifacts that are normally not part of a distribution.
-In this example, the org.foo:dep1`, `com.bar:dep2`, `org.foo:runtime-dep`, `com.bar:provided-dep` and `com.local:system.dep` artifacts are packages into the resulting archive.
+In this example, the `org.foo:dep1`, `com.bar:dep2`, `org.foo:runtime-dep`, `com.bar:provided-dep` and `com.local:system.dep` artifacts are packages into the resulting archive.
 
 ```xml
 <plugin>
