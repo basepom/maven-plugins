@@ -137,18 +137,20 @@ public class PropertyGroup {
     }
 
     public String getPropertyValue(final InterpolatorFactory interpolatorFactory, final String propertyName, final Map<String, String> propElements)
-            throws IOException, InterpolationException {
+        throws IOException, InterpolationException {
 
         ImmutableMap<String, PropertyDefinition> definitionMap = ImmutableMap.copyOf(
-                Arrays.stream(properties).collect(toImmutableMap(getNameFunction(), identity())));
-
-        if (!definitionMap.containsKey(propertyName)) {
-            return "";
-        }
+            Arrays.stream(properties).collect(toImmutableMap(getNameFunction(), identity())));
 
         final PropertyDefinition propertyDefinition = definitionMap.get(propertyName);
 
-        final String result = interpolatorFactory.interpolate(propertyDefinition.getValue(), getOnMissingProperty(), propElements);
-        return TransformerRegistry.applyTransformers(propertyDefinition.getTransformers(), result);
+        String result = "";
+
+        if (propertyDefinition != null) {
+            result = TransformerRegistry.applyTransformers(propertyDefinition.getTransformers(),
+                interpolatorFactory.interpolate(propertyDefinition.getValue(), getOnMissingProperty(), propElements));
+        }
+
+        return result;
     }
 }
