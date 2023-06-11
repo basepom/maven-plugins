@@ -113,11 +113,9 @@ final class DependencyDefinition {
 
         // If a classifier is present, try to match the other classifier,
         // otherwise, if no classifier is present, it matches all classifiers from the other DependencyDefinition.
-        if (getClassifier().isPresent()) {
-            return Objects.equals(getClassifier().get(), other.getClassifier().orElse(null));
-        }
-
-        return true;
+        return getClassifier()
+            .map(cl -> Objects.equals(cl, other.getClassifier().orElse(null)))
+            .orElse(true);
     }
 
     @Override
@@ -129,10 +127,7 @@ final class DependencyDefinition {
             return false;
         }
         DependencyDefinition that = (DependencyDefinition) o;
-        return artifactId.equals(that.artifactId)
-                && groupId.equals(that.groupId)
-                && type.equals(that.type)
-                && Objects.equals(classifier, that.classifier);
+        return artifactId.equals(that.artifactId) && groupId.equals(that.groupId) && type.equals(that.type) && Objects.equals(classifier, that.classifier);
     }
 
     @Override

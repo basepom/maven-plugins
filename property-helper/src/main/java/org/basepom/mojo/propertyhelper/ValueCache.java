@@ -62,9 +62,8 @@ public final class ValueCache {
         if (hasValue) {
             return new MapValueProvider(values, name);
         } else if (createProperty) {
-            if (definition.getInitialValue().isPresent()) {
-                values.put(name, definition.getInitialValue().get());
-            }
+            definition.getInitialValue()
+                .ifPresent(value -> values.put(name, value));
             return new MapValueProvider(values, name);
         } else {
             return ValueProvider.NULL_PROVIDER;
