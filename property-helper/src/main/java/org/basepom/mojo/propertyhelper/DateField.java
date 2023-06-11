@@ -61,16 +61,16 @@ public class DateField implements PropertyElement {
     @Override
     public Optional<String> getPropertyValue() {
         final DateTimeZone timeZone = dateDefinition.getTimezone()
-            .map(DateTimeZone::forID)
-            .orElse(DateTimeZone.getDefault());
+                .map(DateTimeZone::forID)
+                .orElse(DateTimeZone.getDefault());
 
         final Optional<String> format = dateDefinition.getFormat();
         final DateTimeFormatter formatter = format.map(DateTimeFormat::forPattern)
-            .orElse(null);
+                .orElse(null);
 
         DateTime date = valueProvider.getValue()
-            .map(value -> getDateTime(value, formatter, timeZone))
-            .orElse(null);
+                .map(value -> getDateTime(value, formatter, timeZone))
+                .orElse(null);
 
         if (date == null) {
             date = dateDefinition.getValue()
