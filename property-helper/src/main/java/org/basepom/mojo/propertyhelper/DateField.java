@@ -29,8 +29,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class DateField
-        implements PropertyElement {
+public class DateField implements PropertyElement {
 
     private final DateDefinition dateDefinition;
     private final ValueProvider valueProvider;
@@ -40,8 +39,7 @@ public class DateField
         this.valueProvider = valueProvider;
     }
 
-    public static List<DateField> createDates(final ValueCache valueCache, final DateDefinition... dateDefinitions)
-            throws IOException {
+    public static List<DateField> createDates(final ValueCache valueCache, final DateDefinition... dateDefinitions) throws IOException {
         checkNotNull(valueCache, "valueCache is null");
 
         final Builder<DateField> result = ImmutableList.builder();
@@ -62,27 +60,25 @@ public class DateField
 
     @Override
     public Optional<String> getPropertyValue() {
-        final DateTimeZone timeZone = dateDefinition.getTimezone().isPresent()
-                ? DateTimeZone.forID(dateDefinition.getTimezone().get())
-                : DateTimeZone.getDefault();
+        final DateTimeZone timeZone = dateDefinition.getTimezone()
+            .map(DateTimeZone::forID)
+            .orElse(DateTimeZone.getDefault());
 
         final Optional<String> format = dateDefinition.getFormat();
-        final DateTimeFormatter formatter;
-        formatter = format.map(DateTimeFormat::forPattern).orElse(null);
+        final DateTimeFormatter formatter = format.map(DateTimeFormat::forPattern)
+            .orElse(null);
 
         DateTime date = valueProvider.getValue()
-                .map(value -> getDateTime(value, formatter, timeZone))
-                .orElse(null);
-
-        if (date == null && dateDefinition.getValue().isPresent()) {
-            date = new DateTime(dateDefinition.getValue().get(), timeZone);
-        }
+            .map(value -> getDateTime(value, formatter, timeZone))
+            .orElse(null);
 
         if (date == null) {
-            date = new DateTime(timeZone);
+            date = dateDefinition.getValue()
+                .map(definition -> new DateTime(definition, timeZone))
+                .orElse(new DateTime(timeZone));
         }
 
-        String result;
+        final String result;
         if (formatter != null) {
             result = formatter.print(date);
             valueProvider.setValue(result);
@@ -91,15 +87,13 @@ public class DateField
             valueProvider.setValue(Long.toString(date.getMillis()));
         }
 
-        if (dateDefinition.getTransformers().isPresent()) {
-            result = TransformerRegistry.applyTransformers(dateDefinition.getTransformers().get(), result);
-        }
-        return Optional.ofNullable(result);
+        return Optional.ofNullable(
+            dateDefinition.getTransformers()
+                .map(definition -> TransformerRegistry.applyTransformers(definition, result))
+                .orElse(result));
     }
 
-    private DateTime getDateTime(String value,
-            final DateTimeFormatter formatter,
-            final DateTimeZone timeZone) {
+    private DateTime getDateTime(String value, final DateTimeFormatter formatter, final DateTimeZone timeZone) {
         if (value == null) {
             return null;
         }
