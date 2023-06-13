@@ -2,16 +2,10 @@
 name: sonar analysis
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_run:
+    workflows: ["CI build"]
     types:
-      - opened
-      - reopened
-      - synchronize
-    branches:
-      - main
+      - completed
 
 jobs:
   sonar:
