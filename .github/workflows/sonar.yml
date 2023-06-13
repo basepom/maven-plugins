@@ -20,9 +20,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - uses: actions/setup-java@v3
         with:
@@ -47,4 +44,5 @@ jobs:
             -Dsonar.projectKey=maven-plugins
             -Dsonar.log.level=DEBUG
         run: |
+          git log -n 5
           make install
