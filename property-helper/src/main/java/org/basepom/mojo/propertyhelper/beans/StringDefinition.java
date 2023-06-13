@@ -40,9 +40,6 @@ public class StringDefinition
      */
     IgnoreWarnFail onMissingValue = IgnoreWarnFail.FAIL;
 
-    public StringDefinition() {
-    }
-
     public List<String> getValues() {
         return values;
     }

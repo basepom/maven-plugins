@@ -26,7 +26,7 @@ public interface ValueProvider {
 
     Optional<String> getValue();
 
-    void setValue(String value);
+    default void setValue(String value) {}
 
     class NullProvider
             implements ValueProvider {
@@ -37,10 +37,6 @@ public interface ValueProvider {
         @Override
         public Optional<String> getValue() {
             return Optional.empty();
-        }
-
-        @Override
-        public void setValue(final String value) {
         }
     }
 

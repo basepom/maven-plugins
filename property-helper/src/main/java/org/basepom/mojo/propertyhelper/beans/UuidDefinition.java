@@ -29,9 +29,6 @@ public class UuidDefinition
      */
     String value = null;
 
-    public UuidDefinition() {
-    }
-
     public Optional<UUID> getValue() {
         return Optional.ofNullable(value).map(UUID::fromString);
     }

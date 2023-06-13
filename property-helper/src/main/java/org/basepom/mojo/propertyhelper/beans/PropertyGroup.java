@@ -66,10 +66,6 @@ public class PropertyGroup {
      */
     PropertyDefinition[] properties = new PropertyDefinition[0];
 
-    // Must be noargs c'tor for maven property injection */
-    public PropertyGroup() {
-    }
-
     public String getId() {
         return id;
     }
