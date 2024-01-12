@@ -101,7 +101,15 @@ final class Reporter {
 
     private static SortedMap<String, Artifact> computeNames(Set<Artifact> artifacts) {
         ImmutableSortedMap.Builder<String, Artifact> builder = ImmutableSortedMap.naturalOrder();
-        artifacts.forEach(a -> builder.put(a.getGroupId() + ':' + a.getArtifactId(), a));
+        artifacts.forEach(a -> builder.put(computeArtifactName(a), a));
         return builder.build();
+    }
+
+    private static String computeArtifactName(Artifact artifact) {
+        if (artifact.hasClassifier()) {
+            return artifact.getGroupId() + ':' + artifact.getArtifactId() + ':' + artifact.getClassifier();
+        } else {
+            return artifact.getGroupId() + ':' + artifact.getArtifactId();
+        }
     }
 }
