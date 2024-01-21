@@ -17,15 +17,15 @@ package org.basepom.mojo.propertyhelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.util.Log;
-
 import java.util.Locale;
 import javax.annotation.Nonnull;
+
+import com.google.common.flogger.FluentLogger;
 
 public enum IgnoreWarnFailCreate {
     IGNORE, WARN, FAIL, CREATE;
 
-    private static final Log LOG = Log.findLog();
+    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     public static IgnoreWarnFailCreate forString(final String value) {
         checkArgument(value != null, "the value can not be null");
@@ -49,12 +49,12 @@ public enum IgnoreWarnFailCreate {
             case IGNORE:
                 return false;
             case WARN:
-                LOG.warn("'%s' does not exist!", thing);
+                LOG.atWarning().log("'%s' does not exist!", thing);
                 return false;
             case FAIL:
                 throw new IllegalStateException(format("'%s' does not exist!", thing));
             case CREATE:
-                LOG.debug("'%s' does not exist, suggesting creation.", thing);
+                LOG.atFine().log("'%s' does not exist, suggesting creation.", thing);
                 return true;
             default:
                 throw new IllegalStateException("Unknown state: " + iwfc);

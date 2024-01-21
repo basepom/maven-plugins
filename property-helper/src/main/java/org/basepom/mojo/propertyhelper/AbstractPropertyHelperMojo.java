@@ -28,7 +28,6 @@ import org.basepom.mojo.propertyhelper.fields.NumberField;
 import org.basepom.mojo.propertyhelper.groups.PropertyField;
 import org.basepom.mojo.propertyhelper.groups.PropertyGroup;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
-import org.basepom.mojo.propertyhelper.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +45,7 @@ import javax.inject.Inject;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.flogger.FluentLogger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -58,7 +58,8 @@ import org.apache.maven.settings.Settings;
 public abstract class AbstractPropertyHelperMojo
     extends AbstractMojo implements PropertyElementContext {
 
-    protected static final Log LOG = Log.findLog();
+    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
+
     protected final ValueCache valueCache = new ValueCache(this);
     private final Map<String, String> values = Maps.newHashMap();
 
@@ -167,19 +168,19 @@ public abstract class AbstractPropertyHelperMojo
     public void execute()
         throws MojoExecutionException {
         isSnapshot = project.getArtifact().isSnapshot();
-        LOG.debug("Project is a %s.", isSnapshot ? "snapshot" : "release");
-        LOG.trace("%s on duplicate definitions", onDuplicateProperty);
+        LOG.atFine().log("Project is a %s.", isSnapshot ? "snapshot" : "release");
+        LOG.atFiner().log("%s on duplicate definitions", onDuplicateProperty);
 
         try {
             if (skip) {
-                LOG.debug("Skipping execution!");
+                LOG.atFine().log("Skipping execution!");
             } else {
                 doExecute();
             }
         } catch (IOException e) {
             throw new MojoExecutionException("While running mojo: ", e);
         } finally {
-            LOG.debug("Ended %s mojo run!", this.getClass().getSimpleName());
+            LOG.atFine().log("Ended %s mojo run!", this.getClass().getSimpleName());
         }
     }
 
@@ -227,10 +228,10 @@ public abstract class AbstractPropertyHelperMojo
                     case FAIL:
                         throw new IllegalStateException(format("Can not create property %s, already exists (%s)!", propertyName, existingElement));
                     case WARN:
-                        LOG.warn("Property %s already defined (%s), ignoring second definition (%s)!", propertyName, existingElement, definition);
+                        LOG.atWarning().log("Property %s already defined (%s), ignoring second definition (%s)!", propertyName, existingElement, definition);
                         break;
                     case IGNORE:
-                        LOG.debug("Property %s already defined (%s), ignoring second definition (%s)!", propertyName, existingElement, definition);
+                        LOG.atFine().log("Property %s already defined (%s), ignoring second definition (%s)!", propertyName, existingElement, definition);
                         builder.put(propertyName, definition);
                         break;
                     default:
@@ -257,9 +258,9 @@ public abstract class AbstractPropertyHelperMojo
             if (propertyElement.isExport()) {
                 final String result = value.orElse("");
                 project.getProperties().setProperty(propertyElement.getPropertyName(), result);
-                LOG.debug("Exporting Property name: %s, value: %s", propertyElement.getPropertyName(), result);
+                LOG.atFine().log("Exporting Property name: %s, value: %s", propertyElement.getPropertyName(), result);
             } else {
-                LOG.debug("Property name: %s, value: %s", propertyElement.getPropertyName(), value.orElse("<null>"));
+                LOG.atFine().log("Property name: %s, value: %s", propertyElement.getPropertyName(), value.orElse("<null>"));
             }
         }
 
@@ -294,7 +295,7 @@ public abstract class AbstractPropertyHelperMojo
                         project.getProperties().setProperty(propertyName, value.orElse(""));
                     }
                 } else {
-                    LOG.debug("Skipping property group %s: Snapshot: %b, activeOnSnapshot: %b, activeOnRelease: %b", activeGroup, isSnapshot,
+                    LOG.atFine().log("Skipping property group %s: Snapshot: %b, activeOnSnapshot: %b, activeOnRelease: %b", activeGroup, isSnapshot,
                         propertyGroup.isActiveOnSnapshot(), propertyGroup.isActiveOnRelease());
                 }
             }

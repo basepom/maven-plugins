@@ -17,14 +17,14 @@ package org.basepom.mojo.propertyhelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.util.Log;
-
 import java.util.Locale;
+
+import com.google.common.flogger.FluentLogger;
 
 public enum IgnoreWarnFail {
     IGNORE, WARN, FAIL;
 
-    private static final Log LOG = Log.findLog();
+    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     public static IgnoreWarnFail forString(final String value) {
         checkNotNull(value, "the value can not be null");
@@ -48,7 +48,7 @@ public enum IgnoreWarnFail {
             case IGNORE:
                 return;
             case WARN:
-                LOG.warn("'%s' does not exist!", thing);
+                LOG.atWarning().log("'%s' does not exist!", thing);
                 break;
             case FAIL:
                 throw new IllegalStateException(format("'%s' does not exist!", thing));

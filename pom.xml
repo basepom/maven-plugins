@@ -99,6 +99,7 @@
         <dep.maven-dependency-tree.version>3.2.1</dep.maven-dependency-tree.version>
         <dep.maven-artifact-filter.version>3.3.2</dep.maven-artifact-filter.version>
         <dep.sisu.version>0.3.5</dep.sisu.version>
+        <dep.flogger.version>0.8</dep.flogger.version>
 
         <!-- plugin tooling -->
         <dep.plugin.plugin.version>3.9.0</dep.plugin.plugin.version>
@@ -243,6 +244,19 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
                 <version>${dep.plexus-utils.version}</version>
+            </dependency>
+
+            <!-- logging -->
+            <dependency>
+                <groupId>com.google.flogger</groupId>
+                <artifactId>flogger</artifactId>
+                <version>${dep.flogger.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.flogger</groupId>
+                <artifactId>flogger-slf4j-backend</artifactId>
+                <version>${dep.flogger.version}</version>
             </dependency>
 
             <!-- dependency convergence help -->

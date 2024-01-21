@@ -20,7 +20,6 @@ import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.MapValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.AbstractDefinition;
-import org.basepom.mojo.propertyhelper.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,10 +37,11 @@ import javax.annotation.Nonnull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.Maps;
+import com.google.common.flogger.FluentLogger;
 
 public final class ValueCache {
 
-    private static final Log LOG = Log.findLog();
+    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
     private final Map<String, String> ephemeralValues = Maps.newHashMap();
 
 
@@ -189,13 +189,13 @@ public final class ValueCache {
 
                 if (file.exists()) {
                     if (!file.renameTo(oldFile)) {
-                        LOG.warn("Could not rename '%s' to '%s'!", file, oldFile);
+                        LOG.atWarning().log("Could not rename '%s' to '%s'!", file, oldFile);
                     }
                 }
 
                 if (!file.exists()) {
                     if (!newFile.renameTo(file)) {
-                        LOG.warn("Could not rename '%s' to '%s'!", newFile, file);
+                        LOG.atWarning().log("Could not rename '%s' to '%s'!", newFile, file);
                     }
                 }
             }

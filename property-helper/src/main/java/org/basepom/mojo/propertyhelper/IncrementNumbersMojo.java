@@ -19,6 +19,7 @@ import org.basepom.mojo.propertyhelper.fields.NumberField;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.common.flogger.FluentLogger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -29,6 +30,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "inc", threadSafe = true)
 public final class IncrementNumbersMojo
         extends AbstractPropertyHelperMojo {
+    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     /**
      * If set to true, all generated properties are persisted to disk using a properties file.
@@ -38,7 +40,7 @@ public final class IncrementNumbersMojo
 
     @Override
     protected void doExecute() throws IOException, MojoExecutionException {
-        LOG.debug("Running IncrementNumbers");
+        LOG.atFine().log("Running IncrementNumbers");
 
         loadPropertyElements();
 

@@ -16,6 +16,7 @@ package org.basepom.mojo.propertyhelper;
 
 import java.io.IOException;
 
+import com.google.common.flogger.FluentLogger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -27,6 +28,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 public final class GetPropertiesMojo
         extends AbstractPropertyHelperMojo {
 
+    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
+
     /**
      * If set to true, all generated properties are persisted to disk using a properties file.
      */
@@ -35,12 +38,12 @@ public final class GetPropertiesMojo
 
     @Override
     protected void doExecute() throws MojoExecutionException, IOException {
-        LOG.debug("Running GetProperties");
+        LOG.atFine().log("Running GetProperties");
 
         loadPropertyElements();
 
         if (persist) {
-            LOG.debug("Persisting value cache");
+            LOG.atFine().log("Persisting value cache");
             // Now dump the value cache back to the files if necessary.
             valueCache.persist();
         }
