@@ -12,9 +12,12 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper;
+package org.basepom.mojo.propertyhelper.fields;
 
-import org.basepom.mojo.propertyhelper.beans.DateDefinition;
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.TransformerRegistry;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
 
 import java.util.Optional;
 

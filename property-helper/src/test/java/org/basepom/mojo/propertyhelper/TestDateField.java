@@ -19,7 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
-import org.basepom.mojo.propertyhelper.beans.DateDefinition;
+import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
+import org.basepom.mojo.propertyhelper.fields.DateField;
 
 import java.util.Optional;
 import java.util.Properties;

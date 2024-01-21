@@ -12,11 +12,12 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper.beans;
+package org.basepom.mojo.propertyhelper.groups;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.basepom.mojo.propertyhelper.InterpolatorFactory;
+import org.basepom.mojo.propertyhelper.groups.PropertyGroup;
 
 import java.util.Collections;
 import java.util.List;

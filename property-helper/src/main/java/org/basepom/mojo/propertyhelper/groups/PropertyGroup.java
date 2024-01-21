@@ -12,18 +12,19 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper.beans;
+package org.basepom.mojo.propertyhelper.groups;
 
 import static com.google.common.base.Functions.identity;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static org.basepom.mojo.propertyhelper.beans.PropertyDefinition.getNameFunction;
-import static org.basepom.mojo.propertyhelper.beans.PropertyDefinition.getValueFunction;
+import static org.basepom.mojo.propertyhelper.definitions.PropertyDefinition.getNameFunction;
+import static org.basepom.mojo.propertyhelper.definitions.PropertyDefinition.getValueFunction;
 
 import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.InterpolatorFactory;
 import org.basepom.mojo.propertyhelper.TransformerRegistry;
+import org.basepom.mojo.propertyhelper.definitions.PropertyDefinition;
 
 import java.io.IOException;
 import java.util.Arrays;

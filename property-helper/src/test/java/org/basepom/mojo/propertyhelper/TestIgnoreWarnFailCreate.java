@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper.beans;
+package org.basepom.mojo.propertyhelper;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;

@@ -18,13 +18,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.beans.AbstractDefinition;
-import org.basepom.mojo.propertyhelper.beans.DateDefinition;
-import org.basepom.mojo.propertyhelper.beans.MacroDefinition;
-import org.basepom.mojo.propertyhelper.beans.NumberDefinition;
-import org.basepom.mojo.propertyhelper.beans.PropertyGroup;
-import org.basepom.mojo.propertyhelper.beans.StringDefinition;
-import org.basepom.mojo.propertyhelper.beans.UuidDefinition;
+import org.basepom.mojo.propertyhelper.definitions.AbstractDefinition;
+import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
+import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
+import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
+import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
+import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
+import org.basepom.mojo.propertyhelper.fields.NumberField;
+import org.basepom.mojo.propertyhelper.groups.PropertyField;
+import org.basepom.mojo.propertyhelper.groups.PropertyGroup;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
 import org.basepom.mojo.propertyhelper.util.Log;
 

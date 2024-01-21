@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper;
+package org.basepom.mojo.propertyhelper.groups;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.beans.PropertyGroup;
+import org.basepom.mojo.propertyhelper.InterpolatorFactory;
+import org.basepom.mojo.propertyhelper.PropertyElement;
 
 import java.io.IOException;
 import java.util.List;

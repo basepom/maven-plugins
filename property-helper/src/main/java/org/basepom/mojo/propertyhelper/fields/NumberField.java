@@ -12,11 +12,13 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper;
+package org.basepom.mojo.propertyhelper.fields;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.basepom.mojo.propertyhelper.beans.NumberDefinition;
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 
 import java.util.List;
 import java.util.Optional;

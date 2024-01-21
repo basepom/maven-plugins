@@ -20,13 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.basepom.mojo.propertyhelper.beans.NumberDefinition;
-import org.basepom.mojo.propertyhelper.macros.MacroType;
+import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Properties;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

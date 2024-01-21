@@ -14,6 +14,8 @@
 
 package org.basepom.mojo.propertyhelper;
 
+import org.basepom.mojo.propertyhelper.fields.NumberField;
+
 import java.io.IOException;
 import java.util.List;
 

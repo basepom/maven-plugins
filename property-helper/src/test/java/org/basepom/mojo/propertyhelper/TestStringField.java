@@ -19,7 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
-import org.basepom.mojo.propertyhelper.beans.StringDefinition;
+import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
+import org.basepom.mojo.propertyhelper.fields.StringField;
 
 import java.util.List;
 import java.util.Properties;

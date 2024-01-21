@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.MapValueProvider;
-import org.basepom.mojo.propertyhelper.beans.AbstractDefinition;
+import org.basepom.mojo.propertyhelper.definitions.AbstractDefinition;
 import org.basepom.mojo.propertyhelper.util.Log;
 
 import java.io.File;

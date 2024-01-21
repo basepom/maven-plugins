@@ -18,7 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
-import org.basepom.mojo.propertyhelper.beans.MacroDefinition;
+import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 
 import java.util.Objects;
 import java.util.Optional;

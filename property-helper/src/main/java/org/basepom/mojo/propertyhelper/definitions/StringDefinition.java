@@ -12,16 +12,16 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper.beans;
+package org.basepom.mojo.propertyhelper.definitions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.PropertyElement;
 import org.basepom.mojo.propertyhelper.PropertyElementContext;
-import org.basepom.mojo.propertyhelper.StringField;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
+import org.basepom.mojo.propertyhelper.fields.StringField;
 
 import java.io.IOException;
 import java.util.List;

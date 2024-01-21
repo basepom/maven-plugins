@@ -12,9 +12,12 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper;
+package org.basepom.mojo.propertyhelper.fields;
 
-import org.basepom.mojo.propertyhelper.beans.StringDefinition;
+import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
 
 import java.util.List;
 import java.util.Optional;

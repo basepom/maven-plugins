@@ -18,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
 import org.basepom.mojo.propertyhelper.ValueProvider.StaticValueProvider;
-import org.basepom.mojo.propertyhelper.beans.UuidDefinition;
+import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
+import org.basepom.mojo.propertyhelper.fields.UuidField;
 
 import java.util.Properties;
 import java.util.UUID;

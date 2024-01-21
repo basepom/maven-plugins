@@ -17,7 +17,8 @@ package org.basepom.mojo.propertyhelper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
-import org.basepom.mojo.propertyhelper.beans.NumberDefinition;
+import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
+import org.basepom.mojo.propertyhelper.fields.NumberField;
 
 import java.util.Properties;
 

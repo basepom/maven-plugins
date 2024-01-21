@@ -12,12 +12,15 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper;
+package org.basepom.mojo.propertyhelper.fields;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.beans.MacroDefinition;
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
 
 import java.util.Optional;
