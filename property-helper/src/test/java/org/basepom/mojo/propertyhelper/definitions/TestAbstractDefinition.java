@@ -30,39 +30,39 @@ public class TestAbstractDefinition {
 
     @Test
     public void testValidId() {
-        final BasicDefinition ad = new BasicDefinition();
+        final BasicDefinition fieldDefinition = new BasicDefinition();
 
-        ad.setId("hello");
-        ad.check();
+        fieldDefinition.id = "hello";
+        fieldDefinition.check();
     }
 
     @Test
     public void testUnsetId() {
         assertThrows(IllegalStateException.class, () -> {
-            final BasicDefinition ad = new BasicDefinition();
-            ad.check();
+            final BasicDefinition fieldDefinition = new BasicDefinition();
+            fieldDefinition.check();
         });
     }
 
     @Test
     public void testBlankId() {
         assertThrows(IllegalStateException.class, () -> {
-            final BasicDefinition ad = new BasicDefinition();
-            ad.check();
+            final BasicDefinition fieldDefinition = new BasicDefinition();
+            fieldDefinition.check();
         });
     }
 
     @Test
     public void testDefaults() {
         final String id = UUID.randomUUID().toString();
-        final BasicDefinition ad = new BasicDefinition();
-        ad.setId(id);
-        ad.check();
-        Assertions.assertEquals(id, ad.getId());
-        Assertions.assertFalse(ad.isSkip());
+        final BasicDefinition fieldDefinition = new BasicDefinition();
+        fieldDefinition.id = id;
+        fieldDefinition.check();
+        Assertions.assertEquals(id, fieldDefinition.getId());
+        Assertions.assertFalse(fieldDefinition.isSkip());
     }
 
-    public static class BasicDefinition extends AbstractDefinition<BasicDefinition> {
+    public static class BasicDefinition extends AbstractDefinition {
 
         public BasicDefinition() {
         }

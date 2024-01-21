@@ -14,6 +14,7 @@
 
 package org.basepom.mojo.propertyhelper.definitions;
 
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.numberDefinition;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,25 +30,25 @@ public class TestNumberDefinition {
 
     @Test
     public void testValid() {
-        final NumberDefinition nd = new NumberDefinition()
-                .setId("hello")
-                .setExport(true)
-                .setInitialValue("1");
+        final NumberDefinition nd = numberDefinition("hello");
+        nd.export = true;
+        nd.initialValue = "1";
+
         nd.check();
     }
 
     @Test
     public void testValid2() {
         final NumberDefinition nd = new NumberDefinition();
-        nd.setId("hello");
+        nd.id = "hello";
         nd.check();
     }
 
     @Test
     public void testDefaults() {
         final String id = UUID.randomUUID().toString();
-        final NumberDefinition nd = new NumberDefinition();
-        nd.setId(id);
+        final NumberDefinition nd = numberDefinition(id);
+
         nd.check();
         assertEquals(id, nd.getId());
         assertEquals("0", nd.getInitialValue().get());
@@ -62,17 +63,17 @@ public class TestNumberDefinition {
 
     @Test
     public void testPropNameOverridesId() {
-        final NumberDefinition nd = new NumberDefinition();
-        nd.setId("hello");
-        nd.setPropertyName("world");
+        final NumberDefinition nd = numberDefinition("hello");
+        nd.propertyName = "world";
+
         assertEquals("hello", nd.getId());
         assertEquals("world", nd.getPropertyName());
     }
 
     @Test
     public void testIdSuppliesPropName() {
-        final NumberDefinition nd = new NumberDefinition();
-        nd.setId("hello");
+        final NumberDefinition nd = numberDefinition("hello");
+
         assertEquals("hello", nd.getId());
         assertEquals("hello", nd.getPropertyName());
     }
@@ -81,7 +82,8 @@ public class TestNumberDefinition {
     public void testNullInitialValue() {
         assertThrows(IllegalStateException.class, () -> {
             final NumberDefinition nd = new NumberDefinition();
-            nd.setInitialValue(null);
+            nd.initialValue = null;
+
             nd.check();
         });
     }
@@ -90,7 +92,8 @@ public class TestNumberDefinition {
     public void testBlankInitialValue() {
         assertThrows(IllegalStateException.class, () -> {
             final NumberDefinition nd = new NumberDefinition();
-            nd.setInitialValue("");
+            nd.initialValue = "";
+
             nd.check();
         });
     }
@@ -99,7 +102,8 @@ public class TestNumberDefinition {
     public void testBadFieldNumber() {
         assertThrows(IllegalStateException.class, () -> {
             final NumberDefinition nd = new NumberDefinition();
-            nd.setFieldNumber(-1);
+            nd.fieldNumber = -1;
+
             nd.check();
         });
     }

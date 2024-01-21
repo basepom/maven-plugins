@@ -31,13 +31,24 @@ import java.util.StringJoiner;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Defines a string field. This is a config element that is populated by maven.
+ */
 public class StringDefinition
-    extends AbstractDefinition<StringDefinition> {
+    extends AbstractDefinition {
+
+    private List<String> values = ImmutableList.of();
+
 
     /**
-     * Values for this string. Field injected by Maven.
+     * called by maven
      */
-    List<String> values = ImmutableList.of();
+    StringDefinition setValues(final List<String> values) {
+        checkNotNull(values, "values is null");
+        this.values = values.stream().map(v -> Objects.requireNonNullElse(v, "")).collect(ImmutableList.toImmutableList());
+        return this;
+    }
+
 
     /**
      * Whether a blank string is a valid value. Field injected by Maven.
@@ -47,42 +58,30 @@ public class StringDefinition
     /**
      * Default action on missing value. Field injected by Maven.
      */
-    IgnoreWarnFail onMissingValue = IgnoreWarnFail.FAIL;
+    private IgnoreWarnFail onMissingValue = IgnoreWarnFail.FAIL;
 
-    public List<String> getValues() {
-        return values;
+    void setOnMissingValue(String onMissingValue) {
+        this.onMissingValue = IgnoreWarnFail.forString(onMissingValue);
+    }
+
+    public StringDefinition() {
     }
 
     @VisibleForTesting
-    public StringDefinition setValues(final List<String> values) {
-        checkNotNull(values, "values is null");
-        final ImmutableList.Builder<String> builder = ImmutableList.builder();
-        for (String value : values) {
-            builder.add(Objects.requireNonNullElse(value, ""));
-        }
-        this.values = builder.build();
-        return this;
+    StringDefinition(String id) {
+        super(id);
+    }
+
+    public List<String> getValues() {
+        return values;
     }
 
     public boolean isBlankIsValid() {
         return blankIsValid;
     }
 
-    @VisibleForTesting
-    public StringDefinition setBlankIsValid(final boolean blankIsValid) {
-        this.blankIsValid = blankIsValid;
-        return this;
-    }
-
     public IgnoreWarnFail getOnMissingValue() {
         return onMissingValue;
-    }
-
-    @VisibleForTesting
-    public StringDefinition setOnMissingValue(final String onMissingValue) {
-        checkNotNull(onMissingValue, "onMissingValue is null");
-        this.onMissingValue = IgnoreWarnFail.forString(onMissingValue);
-        return this;
     }
 
     @Override

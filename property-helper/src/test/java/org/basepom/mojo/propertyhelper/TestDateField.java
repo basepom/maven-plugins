@@ -15,6 +15,10 @@
 package org.basepom.mojo.propertyhelper;
 
 import static java.lang.String.format;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.dateDefinition;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setFormat;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setTimezone;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,11 +39,10 @@ public class TestDateField {
 
     @Test
     public void testSimple() {
-        final DateDefinition d1 = new DateDefinition()
-                .setId("hello")
-                .setTimezone("UTC")
-                .setValue(0L)
-                .setFormat("yyyyMMdd_HHmmss");
+        final DateDefinition d1 = dateDefinition("hello");
+        setValue(d1, 0L);
+        setTimezone(d1, "UTC");
+        setFormat(d1, "yyyyMMdd_HHmmss");
 
         d1.check();
 
@@ -50,9 +53,8 @@ public class TestDateField {
     @Test
     public void testProperty() {
         final String format = "yyyyMMdd_HHmmss";
-        final DateDefinition d1 = new DateDefinition()
-                .setId("hello")
-                .setFormat(format);
+        final DateDefinition d1 = dateDefinition("hello");
+        setFormat(d1, format);
 
         d1.check();
 
@@ -67,8 +69,7 @@ public class TestDateField {
 
     @Test
     public void testUnformattedLongProperty() {
-        final DateDefinition d1 = new DateDefinition()
-                .setId("hello");
+        final DateDefinition d1 = dateDefinition("hello");
 
         d1.check();
 
@@ -82,8 +83,7 @@ public class TestDateField {
 
     @Test
     public void testUnformattedStringProperty() {
-        final DateDefinition d1 = new DateDefinition()
-                .setId("hello");
+        final DateDefinition d1 = dateDefinition("hello");
 
         d1.check();
 
@@ -99,9 +99,8 @@ public class TestDateField {
     @Test
     public void testNow() {
         final String format = "yyyyMMdd_HHmmss";
-        final DateDefinition d1 = new DateDefinition()
-                .setId("hello")
-                .setFormat(format);
+        final DateDefinition d1 = dateDefinition("hello");
+        setFormat(d1, format);
 
         d1.check();
 

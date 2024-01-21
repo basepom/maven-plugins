@@ -25,8 +25,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * Fetches the defined numbers and add properties.
  */
 @Mojo(name = "get", threadSafe = true)
-public final class GetPropertiesMojo
-        extends AbstractPropertyHelperMojo {
+public final class GetPropertiesMojo extends AbstractPropertyHelperMojo {
 
     private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 

@@ -16,9 +16,12 @@ package org.basepom.mojo.propertyhelper.definitions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Function;
+
+import com.google.common.base.Splitter;
 
 public class PropertyDefinition {
 
@@ -35,7 +38,14 @@ public class PropertyDefinition {
     /**
      * Transformers. Field injected by maven.
      */
-    String transformers = "";
+    private List<String> transformers = List.of();
+
+    void setTransformers(String transformers) {
+        this.transformers = Splitter.on(",")
+            .omitEmptyStrings()
+            .trimResults()
+            .splitToList(transformers);
+    }
 
     public PropertyDefinition() {
     }
@@ -43,7 +53,6 @@ public class PropertyDefinition {
     public PropertyDefinition(final String name, final String value) {
         this.name = checkNotNull(name, "name is null");
         this.value = checkNotNull(value, "value is null");
-        this.transformers = "";
     }
 
     public static Function<PropertyDefinition, String> getNameFunction() {
@@ -70,7 +79,7 @@ public class PropertyDefinition {
         return value;
     }
 
-    public String getTransformers() {
+    public List<String> getTransformers() {
         return transformers;
     }
 

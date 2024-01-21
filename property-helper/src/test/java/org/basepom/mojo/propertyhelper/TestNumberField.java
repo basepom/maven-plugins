@@ -14,6 +14,8 @@
 
 package org.basepom.mojo.propertyhelper;
 
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.numberDefinition;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setFieldNumber;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
@@ -29,9 +31,8 @@ public class TestNumberField {
 
     @Test
     public void testSimple() {
-        final NumberDefinition f1 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(0);
+        final NumberDefinition f1 = numberDefinition("hello");
+        setFieldNumber(f1, 0);
         f1.check();
 
         final Properties props = new Properties();
@@ -42,15 +43,12 @@ public class TestNumberField {
 
     @Test
     public void testThreeElements() {
-        final NumberDefinition f1 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(0);
-        final NumberDefinition f2 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(1);
-        final NumberDefinition f3 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(2);
+        final NumberDefinition f1 = numberDefinition("hello");
+        setFieldNumber(f1, 0);
+        final NumberDefinition f2 = numberDefinition("hello");
+        setFieldNumber(f2, 1);
+        final NumberDefinition f3 = numberDefinition("hello");
+        setFieldNumber(f3, 2);
         f1.check();
         f2.check();
         f3.check();
@@ -74,18 +72,14 @@ public class TestNumberField {
 
     @Test
     public void testItsComplicated() {
-        final NumberDefinition f1 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(0);
-        final NumberDefinition f2 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(1);
-        final NumberDefinition f3 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(2);
-        final NumberDefinition f4 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(3);
+        final NumberDefinition f1 = numberDefinition("hello");
+        setFieldNumber(f1, 0);
+        final NumberDefinition f2 = numberDefinition("hello");
+        setFieldNumber(f2, 1);
+        final NumberDefinition f3 = numberDefinition("hello");
+        setFieldNumber(f3, 2);
+        final NumberDefinition f4 = numberDefinition("hello");
+        setFieldNumber(f4, 3);
         f1.check();
         f2.check();
         f3.check();
@@ -114,9 +108,8 @@ public class TestNumberField {
 
     @Test
     public void testIncrementSingle() {
-        final NumberDefinition f1 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(0);
+        final NumberDefinition f1 = numberDefinition("hello");
+        setFieldNumber(f1, 0);
 
         final String value = "foobar-1.2-barfoo-3";
 
@@ -136,12 +129,10 @@ public class TestNumberField {
 
     @Test
     public void testIncrement2() {
-        final NumberDefinition f1 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(0);
-        final NumberDefinition f2 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(1);
+        final NumberDefinition f1 = numberDefinition("hello");
+        setFieldNumber(f1, 0);
+        final NumberDefinition f2 = numberDefinition("hello");
+        setFieldNumber(f2, 1);
         f1.check();
         f2.check();
 
@@ -173,12 +164,10 @@ public class TestNumberField {
 
     @Test
     public void testDoubleIncrement() {
-        final NumberDefinition f1 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(0);
-        final NumberDefinition f2 = new NumberDefinition()
-                .setId("hello")
-                .setFieldNumber(0);
+        final NumberDefinition f1 = numberDefinition("hello");
+        setFieldNumber(f1, 0);
+        final NumberDefinition f2 = numberDefinition("hello");
+        setFieldNumber(f2, 0);
         f1.check();
         f2.check();
 

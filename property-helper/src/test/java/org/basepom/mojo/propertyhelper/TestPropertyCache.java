@@ -14,6 +14,10 @@
 
 package org.basepom.mojo.propertyhelper;
 
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.numberDefinition;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingFile;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingProperty;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setPropertyFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,7 +45,7 @@ public class TestPropertyCache {
 
     @BeforeEach
     public void setUp()
-            throws IOException {
+        throws IOException {
         assertNull(pc);
         pc = ValueCache.forTesting();
 
@@ -55,7 +59,7 @@ public class TestPropertyCache {
 
     @AfterEach
     public void tearDown()
-            throws IOException {
+        throws IOException {
         assertNotNull(pc);
         assertNotNull(propFile);
         assertNotNull(writer);
@@ -64,8 +68,8 @@ public class TestPropertyCache {
 
     @Test
     public void testEphemeralDefault()
-            throws IOException {
-        final NumberDefinition ephemeral = new NumberDefinition().setId("hello");
+        throws IOException {
+        final NumberDefinition ephemeral = numberDefinition("hello");
         ephemeral.check();
         final ValueProvider valueProvider = pc.getValueProvider(ephemeral);
         assertEquals(ephemeral.getInitialValue(), valueProvider.getValue());
@@ -75,11 +79,11 @@ public class TestPropertyCache {
     @SuppressFBWarnings(value = "DMI_HARDCODED_ABSOLUTE_FILENAME", justification = "unit test")
     public void testMissingPropertyFileFail() {
         assertThrows(IllegalStateException.class, () -> {
-            final NumberDefinition fileBacked = new NumberDefinition()
-                    .setId("hello")
-                    .setOnMissingFile("FAIL")
-                    .setOnMissingProperty("IGNORE")
-                    .setPropertyFile(new File("/does/not/exist"));
+            final NumberDefinition fileBacked = numberDefinition("hello");
+            setOnMissingFile(fileBacked, "FAIL");
+            setOnMissingProperty(fileBacked, "IGNORE");
+            setPropertyFile(fileBacked, new File("/does/not/exist"));
+
             fileBacked.check();
             pc.getValueProvider(fileBacked);
         });
@@ -87,16 +91,15 @@ public class TestPropertyCache {
 
     @Test
     public void testEmptyPropertyFileCreate()
-            throws IOException {
+        throws IOException {
         props.store(writer, null);
         writer.flush();
         writer.close();
 
-        final NumberDefinition fileBacked = new NumberDefinition()
-                .setId("hello")
-                .setOnMissingFile("FAIL")
-                .setOnMissingProperty("CREATE")
-                .setPropertyFile(propFile);
+        final NumberDefinition fileBacked = numberDefinition("hello");
+        setOnMissingFile(fileBacked, "FAIL");
+        setOnMissingProperty(fileBacked, "CREATE");
+        setPropertyFile(fileBacked, propFile);
         fileBacked.check();
         final ValueProvider valueProvider = pc.getValueProvider(fileBacked);
         assertEquals(fileBacked.getInitialValue(), valueProvider.getValue());
@@ -104,16 +107,16 @@ public class TestPropertyCache {
 
     @Test
     public void testEmptyPropertyFileIgnore()
-            throws IOException {
+        throws IOException {
         props.store(writer, null);
         writer.flush();
         writer.close();
 
-        final NumberDefinition fileBacked = new NumberDefinition()
-                .setId("hello")
-                .setOnMissingFile("FAIL")
-                .setOnMissingProperty("IGNORE")
-                .setPropertyFile(propFile);
+        final NumberDefinition fileBacked = numberDefinition("hello");
+        setOnMissingFile(fileBacked, "FAIL");
+        setOnMissingProperty(fileBacked, "IGNORE");
+        setPropertyFile(fileBacked, propFile);
+
         fileBacked.check();
         final ValueProvider valueProvider = pc.getValueProvider(fileBacked);
         assertFalse(valueProvider.getValue().isPresent());
@@ -129,11 +132,11 @@ public class TestPropertyCache {
             writer.flush();
             writer.close();
 
-            final NumberDefinition fileBacked = new NumberDefinition()
-                    .setId("hello")
-                    .setOnMissingFile("FAIL")
-                    .setOnMissingProperty("FAIL")
-                    .setPropertyFile(propFile);
+            final NumberDefinition fileBacked = numberDefinition("hello");
+            setOnMissingFile(fileBacked, "FAIL");
+            setOnMissingProperty(fileBacked, "FAIL");
+            setPropertyFile(fileBacked, propFile);
+
             fileBacked.check();
             pc.getValueProvider(fileBacked);
         });
@@ -141,7 +144,7 @@ public class TestPropertyCache {
 
     @Test
     public void testLoadProperty()
-            throws IOException {
+        throws IOException {
         final Properties props = new Properties();
         final FileWriter writer = new FileWriter(propFile);
         final String propValue = "12345";
@@ -151,19 +154,18 @@ public class TestPropertyCache {
         writer.flush();
         writer.close();
 
-        final NumberDefinition fileBacked = new NumberDefinition()
-                .setId("hello")
-                .setOnMissingFile("FAIL")
-                .setOnMissingProperty("FAIL")
-                .setPropertyFile(propFile);
+        final NumberDefinition fileBacked = numberDefinition("hello");
+        setOnMissingFile(fileBacked, "FAIL");
+        setOnMissingProperty(fileBacked, "FAIL");
+        setPropertyFile(fileBacked, propFile);
+
         fileBacked.check();
         final ValueProvider valueProvider = pc.getValueProvider(fileBacked);
         assertEquals(propValue, valueProvider.getValue().get());
     }
 
     @Test
-    public void testIgnoreCreate()
-            throws IOException {
+    public void testIgnoreCreate() throws IOException {
         final Properties props = new Properties();
         final FileWriter writer = new FileWriter(propFile);
         final String propValue = "12345";
@@ -173,11 +175,10 @@ public class TestPropertyCache {
         writer.flush();
         writer.close();
 
-        final NumberDefinition fileBacked = new NumberDefinition()
-                .setId("hello")
-                .setOnMissingFile("FAIL")
-                .setOnMissingProperty("CREATE")
-                .setPropertyFile(propFile);
+        final NumberDefinition fileBacked = numberDefinition("hello");
+        setOnMissingFile(fileBacked, "FAIL");
+        setOnMissingProperty(fileBacked, "CREATE");
+        setPropertyFile(fileBacked, propFile);
         fileBacked.check();
         final ValueProvider valueProvider = pc.getValueProvider(fileBacked);
         assertEquals(propValue, valueProvider.getValue().get());
@@ -185,7 +186,7 @@ public class TestPropertyCache {
 
     @Test
     public void samePropertyObject()
-            throws IOException {
+        throws IOException {
         final Properties props = new Properties();
         final FileWriter writer = new FileWriter(propFile);
 
@@ -195,16 +196,15 @@ public class TestPropertyCache {
         writer.flush();
         writer.close();
 
-        final NumberDefinition n1 = new NumberDefinition()
-                .setId("hello")
-                .setOnMissingFile("FAIL")
-                .setOnMissingProperty("FAIL")
-                .setPropertyFile(propFile);
-        final NumberDefinition n2 = new NumberDefinition()
-                .setId("world")
-                .setOnMissingFile("FAIL")
-                .setOnMissingProperty("FAIL")
-                .setPropertyFile(propFile);
+        final NumberDefinition n1 = numberDefinition("hello");
+        setOnMissingFile(n1, "FAIL");
+        setOnMissingProperty(n1, "FAIL");
+        setPropertyFile(n1, propFile);
+
+        final NumberDefinition n2 = numberDefinition("world");
+        setOnMissingFile(n2, "FAIL");
+        setOnMissingProperty(n2, "FAIL");
+        setPropertyFile(n2, propFile);
 
         n1.check();
         n2.check();

@@ -21,18 +21,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public final class TransformerRegistry {
 
-    private static final Map<String, Function<String, String>> REGISTRY;
+    public static final TransformerRegistry INSTANCE = new TransformerRegistry();
 
-    static {
+    private final Map<String, Function<String, String>> registry;
+
+    private TransformerRegistry() {
         final ImmutableMap.Builder<String, Function<String, String>> registry = ImmutableMap.builder();
         registry.put("lowercase", new LowercaseTransformer());
         registry.put("uppercase", new UppercaseTransformer());
@@ -43,29 +44,14 @@ public final class TransformerRegistry {
         registry.put("use_dash", new UseDashTransformer());
         registry.put("trim", new TrimTransformer());
 
-        REGISTRY = registry.build();
+        this.registry = registry.build();
     }
 
-    private TransformerRegistry() {
-        throw new AssertionError("Do not instantiate");
-    }
-
-    public static List<Function<String, String>> getTransformers(final String transformerNames) {
-        if (transformerNames == null) {
-            return ImmutableList.of();
-        }
-
-        ImmutableList.Builder<Function<String, String>> transformers = ImmutableList.builder();
-        for (String transformerName : Splitter.on(',').omitEmptyStrings().split(transformerNames)) {
-            transformers.add(forName(transformerName));
-        }
-
-        return transformers.build();
-    }
-
-    public static String applyTransformers(final String transformers, final String value) {
+    public String applyTransformers(final List<String> transformers, final String value) {
         String res = value;
-        for (Function<String, String> transformer : getTransformers(transformers)) {
+
+        for (Function<String, String> transformer : transformers.stream()
+            .map(this::forName).collect(Collectors.toList())) {
             if (res != null) {
                 res = transformer.apply(res);
             }
@@ -73,10 +59,10 @@ public final class TransformerRegistry {
         return res;
     }
 
-    public static Function<String, String> forName(final String transformerName) {
+    Function<String, String> forName(final String transformerName) {
         checkNotNull(transformerName, "transformerName is null");
 
-        final var transformer = REGISTRY.get(transformerName.toLowerCase(Locale.ENGLISH));
+        final var transformer = registry.get(transformerName.toLowerCase(Locale.getDefault()));
 
         checkState(transformer != null, "Transformer '%s' is unknown.", transformerName);
 
@@ -84,7 +70,7 @@ public final class TransformerRegistry {
     }
 
     public static class LowercaseTransformer
-            implements Function<String, String> {
+        implements Function<String, String> {
 
         @Override
         public String apply(@Nonnull String value) {
@@ -93,7 +79,7 @@ public final class TransformerRegistry {
     }
 
     public static class UppercaseTransformer
-            implements Function<String, String> {
+        implements Function<String, String> {
 
         @Override
         public String apply(@Nonnull String value) {
@@ -102,7 +88,7 @@ public final class TransformerRegistry {
     }
 
     public static class RemoveWhitespaceTransformer
-            implements Function<String, String> {
+        implements Function<String, String> {
 
         @Override
         public String apply(@Nonnull String value) {
@@ -111,7 +97,7 @@ public final class TransformerRegistry {
     }
 
     public static class UnderscoreForWhitespaceTransformer
-            implements Function<String, String> {
+        implements Function<String, String> {
 
         @Override
         public String apply(@Nonnull String value) {
@@ -120,7 +106,7 @@ public final class TransformerRegistry {
     }
 
     public static class DashForWhitespaceTransformer
-            implements Function<String, String> {
+        implements Function<String, String> {
 
         @Override
         public String apply(@Nonnull String value) {
@@ -129,7 +115,7 @@ public final class TransformerRegistry {
     }
 
     public static class UseUnderscoreTransformer
-            implements Function<String, String> {
+        implements Function<String, String> {
 
         @Override
         public String apply(@Nonnull String value) {
@@ -138,7 +124,7 @@ public final class TransformerRegistry {
     }
 
     public static class UseDashTransformer
-            implements Function<String, String> {
+        implements Function<String, String> {
 
         @Override
         public String apply(@Nonnull String value) {
@@ -147,7 +133,7 @@ public final class TransformerRegistry {
     }
 
     public static class TrimTransformer
-            implements Function<String, String> {
+        implements Function<String, String> {
 
         @Override
         public String apply(@Nonnull String value) {

@@ -14,29 +14,31 @@
 
 package org.basepom.mojo.propertyhelper;
 
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setBlankIsValid;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingProperty;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingValue;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setValues;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.stringDefinition;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
+import org.basepom.mojo.propertyhelper.definitions.DefinitionHelper;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
 import org.basepom.mojo.propertyhelper.fields.StringField;
 
-import java.util.List;
 import java.util.Properties;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 
 public class TestStringField {
 
     @Test
     public void testSimple() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(ImmutableList.of("foo"));
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, "foo");
 
         f1.check();
 
@@ -46,9 +48,8 @@ public class TestStringField {
 
     @Test
     public void testTwoValues() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(ImmutableList.of("foo", "bar", "baz"));
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, "foo", "bar", "baz");
 
         f1.check();
 
@@ -58,10 +59,9 @@ public class TestStringField {
 
     @Test
     public void testIgnoreBlank() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(ImmutableList.of("", "      ", "baz"))
-                .setBlankIsValid(false);
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, "", "      ", "baz");
+        setBlankIsValid(f1, false);
 
         f1.check();
 
@@ -71,10 +71,9 @@ public class TestStringField {
 
     @Test
     public void testAcceptBlank() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(ImmutableList.of("      ", "baz"))
-                .setBlankIsValid(true);
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, "      ", "baz");
+        setBlankIsValid(f1, true);
 
         f1.check();
 
@@ -84,10 +83,9 @@ public class TestStringField {
 
     @Test
     public void testAcceptEmpty() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(ImmutableList.of("", "baz"))
-                .setBlankIsValid(true);
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, "", "baz");
+        setBlankIsValid(f1, true);
 
         f1.check();
 
@@ -97,14 +95,9 @@ public class TestStringField {
 
     @Test
     public void testNullValueIsEmptyString() {
-        final List<String> values = Lists.newArrayList();
-        values.add(null);
-        values.add("wibble");
-
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(values)
-                .setBlankIsValid(true);
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, null, "wibble");
+        setBlankIsValid(f1, true);
 
         f1.check();
 
@@ -114,8 +107,7 @@ public class TestStringField {
 
     @Test
     public void testSimpleProperty() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello");
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
 
         f1.check();
 
@@ -127,9 +119,8 @@ public class TestStringField {
 
     @Test
     public void testSimplePropertyWithDefault() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(ImmutableList.of("baz"));
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, "baz");
 
         f1.check();
 
@@ -141,9 +132,8 @@ public class TestStringField {
 
     @Test
     public void testNoProperty() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(ImmutableList.of("baz"));
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, "baz");
 
         f1.check();
 
@@ -155,10 +145,9 @@ public class TestStringField {
 
     @Test
     public void testIgnoreBlankProperty() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setBlankIsValid(false)
-                .setValues(ImmutableList.of("baz"));
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setBlankIsValid(f1, false);
+        setValues(f1, "baz");
 
         f1.check();
 
@@ -172,10 +161,9 @@ public class TestStringField {
     public void testNothing() {
 
         assertThrows(IllegalStateException.class, () -> {
-            final StringDefinition f1 = new StringDefinition()
-                    .setId("hello")
-                    .setOnMissingValue("fail")
-                    .setBlankIsValid(true);
+            final StringDefinition f1 = stringDefinition("hello");
+            setOnMissingValue(f1, "fail");
+            setBlankIsValid(f1, true);
             f1.check();
 
             final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
@@ -185,10 +173,9 @@ public class TestStringField {
 
     @Test
     public void testNothingIgnore() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setOnMissingValue("ignore")
-                .setBlankIsValid(true);
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setOnMissingValue(f1, "ignore");
+        setBlankIsValid(f1, true);
 
         f1.check();
 
@@ -201,11 +188,10 @@ public class TestStringField {
         ValueCache valueCache = ValueCache.forTesting();
 
         assertThrows(IllegalStateException.class, () -> {
-            final StringDefinition f1 = new StringDefinition()
-                    .setId("hello")
-                    .setOnMissingValue("ignore")
-                    .setOnMissingProperty("fail")
-                    .setBlankIsValid(true);
+            final StringDefinition f1 = stringDefinition("hello");
+            setOnMissingValue(f1, "ignore");
+            setOnMissingProperty(f1, "fail");
+            setBlankIsValid(f1, true);
 
             f1.check();
 
@@ -220,9 +206,8 @@ public class TestStringField {
     public void testBlankPropertyValue() {
         ValueCache valueCache = ValueCache.forTesting();
 
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setBlankIsValid(true);
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setBlankIsValid(f1, true);
 
         f1.check();
 
@@ -235,10 +220,9 @@ public class TestStringField {
 
     @Test
     public void testBlankValue() {
-        final StringDefinition f1 = new StringDefinition()
-                .setId("hello")
-                .setValues(ImmutableList.of("", "foo"))
-                .setBlankIsValid(true);
+        final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
+        setValues(f1, "", "foo");
+        setBlankIsValid(f1, true);
 
         f1.check();
 

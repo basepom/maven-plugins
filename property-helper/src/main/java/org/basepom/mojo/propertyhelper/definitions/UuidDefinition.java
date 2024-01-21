@@ -31,7 +31,14 @@ import java.util.UUID;
 import com.google.common.annotations.VisibleForTesting;
 
 public class UuidDefinition
-    extends AbstractDefinition<UuidDefinition> {
+    extends AbstractDefinition {
+
+    public UuidDefinition() {}
+
+    @VisibleForTesting
+    UuidDefinition(String id) {
+        super(id);
+    }
 
     /**
      * Value for this uuid. Field injected by Maven.
@@ -40,12 +47,6 @@ public class UuidDefinition
 
     public Optional<UUID> getValue() {
         return Optional.ofNullable(value).map(UUID::fromString);
-    }
-
-    @VisibleForTesting
-    public UuidDefinition setValue(final String value) {
-        this.value = checkNotNull(value, "value is null");
-        return this;
     }
 
     @Override

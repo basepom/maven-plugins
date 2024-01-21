@@ -29,7 +29,7 @@ import java.util.StringJoiner;
 import com.google.common.annotations.VisibleForTesting;
 
 public class DateDefinition
-    extends AbstractDefinition<DateDefinition> {
+    extends AbstractDefinition {
 
     /**
      * Timezone for this date. Field injected by Maven.
@@ -44,24 +44,17 @@ public class DateDefinition
     public DateDefinition() {
     }
 
+    @VisibleForTesting
+    DateDefinition(String id) {
+        super(id);
+    }
+
     public Optional<String> getTimezone() {
         return Optional.ofNullable(timezone);
     }
 
-    @VisibleForTesting
-    public DateDefinition setTimezone(final String timezone) {
-        this.timezone = checkNotNull(timezone, "timezone is null");
-        return this;
-    }
-
     public Optional<Long> getValue() {
         return Optional.ofNullable(value);
-    }
-
-    @VisibleForTesting
-    public DateDefinition setValue(final Long value) {
-        this.value = checkNotNull(value, "value is null");
-        return this;
     }
 
     @Override

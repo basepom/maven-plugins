@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 public class MacroDefinition
-    extends AbstractDefinition<MacroDefinition> {
+    extends AbstractDefinition {
 
     /**
      * Macro type. Field injected by Maven.
@@ -53,37 +53,23 @@ public class MacroDefinition
     Properties properties = new Properties();
 
     public MacroDefinition() {
-        super();
+    }
+
+    @VisibleForTesting
+    MacroDefinition(String id) {
+        super(id);
     }
 
     public Optional<String> getMacroType() {
         return Optional.ofNullable(macroType);
     }
 
-    @VisibleForTesting
-    public MacroDefinition setMacroType(final String macroType) {
-        this.macroType = checkNotNull(macroType, "macroType is null");
-        return this;
-    }
-
     public Optional<String> getMacroClass() {
         return Optional.ofNullable(macroClass);
     }
 
-    @VisibleForTesting
-    public MacroDefinition setMacroClass(final String macroClass) {
-        this.macroClass = checkNotNull(macroClass, "macroClass is null");
-        return this;
-    }
-
     public Map<String, String> getProperties() {
         return ImmutableMap.copyOf(Maps.fromProperties(properties));
-    }
-
-    @VisibleForTesting
-    public MacroDefinition setProperties(final Properties properties) {
-        this.properties = new Properties(checkNotNull(properties, "properties is null"));
-        return this;
     }
 
     @Override

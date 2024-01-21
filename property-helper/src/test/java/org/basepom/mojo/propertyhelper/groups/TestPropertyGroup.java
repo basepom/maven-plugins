@@ -36,8 +36,7 @@ public class TestPropertyGroup {
     public void testConstant() throws Exception {
         final Map<String, String> props = ImmutableMap.of("hello", "world");
 
-        final PropertyGroup pg = new PropertyGroup()
-                .setId("hello")
+        final PropertyGroup pg = new PropertyGroup("hello")
                 .setProperties(props);
 
         final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
@@ -52,8 +51,7 @@ public class TestPropertyGroup {
     public void testRenderSingle() throws Exception {
         final Map<String, String> props = ImmutableMap.of("hello", "#{world}");
 
-        final PropertyGroup pg = new PropertyGroup()
-                .setId("hello")
+        final PropertyGroup pg = new PropertyGroup("hello")
                 .setProperties(props);
 
         final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
@@ -69,8 +67,7 @@ public class TestPropertyGroup {
         assertThrows(IllegalStateException.class, () -> {
             final Map<String, String> props = ImmutableMap.of("hello", "#{world}");
 
-            final PropertyGroup pg = new PropertyGroup()
-                    .setId("hello")
+            final PropertyGroup pg = new PropertyGroup("hello")
                     .setProperties(props);
 
             final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
@@ -86,8 +83,7 @@ public class TestPropertyGroup {
     public void testRenderEmptyOk() throws Exception {
         final Map<String, String> props = ImmutableMap.of("hello", "nice-#{world}-hat");
 
-        final PropertyGroup pg = new PropertyGroup()
-                .setId("hello")
+        final PropertyGroup pg = new PropertyGroup("hello")
                 .setProperties(props)
                 .setOnMissingProperty("ignore");
 
@@ -103,8 +99,7 @@ public class TestPropertyGroup {
     public void testRenderIsReluctant() throws Exception {
         final Map<String, String> props = ImmutableMap.of("hello", "nice-#{first}-#{world}-hat");
 
-        final PropertyGroup pg = new PropertyGroup()
-                .setId("hello")
+        final PropertyGroup pg = new PropertyGroup("hello")
                 .setProperties(props)
                 .setOnMissingProperty("ignore");
 
@@ -120,8 +115,7 @@ public class TestPropertyGroup {
     public void testRenderFriendOfAFriend() throws Exception {
         final Map<String, String> props = ImmutableMap.of("hello", "nice-#{whatWorld}-#{world}-hat");
 
-        final PropertyGroup pg = new PropertyGroup()
-                .setId("hello")
+        final PropertyGroup pg = new PropertyGroup("hello")
                 .setProperties(props)
                 .setOnMissingProperty("ignore");
 
@@ -139,8 +133,7 @@ public class TestPropertyGroup {
     public void testRenderDotsAreCool() throws Exception {
         final Map<String, String> props = ImmutableMap.of("hello", "nice-#{foo.bar.world}-hat");
 
-        final PropertyGroup pg = new PropertyGroup()
-                .setId("hello")
+        final PropertyGroup pg = new PropertyGroup("hello")
                 .setProperties(props)
                 .setOnMissingProperty("ignore");
 

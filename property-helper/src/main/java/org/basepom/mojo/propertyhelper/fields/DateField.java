@@ -70,10 +70,7 @@ public class DateField implements PropertyElement {
             valueProvider.setValue(Long.toString(date.getMillis()));
         }
 
-        return Optional.ofNullable(
-            dateDefinition.getTransformers()
-                .map(definition -> TransformerRegistry.applyTransformers(definition, result))
-                .orElse(result));
+        return Optional.ofNullable(TransformerRegistry.INSTANCE.applyTransformers(dateDefinition.getTransformers(), result));
     }
 
     private DateTime getDateTime(String value, final DateTimeFormatter formatter, final DateTimeZone timeZone) {

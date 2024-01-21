@@ -62,7 +62,7 @@ public final class ValueCache {
 
     @VisibleForTesting
     ValueProvider findCurrentValueProvider(final Map<String, String> values,
-            final AbstractDefinition<?> definition) {
+            final AbstractDefinition definition) {
         checkNotNull(values, "values is null");
         final String name = definition.getPropertyName();
         final boolean hasValue = values.containsKey(name);
@@ -86,7 +86,7 @@ public final class ValueCache {
         }
     }
 
-    public ValueProvider getValueProvider(final AbstractDefinition<?> definition)
+    public ValueProvider getValueProvider(final AbstractDefinition definition)
             throws IOException {
         final Optional<Map<String, String>> values = getValues(definition);
         if (values.isEmpty()) {
@@ -107,7 +107,7 @@ public final class ValueCache {
     }
 
     @VisibleForTesting
-    Optional<Map<String, String>> getValues(final AbstractDefinition<?> definition)
+    Optional<Map<String, String>> getValues(final AbstractDefinition definition)
             throws IOException {
         final Optional<File> definitionFile = definition.getPropertyFile();
 

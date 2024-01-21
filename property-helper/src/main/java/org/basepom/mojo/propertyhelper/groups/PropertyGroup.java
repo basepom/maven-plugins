@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.codehaus.plexus.interpolation.InterpolationException;
@@ -67,6 +68,13 @@ public class PropertyGroup {
      * Property definitions in this group. Field injected by Maven.
      */
     PropertyDefinition[] properties = new PropertyDefinition[0];
+
+    public PropertyGroup() {}
+
+    @VisibleForTesting
+    PropertyGroup(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return id;
@@ -145,7 +153,7 @@ public class PropertyGroup {
         String result = "";
 
         if (propertyDefinition != null) {
-            result = TransformerRegistry.applyTransformers(propertyDefinition.getTransformers(),
+            result = TransformerRegistry.INSTANCE.applyTransformers(propertyDefinition.getTransformers(),
                 interpolatorFactory.interpolate(propertyDefinition.getValue(), getOnMissingProperty(), propElements));
         }
 

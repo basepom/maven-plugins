@@ -14,7 +14,6 @@
 
 package org.basepom.mojo.propertyhelper;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
@@ -42,6 +41,7 @@ import java.util.Set;
 import javax.annotation.CheckForNull;
 import javax.inject.Inject;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -55,8 +55,7 @@ import org.apache.maven.settings.Settings;
 /**
  * Base code for all the mojos.
  */
-public abstract class AbstractPropertyHelperMojo
-    extends AbstractMojo implements PropertyElementContext {
+public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements PropertyElementContext {
 
     private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
@@ -76,8 +75,12 @@ public abstract class AbstractPropertyHelperMojo
     /**
      * List of the property group ids to activate for a plugin execution.
      */
+    private List<String> activeGroups = List.of();
+
     @Parameter
-    public String[] activeGroups = new String[0];
+    public void setActiveGroups(String... activeGroups) {
+        this.activeGroups = Arrays.asList(activeGroups);
+    }
 
     /**
      * List of available property groups. A property group contains one or more property definitions and must be activated with activeGroups.
@@ -132,7 +135,7 @@ public abstract class AbstractPropertyHelperMojo
     /**
      * Uuid definitions.
      */
-    @Parameter
+    @Parameter(name = "uuids")
     public void setUuids(UuidDefinition... uuidDefinitions) {
         this.uuidDefinitions = Arrays.asList(uuidDefinitions);
     }
@@ -143,13 +146,13 @@ public abstract class AbstractPropertyHelperMojo
      * The maven project (effective pom).
      */
     @Parameter(defaultValue = "${project}", readonly = true)
-    public MavenProject project;
+    MavenProject project;
 
     @Parameter(defaultValue = "${settings}", readonly = true)
-    public Settings settings;
+    Settings settings;
 
     @Parameter(required = true, readonly = true, defaultValue = "${project.basedir}")
-    public File basedir;
+    File basedir;
 
     /**
      * If set to true, goal execution is skipped.
@@ -157,12 +160,16 @@ public abstract class AbstractPropertyHelperMojo
     @Parameter(defaultValue = "false")
     boolean skip;
 
-    private List<NumberField> numberFields = List.of();
 
     @Inject
-    public Map<String, MacroType> macroMap = Map.of();
+    public void setMacroMap(Map<String, MacroType> macroMap) {
+        this.macroMap = ImmutableMap.copyOf(macroMap);
+    }
+
+    private Map<String, MacroType> macroMap = Map.of();
 
     private boolean isSnapshot;
+    private List<NumberField> numberFields = List.of();
 
     @Override
     public void execute()
@@ -184,19 +191,23 @@ public abstract class AbstractPropertyHelperMojo
         }
     }
 
+    @Override
     public MavenProject getProject() {
-        checkNotNull(project, "project is null");
         return project;
     }
 
+    @Override
     public File getBasedir() {
-        checkNotNull(basedir, "basedir is null");
         return basedir;
     }
 
     @Override
+    public Settings getSettings() {
+        return settings;
+    }
+
+    @Override
     public Map<String, MacroType> getMacros() {
-        checkNotNull(macroMap, "macroMap is null");
         return macroMap;
     }
 
@@ -215,10 +226,10 @@ public abstract class AbstractPropertyHelperMojo
      */
     protected abstract void doExecute() throws IOException, MojoExecutionException;
 
-    private void addDefinitions(ImmutableMap.Builder<String, AbstractDefinition<?>> builder, List<? extends AbstractDefinition<?>> newDefinitions) {
-        Map<String, AbstractDefinition<?>> existingDefinitions = builder.build();
+    private void addDefinitions(ImmutableMap.Builder<String, AbstractDefinition> builder, List<? extends AbstractDefinition> newDefinitions) {
+        Map<String, AbstractDefinition> existingDefinitions = builder.build();
 
-        for (AbstractDefinition<?> definition : newDefinitions) {
+        for (AbstractDefinition definition : newDefinitions) {
             final String propertyName = definition.getId();
             if (!existingDefinitions.containsKey(propertyName)) {
                 builder.put(propertyName, definition);
@@ -242,15 +253,20 @@ public abstract class AbstractPropertyHelperMojo
     }
 
     protected void loadPropertyElements() throws MojoExecutionException, IOException {
-        final ImmutableMap.Builder<String, AbstractDefinition<?>> builder = ImmutableMap.builder();
+        final ImmutableMap.Builder<String, AbstractDefinition> builder = ImmutableMap.builder();
         addDefinitions(builder, numberDefinitions);
         addDefinitions(builder, stringDefinitions);
         addDefinitions(builder, macroDefinitions);
         addDefinitions(builder, dateDefinitions);
         addDefinitions(builder, uuidDefinitions);
 
-        for (AbstractDefinition<?> definition : builder.build().values()) {
+        ImmutableList.Builder<NumberField> numberFields = ImmutableList.builder();
+        for (AbstractDefinition definition : builder.build().values()) {
             PropertyElement propertyElement = definition.createPropertyElement(this, valueCache);
+
+            if (propertyElement instanceof NumberField) {
+                numberFields.add((NumberField) propertyElement);
+            }
 
             final Optional<String> value = propertyElement.getPropertyValue();
             values.put(propertyElement.getPropertyName(), value.orElse(null));
@@ -263,6 +279,8 @@ public abstract class AbstractPropertyHelperMojo
                 LOG.atFine().log("Property name: %s, value: %s", propertyElement.getPropertyName(), value.orElse("<null>"));
             }
         }
+
+        this.numberFields = numberFields.build();
 
         // Now generate the property groups.
         final ImmutableMap.Builder<String, Entry<PropertyGroup, List<PropertyElement>>> propertyGroupBuilder = ImmutableMap.builder();

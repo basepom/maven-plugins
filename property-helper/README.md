@@ -1,6 +1,18 @@
-# property-helper-maven-plugin
+# property-helper Maven Plugin
 
-The property helper plugins is a swiss-army-knife for manipulating and setting properties in a maven build.
+Define, create and manipulate properties for the maven build cycle. This plugin can
+
+- create properties to e.g. represent build versions, identifiers, switches etc.
+- combine different type of fields into properties and export them to the maven build cycle
+- manipulate existing properties
+
+## Configuration
+
+The plugin defines different elements that are combined to form properties:
+
+- `string` fields 
+
+
 
 ```xml
 <plugin>

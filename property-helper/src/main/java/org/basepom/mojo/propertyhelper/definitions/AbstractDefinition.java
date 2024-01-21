@@ -14,7 +14,6 @@
 
 package org.basepom.mojo.propertyhelper.definitions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
@@ -26,13 +25,23 @@ import org.basepom.mojo.propertyhelper.ValueCache;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Splitter;
 
-public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
+public abstract class AbstractDefinition {
+
+    protected AbstractDefinition() {
+    }
+
+    @VisibleForTesting
+    protected AbstractDefinition(String id) {
+        this.id = id;
+    }
 
     /**
      * Name of the build property to define. Field injected by Maven.
@@ -60,14 +69,22 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
     File propertyFile = null;
 
     /**
-     * What to do when the property is missing from the file. Field injected by Maven.
+     * What to do when the property is missing from the file.
      */
-    String onMissingFile = "fail";
+    private IgnoreWarnFailCreate onMissingFile = IgnoreWarnFailCreate.FAIL;
+
+    public void setOnMissingFile(String onMissingFile) {
+        this.onMissingFile = IgnoreWarnFailCreate.forString(onMissingFile);
+    }
 
     /**
-     * What to do when the property is missing from the file. Field injected by Maven.
+     * What to do when the property is missing from the file.
      */
-    String onMissingProperty = "fail";
+    private IgnoreWarnFailCreate onMissingProperty = IgnoreWarnFailCreate.FAIL;
+
+    public void setOnMissingProperty(String onMissingProperty) {
+        this.onMissingProperty = IgnoreWarnFailCreate.forString(onMissingProperty);
+    }
 
     /**
      * The initial value for this field. Field injected by Maven.
@@ -84,9 +101,13 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
     /**
      * Comma separated list of String transformers.
      */
-    String transformers = null;
+    private List<String> transformers = List.of();
 
-    protected AbstractDefinition() {
+    void setTransformers(String transformers) {
+        this.transformers = Splitter.on(",")
+            .omitEmptyStrings()
+            .trimResults()
+            .splitToList(transformers);
     }
 
     public abstract PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException;
@@ -95,38 +116,16 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
         return id;
     }
 
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setId(final String id) {
-        this.id = checkNotNull(id, "id is null").trim();
-        return (T) this;
-    }
-
     public boolean isSkip() {
         return skip;
     }
 
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setSkip(final boolean skip) {
-        this.skip = skip;
-        return (T) this;
-    }
-
-    public Optional<String> getTransformers() {
-        return Optional.ofNullable(transformers);
+    public List<String> getTransformers() {
+        return transformers;
     }
 
     public Optional<String> getInitialValue() {
         return Optional.ofNullable(initialValue);
-    }
-
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setInitialValue(final String initialValue) {
-        checkState(initialValue != null, "initialValue is null");
-        this.initialValue = initialValue.trim();
-        return (T) this;
     }
 
     public Optional<String> getInitialProperty() {
@@ -137,77 +136,33 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
         return export;
     }
 
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setExport(final boolean export) {
-        this.export = export;
-        return (T) this;
-    }
-
     public String getPropertyName() {
         return Objects.requireNonNullElse(propertyName, id);
-    }
-
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setPropertyName(final String propertyName) {
-        this.propertyName = checkNotNull(propertyName, "propertyName is null").trim();
-        return (T) this;
     }
 
     public Optional<File> getPropertyFile() {
         return Optional.ofNullable(propertyFile);
     }
 
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setPropertyFile(final File propertyFile) {
-        this.propertyFile = checkNotNull(propertyFile, "propertyFile is null");
-        return (T) this;
-    }
-
     public IgnoreWarnFailCreate getOnMissingFile() {
-        return IgnoreWarnFailCreate.forString(onMissingFile);
-    }
-
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setOnMissingFile(final String onMissingFile) {
-        IgnoreWarnFailCreate.forString(onMissingFile);
-        this.onMissingFile = onMissingFile;
-        return (T) this;
+        return onMissingFile;
     }
 
     public IgnoreWarnFailCreate getOnMissingProperty() {
-        return IgnoreWarnFailCreate.forString(onMissingProperty);
-    }
-
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setOnMissingProperty(final String onMissingProperty) {
-        IgnoreWarnFailCreate.forString(onMissingProperty);
-        this.onMissingProperty = onMissingProperty;
-        return (T) this;
+        return onMissingProperty;
     }
 
     public Optional<String> formatResult(final String value) {
         final Optional<String> format = getFormat();
         String res = format.isPresent() ? format(format.get(), value) : value;
 
-        res = TransformerRegistry.applyTransformers(transformers, res);
+        res = TransformerRegistry.INSTANCE.applyTransformers(transformers, res);
 
         return Optional.ofNullable(res);
     }
 
     public Optional<String> getFormat() {
         return Optional.ofNullable(format);
-    }
-
-    @SuppressWarnings("unchecked")
-    @VisibleForTesting
-    public T setFormat(final String format) {
-        this.format = checkNotNull(format, "format is null");
-        return (T) this;
     }
 
     public void check() {
@@ -238,7 +193,7 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AbstractDefinition<?> that = (AbstractDefinition<?>) o;
+        AbstractDefinition that = (AbstractDefinition) o;
         return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyName, that.propertyName)
             && Objects.equals(propertyFile, that.propertyFile) && Objects.equals(onMissingFile, that.onMissingFile)
             && Objects.equals(onMissingProperty, that.onMissingProperty) && Objects.equals(initialValue, that.initialValue)

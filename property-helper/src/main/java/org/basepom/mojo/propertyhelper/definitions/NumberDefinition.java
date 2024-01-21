@@ -30,7 +30,7 @@ import java.util.StringJoiner;
 import com.google.common.annotations.VisibleForTesting;
 
 public class NumberDefinition
-    extends AbstractDefinition<NumberDefinition> {
+    extends AbstractDefinition {
 
     public static final String INITIAL_VALUE = "0";
 
@@ -45,28 +45,22 @@ public class NumberDefinition
     int increment = 1;
 
     public NumberDefinition() {
-        super();
-        setInitialValue(INITIAL_VALUE);
+        initialValue = INITIAL_VALUE;
     }
+
+    @VisibleForTesting
+    NumberDefinition(String id) {
+        super(id);
+        initialValue = INITIAL_VALUE;
+    }
+
 
     public int getFieldNumber() {
         return fieldNumber;
     }
 
-    @VisibleForTesting
-    public NumberDefinition setFieldNumber(final int fieldNumber) {
-        this.fieldNumber = fieldNumber;
-        return this;
-    }
-
     public int getIncrement() {
         return increment;
-    }
-
-    @VisibleForTesting
-    public NumberDefinition setIncrement(final int increment) {
-        this.increment = increment;
-        return this;
     }
 
     @Override
