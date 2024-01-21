@@ -34,8 +34,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Defines a string field. This is a config element that is populated by maven.
  */
-public class StringDefinition
-    extends AbstractDefinition {
+public class StringDefinition extends ElementDefinition {
 
     private List<String> values = ImmutableList.of();
 

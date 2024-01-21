@@ -34,8 +34,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-public class MacroDefinition
-    extends AbstractDefinition {
+public class MacroDefinition extends ElementDefinition {
 
     /**
      * Macro type. Field injected by Maven.

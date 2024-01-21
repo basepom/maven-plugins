@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.MapValueProvider;
-import org.basepom.mojo.propertyhelper.definitions.AbstractDefinition;
+import org.basepom.mojo.propertyhelper.definitions.ElementDefinition;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,9 +61,9 @@ public final class ValueCache {
     }
 
     @VisibleForTesting
-    ValueProvider findCurrentValueProvider(final Map<String, String> values,
-            final AbstractDefinition definition) {
+    ValueProvider findCurrentValueProvider(final Map<String, String> values, final ElementDefinition definition) {
         checkNotNull(values, "values is null");
+
         final String name = definition.getPropertyName();
         final boolean hasValue = values.containsKey(name);
 
@@ -86,8 +86,7 @@ public final class ValueCache {
         }
     }
 
-    public ValueProvider getValueProvider(final AbstractDefinition definition)
-            throws IOException {
+    public ValueProvider getValueProvider(final ElementDefinition definition) throws IOException {
         final Optional<Map<String, String>> values = getValues(definition);
         if (values.isEmpty()) {
             final String name = definition.getPropertyName();
@@ -107,8 +106,7 @@ public final class ValueCache {
     }
 
     @VisibleForTesting
-    Optional<Map<String, String>> getValues(final AbstractDefinition definition)
-            throws IOException {
+    Optional<Map<String, String>> getValues(final ElementDefinition definition) throws IOException {
         final Optional<File> definitionFile = definition.getPropertyFile();
 
         // Ephemeral, so return null.

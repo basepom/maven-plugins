@@ -30,8 +30,7 @@ import java.util.UUID;
 
 import com.google.common.annotations.VisibleForTesting;
 
-public class UuidDefinition
-    extends AbstractDefinition {
+public class UuidDefinition extends ElementDefinition {
 
     public UuidDefinition() {}
 

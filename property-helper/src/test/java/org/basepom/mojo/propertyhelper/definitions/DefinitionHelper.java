@@ -16,8 +16,6 @@ package org.basepom.mojo.propertyhelper.definitions;
 import java.io.File;
 import java.util.Arrays;
 
-import com.google.common.collect.ImmutableList;
-
 public final class DefinitionHelper {
 
     public static UuidDefinition uuidDefinition(String id) {
@@ -36,15 +34,15 @@ public final class DefinitionHelper {
         return new StringDefinition(id);
     }
 
-    public static void setOnMissingProperty(AbstractDefinition baseDefinition, String value) {
+    public static void setOnMissingProperty(ElementDefinition baseDefinition, String value) {
         baseDefinition.setOnMissingProperty(value);
     }
 
-    public static void setOnMissingFile(AbstractDefinition baseDefinition, String value) {
+    public static void setOnMissingFile(ElementDefinition baseDefinition, String value) {
         baseDefinition.setOnMissingFile(value);
     }
 
-    public static void setPropertyFile(AbstractDefinition baseDefinition, File value) {
+    public static void setPropertyFile(ElementDefinition baseDefinition, File value) {
         baseDefinition.propertyFile = value;
     }
 

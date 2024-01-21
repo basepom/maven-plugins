@@ -28,8 +28,7 @@ import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 
-public class DateDefinition
-    extends AbstractDefinition {
+public class DateDefinition extends ElementDefinition {
 
     /**
      * Timezone for this date. Field injected by Maven.

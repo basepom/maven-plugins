@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-public class TestAbstractDefinition {
+public class TestElementDefinition {
 
     @Test
     public void testValidId() {
@@ -62,7 +62,7 @@ public class TestAbstractDefinition {
         Assertions.assertFalse(fieldDefinition.isSkip());
     }
 
-    public static class BasicDefinition extends AbstractDefinition {
+    public static class BasicDefinition extends ElementDefinition {
 
         public BasicDefinition() {
         }

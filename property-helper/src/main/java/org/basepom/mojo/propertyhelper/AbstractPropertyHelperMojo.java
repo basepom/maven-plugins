@@ -17,8 +17,8 @@ package org.basepom.mojo.propertyhelper;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.definitions.AbstractDefinition;
 import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
+import org.basepom.mojo.propertyhelper.definitions.ElementDefinition;
 import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
@@ -226,10 +226,10 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      */
     protected abstract void doExecute() throws IOException, MojoExecutionException;
 
-    private void addDefinitions(ImmutableMap.Builder<String, AbstractDefinition> builder, List<? extends AbstractDefinition> newDefinitions) {
-        Map<String, AbstractDefinition> existingDefinitions = builder.build();
+    private void addDefinitions(ImmutableMap.Builder<String, ElementDefinition> builder, List<? extends ElementDefinition> newDefinitions) {
+        Map<String, ElementDefinition> existingDefinitions = builder.build();
 
-        for (AbstractDefinition definition : newDefinitions) {
+        for (ElementDefinition definition : newDefinitions) {
             final String propertyName = definition.getId();
             if (!existingDefinitions.containsKey(propertyName)) {
                 builder.put(propertyName, definition);
@@ -253,7 +253,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     }
 
     protected void loadPropertyElements() throws MojoExecutionException, IOException {
-        final ImmutableMap.Builder<String, AbstractDefinition> builder = ImmutableMap.builder();
+        final ImmutableMap.Builder<String, ElementDefinition> builder = ImmutableMap.builder();
         addDefinitions(builder, numberDefinitions);
         addDefinitions(builder, stringDefinitions);
         addDefinitions(builder, macroDefinitions);
@@ -261,7 +261,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
         addDefinitions(builder, uuidDefinitions);
 
         ImmutableList.Builder<NumberField> numberFields = ImmutableList.builder();
-        for (AbstractDefinition definition : builder.build().values()) {
+        for (ElementDefinition definition : builder.build().values()) {
             PropertyElement propertyElement = definition.createPropertyElement(this, valueCache);
 
             if (propertyElement instanceof NumberField) {

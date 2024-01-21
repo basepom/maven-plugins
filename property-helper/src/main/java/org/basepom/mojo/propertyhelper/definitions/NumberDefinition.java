@@ -29,8 +29,7 @@ import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 
-public class NumberDefinition
-    extends AbstractDefinition {
+public class NumberDefinition extends ElementDefinition {
 
     public static final String INITIAL_VALUE = "0";
 

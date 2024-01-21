@@ -33,13 +33,13 @@ import java.util.StringJoiner;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 
-public abstract class AbstractDefinition {
+public abstract class ElementDefinition {
 
-    protected AbstractDefinition() {
+    protected ElementDefinition() {
     }
 
     @VisibleForTesting
-    protected AbstractDefinition(String id) {
+    protected ElementDefinition(String id) {
         this.id = id;
     }
 
@@ -171,7 +171,7 @@ public abstract class AbstractDefinition {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AbstractDefinition.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", ElementDefinition.class.getSimpleName() + "[", "]")
             .add("id='" + id + "'")
             .add("skip=" + skip)
             .add("export=" + export)
@@ -193,7 +193,7 @@ public abstract class AbstractDefinition {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AbstractDefinition that = (AbstractDefinition) o;
+        ElementDefinition that = (ElementDefinition) o;
         return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyName, that.propertyName)
             && Objects.equals(propertyFile, that.propertyFile) && Objects.equals(onMissingFile, that.onMissingFile)
             && Objects.equals(onMissingProperty, that.onMissingProperty) && Objects.equals(initialValue, that.initialValue)
