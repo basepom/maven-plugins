@@ -16,13 +16,22 @@ package org.basepom.mojo.propertyhelper.beans;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.UuidField;
+import org.basepom.mojo.propertyhelper.ValueCache;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 import com.google.common.annotations.VisibleForTesting;
 
 public class UuidDefinition
-        extends AbstractDefinition<UuidDefinition> {
+    extends AbstractDefinition<UuidDefinition> {
 
     /**
      * Value for this uuid. Field injected by Maven.
@@ -37,5 +46,44 @@ public class UuidDefinition
     public UuidDefinition setValue(final String value) {
         this.value = checkNotNull(value, "value is null");
         return this;
+    }
+
+    @Override
+    public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+        checkNotNull(context, "context is null");
+        checkNotNull(valueCache, "valueCache is null");
+
+        check();
+
+        final ValueProvider uuidValue = valueCache.getValueProvider(this);
+        return new UuidField(this, uuidValue);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", UuidDefinition.class.getSimpleName() + "[", "]")
+            .add("value='" + value + "'")
+            .add(super.toString())
+            .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        UuidDefinition that = (UuidDefinition) o;
+        return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), value);
     }
 }

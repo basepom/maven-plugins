@@ -12,19 +12,13 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper.macros;
+package org.basepom.mojo.propertyhelper;
 
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
-import org.basepom.mojo.propertyhelper.ValueProvider;
-import org.basepom.mojo.propertyhelper.beans.MacroDefinition;
+import org.basepom.mojo.propertyhelper.macros.MacroType;
 
-import java.util.Optional;
+import java.util.Map;
 
-public interface MacroType {
+public interface PropertyElementContext {
 
-    String ROLE = MacroType.class.getName();
-
-    Optional<String> getValue(MacroDefinition macroDefinition,
-        ValueProvider valueProvider,
-        PropertyElementContext context);
+    Map<String, MacroType> getMacros();
 }

@@ -16,9 +16,10 @@ package org.basepom.mojo.propertyhelper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.lang.String.format;
 
+import org.basepom.mojo.propertyhelper.beans.AbstractDefinition;
 import org.basepom.mojo.propertyhelper.beans.DateDefinition;
-import org.basepom.mojo.propertyhelper.beans.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.beans.MacroDefinition;
 import org.basepom.mojo.propertyhelper.beans.NumberDefinition;
 import org.basepom.mojo.propertyhelper.beans.PropertyGroup;
@@ -30,6 +31,7 @@ import org.basepom.mojo.propertyhelper.util.Log;
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,8 +40,6 @@ import java.util.Set;
 import javax.annotation.CheckForNull;
 import javax.inject.Inject;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -53,23 +53,21 @@ import org.apache.maven.settings.Settings;
  * Base code for all the mojos.
  */
 public abstract class AbstractPropertyHelperMojo
-        extends AbstractMojo {
+    extends AbstractMojo implements PropertyElementContext {
 
     protected static final Log LOG = Log.findLog();
     protected final ValueCache valueCache = new ValueCache();
     private final Map<String, String> values = Maps.newHashMap();
 
+    private IgnoreWarnFail onDuplicateProperty = IgnoreWarnFail.FAIL;
+
     /**
      * Defines the action to take if a property is present multiple times.
      */
     @Parameter(defaultValue = "fail")
-    public String onDuplicateProperty = "fail";
-
-    /**
-     * Defines the action to take if a referenced property is missing.
-     */
-    @Parameter(defaultValue = "fail")
-    public String onMissingProperty = "fail";
+    public void setOnDuplicateProperty(String onDuplicateProperty) {
+        this.onDuplicateProperty = IgnoreWarnFail.forString(onDuplicateProperty);
+    }
 
     /**
      * List of the property group ids to activate for a plugin execution.
@@ -81,48 +79,74 @@ public abstract class AbstractPropertyHelperMojo
      * List of available property groups. A property group contains one or more property definitions and must be activated with activeGroups.
      */
     @Parameter
-    public PropertyGroup[] propertyGroups = new PropertyGroup[0];
+    public void setPropertyGroups(PropertyGroup... propertyGroups) {
+        this.propertyGroups = Arrays.asList(propertyGroups);
+    }
+
+    private List<PropertyGroup> propertyGroups = List.of();
 
     /**
      * Number property definitions.
      */
     @Parameter
-    public NumberDefinition[] numbers = new NumberDefinition[0];
+    public void setNumbers(NumberDefinition... numberDefinitions) {
+        this.numberDefinitions = Arrays.asList(numberDefinitions);
+    }
+
+    private List<NumberDefinition> numberDefinitions = List.of();
 
     /**
      * String property definitions.
      */
     @Parameter
-    public StringDefinition[] strings = new StringDefinition[0];
+    public void setStrings(StringDefinition... stringDefinitions) {
+        this.stringDefinitions = Arrays.asList(stringDefinitions);
+    }
+
+    private List<StringDefinition> stringDefinitions = List.of();
 
     /**
      * Date property definitions.
      */
     @Parameter
-    public DateDefinition[] dates = new DateDefinition[0];
+    public void setDates(DateDefinition... dateDefinitions) {
+        this.dateDefinitions = Arrays.asList(dateDefinitions);
+    }
+
+    private List<DateDefinition> dateDefinitions = List.of();
 
     /**
      * Macro definitions.
      */
     @Parameter
-    public MacroDefinition[] macros = new MacroDefinition[0];
+    public void setMacros(MacroDefinition... macroDefinitions) {
+        this.macroDefinitions = Arrays.asList(macroDefinitions);
+    }
+
+    private List<MacroDefinition> macroDefinitions = List.of();
 
     /**
      * Uuid definitions.
      */
     @Parameter
-    public UuidDefinition[] uuids = new UuidDefinition[0];
+    public void setUuids(UuidDefinition... uuidDefinitions) {
+        this.uuidDefinitions = Arrays.asList(uuidDefinitions);
+    }
+
+    private List<UuidDefinition> uuidDefinitions = List.of();
 
     /**
      * The maven project (effective pom).
      */
     @Parameter(defaultValue = "${project}", readonly = true)
     public MavenProject project;
+
     @Parameter(defaultValue = "${settings}", readonly = true)
     public Settings settings;
 
     @Parameter(required = true, readonly = true, defaultValue = "${project.basedir}")
     public File basedir;
+
     /**
      * If set to true, goal execution is skipped.
      */
@@ -138,10 +162,10 @@ public abstract class AbstractPropertyHelperMojo
 
     @Override
     public void execute()
-            throws MojoExecutionException {
+        throws MojoExecutionException {
         isSnapshot = project.getArtifact().isSnapshot();
         LOG.debug("Project is a %s.", isSnapshot ? "snapshot" : "release");
-        LOG.trace("%s on duplicate, %s on missing", onDuplicateProperty, onMissingProperty);
+        LOG.trace("%s on duplicate definitions", onDuplicateProperty);
 
         try {
             if (skip) {
@@ -161,23 +185,19 @@ public abstract class AbstractPropertyHelperMojo
         return project;
     }
 
-    public Settings getSettings() {
-        checkNotNull(settings, "settings is null");
-        return settings;
-    }
-
     public File getBasedir() {
         checkNotNull(basedir, "basedir is null");
         return basedir;
     }
 
+    @Override
     public Map<String, MacroType> getMacros() {
         checkNotNull(macroMap, "macroMap is null");
         return macroMap;
     }
 
     @CheckForNull
-    public List<NumberField> getNumbers() {
+    protected List<NumberField> getNumbers() {
         return numberFields;
     }
 
@@ -186,43 +206,68 @@ public abstract class AbstractPropertyHelperMojo
      */
     protected abstract void doExecute() throws IOException, MojoExecutionException;
 
-    protected void loadPropertyElements() throws MojoExecutionException, IOException {
-        final Builder<PropertyElement> propertyElements = ImmutableList.builder();
+    private void addDefinitions(ImmutableMap.Builder<String, AbstractDefinition<?>> builder, List<? extends AbstractDefinition<?>> newDefinitions) {
+        Map<String, AbstractDefinition<?>> existingDefinitions = builder.build();
 
-        numberFields = NumberField.createNumbers(valueCache, numbers);
-        propertyElements.addAll(numberFields);
-        propertyElements.addAll(StringField.createStrings(valueCache, strings));
-        propertyElements.addAll(DateField.createDates(valueCache, dates));
-        propertyElements.addAll(MacroField.createMacros(valueCache, macros, this));
-        propertyElements.addAll(UuidField.createUuids(valueCache, uuids));
-
-        for (final PropertyElement pe : propertyElements.build()) {
-            final Optional<String> value = pe.getPropertyValue();
-            values.put(pe.getPropertyName(), value.orElse(null));
-
-            if (pe.isExport()) {
-                final String result = value.orElse("");
-                project.getProperties().setProperty(pe.getPropertyName(), result);
-                LOG.debug("Exporting Property name: %s, value: %s", pe.getPropertyName(), result);
+        for (AbstractDefinition<?> definition : newDefinitions) {
+            final String propertyName = definition.getId();
+            if (!existingDefinitions.containsKey(propertyName)) {
+                builder.put(propertyName, definition);
             } else {
-                LOG.debug("Property name: %s, value: %s", pe.getPropertyName(),
-                        value.orElse("<null>"));
+                var existingElement = existingDefinitions.get(propertyName);
+                switch (onDuplicateProperty) {
+                    case FAIL:
+                        throw new IllegalStateException(format("Can not create property %s, already exists (%s)!", propertyName, existingElement));
+                    case WARN:
+                        LOG.warn("Property %s already defined (%s), ignoring second definition (%s)!", propertyName, existingElement, definition);
+                        break;
+                    case IGNORE:
+                        LOG.debug("Property %s already defined (%s), ignoring second definition (%s)!", propertyName, existingElement, definition);
+                        builder.put(propertyName, definition);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    protected void loadPropertyElements() throws MojoExecutionException, IOException {
+        final ImmutableMap.Builder<String, AbstractDefinition<?>> builder = ImmutableMap.builder();
+        addDefinitions(builder, numberDefinitions);
+        addDefinitions(builder, stringDefinitions);
+        addDefinitions(builder, macroDefinitions);
+        addDefinitions(builder, dateDefinitions);
+        addDefinitions(builder, uuidDefinitions);
+
+        for (AbstractDefinition<?> definition : builder.build().values()) {
+            PropertyElement propertyElement = definition.createPropertyElement(this, valueCache);
+
+            final Optional<String> value = propertyElement.getPropertyValue();
+            values.put(propertyElement.getPropertyName(), value.orElse(null));
+
+            if (propertyElement.isExport()) {
+                final String result = value.orElse("");
+                project.getProperties().setProperty(propertyElement.getPropertyName(), result);
+                LOG.debug("Exporting Property name: %s, value: %s", propertyElement.getPropertyName(), result);
+            } else {
+                LOG.debug("Property name: %s, value: %s", propertyElement.getPropertyName(), value.orElse("<null>"));
             }
         }
 
         // Now generate the property groups.
-        final ImmutableMap.Builder<String, Entry<PropertyGroup, List<PropertyElement>>> builder = ImmutableMap.builder();
+        final ImmutableMap.Builder<String, Entry<PropertyGroup, List<PropertyElement>>> propertyGroupBuilder = ImmutableMap.builder();
 
         final Set<String> propertyNames = Sets.newHashSet();
 
         if (propertyGroups != null) {
             for (final PropertyGroup propertyGroup : propertyGroups) {
                 final List<PropertyElement> propertyFields = PropertyField.createProperties(project.getModel(), values, propertyGroup);
-                builder.put(propertyGroup.getId(), new SimpleImmutableEntry<>(propertyGroup, propertyFields));
+                propertyGroupBuilder.put(propertyGroup.getId(), new SimpleImmutableEntry<>(propertyGroup, propertyFields));
             }
         }
 
-        final Map<String, Entry<PropertyGroup, List<PropertyElement>>> propertyPairs = builder.build();
+        final Map<String, Entry<PropertyGroup, List<PropertyElement>>> propertyPairs = propertyGroupBuilder.build();
 
         if (activeGroups != null) {
             for (final String activeGroup : activeGroups) {
@@ -235,14 +280,14 @@ public abstract class AbstractPropertyHelperMojo
                         final Optional<String> value = pe.getPropertyValue();
                         final String propertyName = pe.getPropertyName();
                         IgnoreWarnFail.checkState(propertyGroup.getOnDuplicateProperty(), !propertyNames.contains(propertyName),
-                                "property name '" + propertyName + "'");
+                            "property name '" + propertyName + "'");
                         propertyNames.add(propertyName);
 
                         project.getProperties().setProperty(propertyName, value.orElse(""));
                     }
                 } else {
                     LOG.debug("Skipping property group %s: Snapshot: %b, activeOnSnapshot: %b, activeOnRelease: %b", activeGroup, isSnapshot,
-                            propertyGroup.isActiveOnSnapshot(), propertyGroup.isActiveOnRelease());
+                        propertyGroup.isActiveOnSnapshot(), propertyGroup.isActiveOnRelease());
                 }
             }
         }

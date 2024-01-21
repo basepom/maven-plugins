@@ -20,7 +20,6 @@ import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.MapValueProvider;
 import org.basepom.mojo.propertyhelper.beans.AbstractDefinition;
-import org.basepom.mojo.propertyhelper.beans.IgnoreWarnFailCreate;
 import org.basepom.mojo.propertyhelper.util.Log;
 
 import java.io.File;

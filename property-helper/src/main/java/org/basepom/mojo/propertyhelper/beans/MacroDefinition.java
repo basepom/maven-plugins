@@ -17,7 +17,15 @@ package org.basepom.mojo.propertyhelper.beans;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import org.basepom.mojo.propertyhelper.MacroField;
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.ValueCache;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+
+import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.StringJoiner;
@@ -27,7 +35,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 public class MacroDefinition
-        extends AbstractDefinition<MacroDefinition> {
+    extends AbstractDefinition<MacroDefinition> {
 
     /**
      * Macro type. Field injected by Maven.
@@ -86,12 +94,24 @@ public class MacroDefinition
     }
 
     @Override
+    public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+        checkNotNull(context, "context is null");
+        checkNotNull(valueCache, "valueCache is null");
+
+        check();
+
+        final ValueProvider macroValue = valueCache.getValueProvider(this);
+        return new MacroField(this, macroValue, context);
+    }
+
+    @Override
     public String toString() {
         return new StringJoiner(", ", MacroDefinition.class.getSimpleName() + "[", "]")
-                .add("macroType='" + macroType + "'")
-                .add("macroClass='" + macroClass + "'")
-                .add("properties=" + properties)
-                .toString();
+            .add("macroType='" + macroType + "'")
+            .add("macroClass='" + macroClass + "'")
+            .add("properties=" + properties)
+            .add(super.toString())
+            .toString();
     }
 
     @Override
@@ -102,15 +122,16 @@ public class MacroDefinition
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+        if (!super.equals(o)) {
+            return false;
+        }
         MacroDefinition that = (MacroDefinition) o;
-        return java.util.Objects.equals(macroType, that.macroType) && java.util.Objects.equals(
-                macroClass,
-                that.macroClass) && java.util.Objects.equals(properties, that.properties);
+        return Objects.equals(macroType, that.macroType) && Objects.equals(macroClass, that.macroClass) && Objects.equals(properties,
+            that.properties);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(macroType, macroClass, properties);
+        return Objects.hash(super.hashCode(), macroType, macroClass, properties);
     }
-
 }

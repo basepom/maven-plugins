@@ -14,12 +14,10 @@
 
 package org.basepom.mojo.propertyhelper;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.basepom.mojo.propertyhelper.beans.NumberDefinition;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -29,7 +27,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 public class NumberField
-        implements PropertyElement {
+    implements PropertyElement {
 
     private static final Pattern MATCH_GROUPS = Pattern.compile("\\d+|\\D+");
 
@@ -42,22 +40,6 @@ public class NumberField
     public NumberField(final NumberDefinition numberDefinition, final ValueProvider valueProvider) {
         this.numberDefinition = numberDefinition;
         this.valueProvider = valueProvider;
-    }
-
-    public static List<NumberField> createNumbers(final ValueCache valueCache, final NumberDefinition... numberDefinitions)
-            throws IOException {
-        checkNotNull(valueCache, "valueCache is null");
-
-        final List<NumberField> result = Lists.newArrayList();
-
-        for (NumberDefinition numberDefinition : numberDefinitions) {
-            numberDefinition.check();
-            final ValueProvider numberValue = valueCache.getValueProvider(numberDefinition);
-            final NumberField numberField = new NumberField(numberDefinition, numberValue);
-            result.add(numberField);
-        }
-
-        return result;
     }
 
     @Override
@@ -95,8 +77,8 @@ public class NumberField
                 }
             }
 
-            checkState(numberElements.size() > numberDefinition.getFieldNumber(), "Only %d fields in %s, field %d requested.", numberElements.size(), value,
-                    numberDefinition.getFieldNumber());
+            checkState(numberElements.size() > numberDefinition.getFieldNumber(), "Only %s fields in %s, field %s requested.",
+                numberElements.size(), value, numberDefinition.getFieldNumber());
         }
     }
 

@@ -21,6 +21,7 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.basepom.mojo.propertyhelper.beans.PropertyDefinition.getNameFunction;
 import static org.basepom.mojo.propertyhelper.beans.PropertyDefinition.getValueFunction;
 
+import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.InterpolatorFactory;
 import org.basepom.mojo.propertyhelper.TransformerRegistry;
 

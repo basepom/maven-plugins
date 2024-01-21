@@ -16,6 +16,10 @@ package org.basepom.mojo.propertyhelper.beans;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.ValueCache;
+
 import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
@@ -61,6 +65,11 @@ public class TestAbstractDefinition {
     public static class BasicDefinition extends AbstractDefinition<BasicDefinition> {
 
         public BasicDefinition() {
+        }
+
+        @Override
+        public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) {
+            throw new UnsupportedOperationException();
         }
     }
 }

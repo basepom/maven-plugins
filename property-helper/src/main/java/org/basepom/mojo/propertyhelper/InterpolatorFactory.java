@@ -16,8 +16,6 @@ package org.basepom.mojo.propertyhelper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.basepom.mojo.propertyhelper.beans.IgnoreWarnFail;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

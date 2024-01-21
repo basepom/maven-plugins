@@ -14,16 +14,10 @@
 
 package org.basepom.mojo.propertyhelper;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import org.basepom.mojo.propertyhelper.beans.DateDefinition;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -39,20 +33,6 @@ public class DateField implements PropertyElement {
         this.valueProvider = valueProvider;
     }
 
-    public static List<DateField> createDates(final ValueCache valueCache, final DateDefinition... dateDefinitions) throws IOException {
-        checkNotNull(valueCache, "valueCache is null");
-
-        final Builder<DateField> result = ImmutableList.builder();
-
-        for (DateDefinition dateDefinition : dateDefinitions) {
-            dateDefinition.check();
-            final ValueProvider dateValue = valueCache.getValueProvider(dateDefinition);
-            final DateField dateField = new DateField(dateDefinition, dateValue);
-            result.add(dateField);
-        }
-        return result.build();
-    }
-
     @Override
     public String getPropertyName() {
         return dateDefinition.getId();
@@ -61,16 +41,16 @@ public class DateField implements PropertyElement {
     @Override
     public Optional<String> getPropertyValue() {
         final DateTimeZone timeZone = dateDefinition.getTimezone()
-                .map(DateTimeZone::forID)
-                .orElse(DateTimeZone.getDefault());
+            .map(DateTimeZone::forID)
+            .orElse(DateTimeZone.getDefault());
 
         final Optional<String> format = dateDefinition.getFormat();
         final DateTimeFormatter formatter = format.map(DateTimeFormat::forPattern)
-                .orElse(null);
+            .orElse(null);
 
         DateTime date = valueProvider.getValue()
-                .map(value -> getDateTime(value, formatter, timeZone))
-                .orElse(null);
+            .map(value -> getDateTime(value, formatter, timeZone))
+            .orElse(null);
 
         if (date == null) {
             date = dateDefinition.getValue()

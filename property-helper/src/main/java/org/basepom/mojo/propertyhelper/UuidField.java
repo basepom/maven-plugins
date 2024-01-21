@@ -18,16 +18,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.basepom.mojo.propertyhelper.beans.UuidDefinition;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-
 public class UuidField
-        implements PropertyElement {
+    implements PropertyElement {
 
     private final UuidDefinition uuidDefinition;
     private final ValueProvider valueProvider;
@@ -35,22 +30,6 @@ public class UuidField
     public UuidField(final UuidDefinition uuidDefinition, final ValueProvider valueProvider) {
         this.uuidDefinition = checkNotNull(uuidDefinition, "uuidDefinition is null");
         this.valueProvider = checkNotNull(valueProvider, "valueProvider is null");
-    }
-
-    public static List<UuidField> createUuids(final ValueCache valueCache, final UuidDefinition... uuidDefinitions)
-            throws IOException {
-        checkNotNull(valueCache, "valueCache is null");
-
-        final Builder<UuidField> result = ImmutableList.builder();
-
-        for (UuidDefinition uuidDefinition : uuidDefinitions) {
-            uuidDefinition.check();
-            final ValueProvider uuidValue = valueCache.getValueProvider(uuidDefinition);
-            final UuidField uuidField = new UuidField(uuidDefinition, uuidValue);
-            result.add(uuidField);
-        }
-
-        return result.build();
     }
 
     @Override

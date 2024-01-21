@@ -16,7 +16,7 @@ package org.basepom.mojo.propertyhelper.macros;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.basepom.mojo.propertyhelper.AbstractPropertyHelperMojo;
+import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.beans.MacroDefinition;
 
@@ -28,14 +28,14 @@ import org.codehaus.plexus.component.annotations.Component;
 
 @Component(role = MacroType.class, hint = "demo")
 public class DemoMacro
-        implements MacroType {
+    implements MacroType {
 
     @Override
     public Optional<String> getValue(@Nonnull final MacroDefinition macroDefinition,
-            @Nonnull final ValueProvider valueProvider,
-            @Nonnull final AbstractPropertyHelperMojo mojo) {
-        checkNotNull(mojo, "mojo is null");
+        @Nonnull final ValueProvider valueProvider,
+        @Nonnull final PropertyElementContext context) {
         checkNotNull(valueProvider, "valueProvider is null");
+        checkNotNull(context, "context is null");
 
         final String type = Objects.requireNonNullElse(macroDefinition.getProperties().get("type"), "static");
         if ("static".equals(type)) {

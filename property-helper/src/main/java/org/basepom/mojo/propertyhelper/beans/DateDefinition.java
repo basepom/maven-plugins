@@ -16,12 +16,20 @@ package org.basepom.mojo.propertyhelper.beans;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.basepom.mojo.propertyhelper.DateField;
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.ValueCache;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+
+import java.io.IOException;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 
 public class DateDefinition
-        extends AbstractDefinition<DateDefinition> {
+    extends AbstractDefinition<DateDefinition> {
 
     /**
      * Timezone for this date. Field injected by Maven.
@@ -54,5 +62,25 @@ public class DateDefinition
     public DateDefinition setValue(final Long value) {
         this.value = checkNotNull(value, "value is null");
         return this;
+    }
+
+    @Override
+    public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+        checkNotNull(context, "context is null");
+        checkNotNull(valueCache, "valueCache is null");
+
+        check();
+
+        final ValueProvider dateValue = valueCache.getValueProvider(this);
+        return new DateField(this, dateValue);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", DateDefinition.class.getSimpleName() + "[", "]")
+            .add("timezone='" + timezone + "'")
+            .add("value=" + value)
+            .add(super.toString())
+            .toString();
     }
 }

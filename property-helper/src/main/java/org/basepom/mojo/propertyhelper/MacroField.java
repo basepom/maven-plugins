@@ -14,54 +14,29 @@
 
 package org.basepom.mojo.propertyhelper;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.beans.MacroDefinition;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import org.apache.maven.plugin.MojoExecutionException;
 
 public class MacroField
-        implements PropertyElement {
+    implements PropertyElement {
 
     private final MacroDefinition macroDefinition;
     private final ValueProvider valueProvider;
-    private final AbstractPropertyHelperMojo mojo;
+    private final PropertyElementContext context;
 
     public MacroField(final MacroDefinition macroDefinition,
-            final ValueProvider valueProvider,
-            final AbstractPropertyHelperMojo mojo) {
+        final ValueProvider valueProvider,
+        final PropertyElementContext context) {
         this.macroDefinition = macroDefinition;
         this.valueProvider = valueProvider;
-        this.mojo = mojo;
-    }
-
-    public static List<MacroField> createMacros(final ValueCache valueCache,
-            final MacroDefinition[] macroDefinitions,
-            final AbstractPropertyHelperMojo mojo)
-            throws IOException {
-        checkNotNull(valueCache, "valueCache is null");
-        checkNotNull(macroDefinitions, "macroDefinitions is null");
-        checkNotNull(mojo, "mojo is null");
-
-        final Builder<MacroField> result = ImmutableList.builder();
-
-        for (MacroDefinition macroDefinition : macroDefinitions) {
-            macroDefinition.check();
-            final ValueProvider macroValue = valueCache.getValueProvider(macroDefinition);
-            final MacroField macroField = new MacroField(macroDefinition, macroValue, mojo);
-            result.add(macroField);
-        }
-
-        return result.build();
+        this.context = context;
     }
 
     @Override
@@ -76,7 +51,7 @@ public class MacroField
 
         try {
             if (type.isPresent()) {
-                macroType = mojo.getMacros().get(type.get());
+                macroType = context.getMacros().get(type.get());
                 checkState(macroType != null, "Could not locate macro '%s'", type.get());
             } else {
                 final Optional<String> macroClassName = macroDefinition.getMacroClass();
@@ -85,7 +60,7 @@ public class MacroField
                 macroType = (MacroType) macroClass.getDeclaredConstructor().newInstance();
             }
 
-            Optional<String> result = macroType.getValue(macroDefinition, valueProvider, mojo);
+            Optional<String> result = macroType.getValue(macroDefinition, valueProvider, context);
             if (result.isPresent()) {
                 return macroDefinition.formatResult(result.get());
             }

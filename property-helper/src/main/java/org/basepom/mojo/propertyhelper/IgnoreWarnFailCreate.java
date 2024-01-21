@@ -12,48 +12,52 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper.beans;
+package org.basepom.mojo.propertyhelper;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.util.Log;
 
 import java.util.Locale;
+import javax.annotation.Nonnull;
 
-public enum IgnoreWarnFail {
-    IGNORE, WARN, FAIL;
+public enum IgnoreWarnFailCreate {
+    IGNORE, WARN, FAIL, CREATE;
 
     private static final Log LOG = Log.findLog();
 
-    public static IgnoreWarnFail forString(final String value) {
-        checkNotNull(value, "the value can not be null");
-        return Enum.valueOf(IgnoreWarnFail.class, value.toUpperCase(Locale.ENGLISH));
+    public static IgnoreWarnFailCreate forString(final String value) {
+        checkArgument(value != null, "the value can not be null");
+        return Enum.valueOf(IgnoreWarnFailCreate.class, value.toUpperCase(Locale.getDefault()));
     }
 
     /**
      * Reacts on a given thing existing or not existing.
      * <p>
      * IGNORE: Do nothing. WARN: Display a warning message if the thing does not exist, otherwise do nothing. FAIL: Throws an exception if the thing does not
-     * exist.
+     * exist. CREATE: Suggest creation of the thing.
      * <p>
      * Returns true if the thing should be create, false otherwise.
      */
-    public static void checkState(final IgnoreWarnFail iwf, final boolean exists, final String thing) {
+    public static boolean checkState(@Nonnull final IgnoreWarnFailCreate iwfc, final boolean exists, final String thing) {
         if (exists) {
-            return;
+            return false;
         }
 
-        switch (iwf) {
+        switch (iwfc) {
             case IGNORE:
-                return;
+                return false;
             case WARN:
                 LOG.warn("'%s' does not exist!", thing);
-                break;
+                return false;
             case FAIL:
                 throw new IllegalStateException(format("'%s' does not exist!", thing));
+            case CREATE:
+                LOG.debug("'%s' does not exist, suggesting creation.", thing);
+                return true;
             default:
-                throw new IllegalStateException("Unknown state: " + iwf);
+                throw new IllegalStateException("Unknown state: " + iwfc);
         }
     }
 }

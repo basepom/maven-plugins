@@ -18,11 +18,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
+import org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate;
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.TransformerRegistry;
+import org.basepom.mojo.propertyhelper.ValueCache;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -80,6 +86,8 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
 
     protected AbstractDefinition() {
     }
+
+    public abstract PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException;
 
     public String getId() {
         return id;
@@ -198,5 +206,41 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
 
     public void check() {
         checkState(id != null, "the id element must not be empty!");
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", AbstractDefinition.class.getSimpleName() + "[", "]")
+            .add("id='" + id + "'")
+            .add("skip=" + skip)
+            .add("export=" + export)
+            .add("propertyName='" + propertyName + "'")
+            .add("propertyFile=" + propertyFile)
+            .add("onMissingFile='" + onMissingFile + "'")
+            .add("onMissingProperty='" + onMissingProperty + "'")
+            .add("initialValue='" + initialValue + "'")
+            .add("format='" + format + "'")
+            .add("transformers='" + transformers + "'")
+            .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AbstractDefinition<?> that = (AbstractDefinition<?>) o;
+        return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyName, that.propertyName)
+            && Objects.equals(propertyFile, that.propertyFile) && Objects.equals(onMissingFile, that.onMissingFile)
+            && Objects.equals(onMissingProperty, that.onMissingProperty) && Objects.equals(initialValue, that.initialValue)
+            && Objects.equals(format, that.format) && Objects.equals(transformers, that.transformers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, skip, export, propertyName, propertyFile, onMissingFile, onMissingProperty, initialValue, format, transformers);
     }
 }

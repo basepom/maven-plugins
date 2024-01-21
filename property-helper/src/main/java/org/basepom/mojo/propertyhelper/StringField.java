@@ -14,21 +14,15 @@
 
 package org.basepom.mojo.propertyhelper;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import org.basepom.mojo.propertyhelper.beans.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.beans.StringDefinition;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 
 public class StringField
-        implements PropertyElement {
+    implements PropertyElement {
 
     private final StringDefinition stringDefinition;
     private final ValueProvider valueProvider;
@@ -36,21 +30,6 @@ public class StringField
     public StringField(final StringDefinition stringDefinition, final ValueProvider valueProvider) {
         this.stringDefinition = stringDefinition;
         this.valueProvider = valueProvider;
-    }
-
-    public static List<StringField> createStrings(final ValueCache valueCache, final StringDefinition... stringDefinitions)
-            throws IOException {
-        checkNotNull(valueCache, "valueCache is null");
-
-        final Builder<StringField> result = ImmutableList.builder();
-
-        for (StringDefinition stringDefinition : stringDefinitions) {
-            stringDefinition.check();
-            final ValueProvider stringValue = valueCache.getValueProvider(stringDefinition);
-            final StringField stringField = new StringField(stringDefinition, stringValue);
-            result.add(stringField);
-        }
-        return result.build();
     }
 
     @Override

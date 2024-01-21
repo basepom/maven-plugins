@@ -16,14 +16,23 @@ package org.basepom.mojo.propertyhelper.beans;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
+import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.StringField;
+import org.basepom.mojo.propertyhelper.ValueCache;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 
 public class StringDefinition
-        extends AbstractDefinition<StringDefinition> {
+    extends AbstractDefinition<StringDefinition> {
 
     /**
      * Values for this string. Field injected by Maven.
@@ -74,5 +83,46 @@ public class StringDefinition
         checkNotNull(onMissingValue, "onMissingValue is null");
         this.onMissingValue = IgnoreWarnFail.forString(onMissingValue);
         return this;
+    }
+
+    @Override
+    public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+        checkNotNull(context, "context is null");
+        checkNotNull(valueCache, "valueCache is null");
+
+        check();
+
+        final ValueProvider stringValue = valueCache.getValueProvider(this);
+        return new StringField(this, stringValue);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", StringDefinition.class.getSimpleName() + "[", "]")
+            .add("values=" + values)
+            .add("blankIsValid=" + blankIsValid)
+            .add("onMissingValue=" + onMissingValue)
+            .add(super.toString())
+            .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        StringDefinition that = (StringDefinition) o;
+        return blankIsValid == that.blankIsValid && Objects.equals(values, that.values) && onMissingValue == that.onMissingValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), values, blankIsValid, onMissingValue);
     }
 }
