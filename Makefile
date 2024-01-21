@@ -12,42 +12,50 @@
 
 SHELL = /bin/sh
 .SUFFIXES:
-.PHONY: help clean install install-fast tests deploy deploy-site release
 
 MAVEN = ./mvnw
 
 export MAVEN_OPTS MAVEN_CONFIG
 
-default: help
+default:: help
 
-clean:
+Makefile:: ;
+
+clean::
 	${MAVEN} clean
 
-install:
+install::
 	${MAVEN} clean install
 
-install-fast: MAVEN_CONFIG += -Pfast
-install-fast: install
+tests: install-fast run-tests
 
-tests: MAVEN_CONFIG += -Dbasepom.it.skip=false
-tests:
+install-notests:: MAVEN_CONFIG += -Dbasepom.test.skip=true
+install-notests:: install
+
+install-fast:: MAVEN_CONFIG += -Pfast
+install-fast:: install
+
+run-tests:: MAVEN_CONFIG += -Dbasepom.it.skip=false
+run-tests::
 	${MAVEN} surefire:test invoker:install invoker:integration-test invoker:verify
 
-deploy:
+deploy:: MAVEN_CONFIG += -Dbasepom.it.skip=false
+deploy::
 	${MAVEN} clean deploy
 
-# run install b/c https://issues.apache.org/jira/browse/MJAVADOC-701
-deploy-site:
-	${MAVEN} clean install site-deploy
-
-release:
+release::
 	${MAVEN} clean release:clean release:prepare release:perform
 
-help:
-	@echo " * clean        - clean local build tree"
-	@echo " * install      - installs build result in the local maven repository"
-	@echo " * install-fast - same as 'install', but skip test execution and code analysis (Checkstyle/PMD/Spotbugs)"
-	@echo " * deploy       - installs build result in the snapshot OSS repository"
-	@echo " * tests        - run unit and integration tests"
-	@echo " * deploy-site  - builds and deploys the documentation site"
-	@echo " * release      - release a new version to maven central"
+deploy-site::
+	${MAVEN} clean site-deploy
+
+help::
+	@echo " * clean               - clean local build tree"
+	@echo " * install             - build, run static analysis and unit tests, then install in the local repository"
+	@echo " * install-notests     - same as 'install', but skip unit tests"
+	@echo " * install-fast        - same as 'install', but skip unit tests and static analysis"
+	@echo " * tests               - build code and run unit and integration tests"
+	@echo " * run-tests           - run all unit and integration tests except really slow tests"
+	@echo " * deploy-site         - builds and deploys the documentation site"
+	@echo " * deploy              - builds and deploys the current version to the Sonatype OSS repository"
+	@echo " * release             - release a new version to maven central"
