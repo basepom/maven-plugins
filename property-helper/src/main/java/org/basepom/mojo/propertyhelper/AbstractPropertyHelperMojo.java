@@ -128,10 +128,11 @@ public abstract class AbstractPropertyHelperMojo
      */
     @Parameter(defaultValue = "false")
     boolean skip;
-    public List<NumberField> numberFields = null;
+
+    private List<NumberField> numberFields = List.of();
 
     @Inject
-    public Map<String, MacroType> macroMap = null;
+    public Map<String, MacroType> macroMap = Map.of();
 
     private boolean isSnapshot;
 
