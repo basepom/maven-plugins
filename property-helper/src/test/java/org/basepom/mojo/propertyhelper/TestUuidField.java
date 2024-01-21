@@ -106,6 +106,8 @@ public class TestUuidField {
 
     @Test
     public void testMissingProperty() {
+        ValueCache valueCache = ValueCache.forTesting();
+
         assertThrows(IllegalStateException.class, () -> {
             final UuidDefinition f1 = new UuidDefinition()
                     .setId("hello")
@@ -113,7 +115,7 @@ public class TestUuidField {
 
             f1.check();
 
-            final ValueProvider provider = ValueCache.findCurrentValueProvider(ImmutableMap.<String, String>of(), f1);
+            final ValueProvider provider = valueCache.findCurrentValueProvider(ImmutableMap.<String, String>of(), f1);
 
             final UuidField uf1 = new UuidField(f1, provider);
             Assertions.assertFalse(uf1.getPropertyValue().isPresent());

@@ -197,6 +197,8 @@ public class TestStringField {
 
     @Test
     public void testMissingProperty() {
+        ValueCache valueCache = ValueCache.forTesting();
+
         assertThrows(IllegalStateException.class, () -> {
             final StringDefinition f1 = new StringDefinition()
                     .setId("hello")
@@ -206,7 +208,7 @@ public class TestStringField {
 
             f1.check();
 
-            final ValueProvider provider = ValueCache.findCurrentValueProvider(ImmutableMap.<String, String>of(), f1);
+            final ValueProvider provider = valueCache.findCurrentValueProvider(ImmutableMap.<String, String>of(), f1);
 
             final StringField sf1 = new StringField(f1, provider);
             assertFalse(sf1.getPropertyValue().isPresent());
@@ -215,6 +217,8 @@ public class TestStringField {
 
     @Test
     public void testBlankPropertyValue() {
+        ValueCache valueCache = ValueCache.forTesting();
+
         final StringDefinition f1 = new StringDefinition()
                 .setId("hello")
                 .setBlankIsValid(true);
@@ -222,7 +226,7 @@ public class TestStringField {
         f1.check();
 
         final ImmutableMap<String, String> props = ImmutableMap.of("hello", "");
-        final ValueProvider provider = ValueCache.findCurrentValueProvider(props, f1);
+        final ValueProvider provider = valueCache.findCurrentValueProvider(props, f1);
 
         final StringField sf1 = new StringField(f1, provider);
         assertEquals("", sf1.getPropertyValue().get());

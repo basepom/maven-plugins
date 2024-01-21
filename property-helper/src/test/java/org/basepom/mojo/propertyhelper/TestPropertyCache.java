@@ -21,10 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.basepom.mojo.propertyhelper.beans.NumberDefinition;
+import org.basepom.mojo.propertyhelper.macros.MacroType;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +45,7 @@ public class TestPropertyCache {
     public void setUp()
             throws IOException {
         assertNull(pc);
-        pc = new ValueCache();
+        pc = ValueCache.forTesting();
 
         assertNull(propFile);
         propFile = File.createTempFile("test", null);

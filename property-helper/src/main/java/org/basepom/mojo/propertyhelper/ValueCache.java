@@ -43,13 +43,25 @@ public final class ValueCache {
 
     private static final Log LOG = Log.findLog();
     private final Map<String, String> ephemeralValues = Maps.newHashMap();
+
+
     /**
      * Cache for values files loaded from disk
      */
     private final Map<File, ValueCacheEntry> valueFiles = Maps.newHashMap();
 
+    private final PropertyElementContext context;
+
+    ValueCache(PropertyElementContext context) {
+        this.context = context;
+    }
+
+    static ValueCache forTesting() {
+        return new ValueCache(PropertyElementContext.EMPTY_CONTEXT);
+    }
+
     @VisibleForTesting
-    static ValueProvider findCurrentValueProvider(final Map<String, String> values,
+    ValueProvider findCurrentValueProvider(final Map<String, String> values,
             final AbstractDefinition<?> definition) {
         checkNotNull(values, "values is null");
         final String name = definition.getPropertyName();
@@ -61,8 +73,13 @@ public final class ValueCache {
         if (hasValue) {
             return new MapValueProvider(values, name);
         } else if (createProperty) {
-            definition.getInitialValue()
-                .ifPresent(value -> values.put(name, value));
+            Optional<String> initialValue = definition.getInitialValue();
+            initialValue.ifPresent(value -> values.put(name, value));
+
+            Optional<String> initialProperty = definition.getInitialProperty();
+            initialProperty.ifPresent(propertyName -> values.put(name,
+                context.getProperties().getProperty(name, initialValue.orElse(null))));
+
             return new MapValueProvider(values, name);
         } else {
             return ValueProvider.NULL_PROVIDER;
@@ -74,11 +91,18 @@ public final class ValueCache {
         final Optional<Map<String, String>> values = getValues(definition);
         if (values.isEmpty()) {
             final String name = definition.getPropertyName();
-            final Optional<String> value = definition.getInitialValue();
-            value.ifPresent(s -> ephemeralValues.put(name, s));
+            final Optional<String> initialValue = definition.getInitialValue();
+            initialValue.ifPresent(s -> ephemeralValues.put(name, s));
+
+            // if a property was defined, retrieve it from the context. If both initial value and initial property
+            // were defined, use the value as default.
+            final Optional<String> initialProperty = definition.getInitialProperty();
+            initialProperty.ifPresent(s -> ephemeralValues.put(name, context.getProperties().getProperty(s, initialValue.orElse(null))));
+
+
             return new MapValueProvider(ephemeralValues, name);
         } else {
-            return ValueCache.findCurrentValueProvider(values.get(), definition);
+            return findCurrentValueProvider(values.get(), definition);
         }
     }
 

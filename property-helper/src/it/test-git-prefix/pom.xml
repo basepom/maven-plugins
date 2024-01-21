@@ -17,7 +17,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>test-group</groupId>
-    <artifactId>test-duplicate-warn</artifactId>
+    <artifactId>test-git-prefix</artifactId>
     <version>1.0</version>
 
     <build>
@@ -32,13 +32,48 @@
 
         <plugins>
             <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <version>7.0.0</version>
+
+                <configuration>
+                    <prefix>git</prefix>
+                    <dateFormat>yyyy-MM-dd'T'HH:mm:ssZZ</dateFormat>
+                    <verbose>false</verbose>
+                    <skipPoms>true</skipPoms>
+                    <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                    <failOnNoGitDirectory>true</failOnNoGitDirectory>
+                    <failOnUnableToExtractRepoInfo>true</failOnUnableToExtractRepoInfo>
+                    <skip>false</skip>
+                    <abbrevLength>10</abbrevLength>
+                    <useNativeGit>false</useNativeGit>
+                    <gitDescribe>
+                        <always>true</always>
+                        <abbrev>7</abbrev>
+                        <dirty>-dirty</dirty>
+                        <forceLongFormat>false</forceLongFormat>
+                        <tags>true</tags>
+                    </gitDescribe>
+                    <runOnlyOnce>true</runOnlyOnce>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>@project.groupId@</groupId>
                 <artifactId>property-helper-maven-plugin</artifactId>
                 <version>@project.version@</version>
                 <executions>
                     <execution>
-                        <id>test-duplicate-fail</id>
-                        <phase>validate</phase>
+                        <id>test-git-id</id>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>get</goal>
                         </goals>
@@ -47,17 +82,10 @@
                             <strings>
                                 <string>
                                     <id>my.version</id>
-                                    <initialValue>hello.world</initialValue>
+                                    <initialProperty>git.closest.tag.name</initialProperty>
                                     <export>true</export>
                                 </string>
                             </strings>
-                            <numbers>
-                                <number>
-                                    <id>my.version</id>
-                                    <initialValue>1.2.3</initialValue>
-                                    <export>true</export>
-                                </number>
-                            </numbers>
                         </configuration>
                     </execution>
                 </executions>

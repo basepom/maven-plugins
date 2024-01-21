@@ -16,9 +16,18 @@ package org.basepom.mojo.propertyhelper;
 
 import org.basepom.mojo.propertyhelper.macros.MacroType;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 
 public interface PropertyElementContext {
+    PropertyElementContext EMPTY_CONTEXT = new PropertyElementContext() {};
 
-    Map<String, MacroType> getMacros();
+    default Map<String, MacroType> getMacros() {
+        return Collections.emptyMap();
+    }
+
+    default Properties getProperties() {
+        return new Properties();
+    }
 }

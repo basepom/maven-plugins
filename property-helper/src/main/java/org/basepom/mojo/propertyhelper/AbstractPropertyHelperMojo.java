@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import javax.annotation.CheckForNull;
 import javax.inject.Inject;
@@ -56,7 +57,7 @@ public abstract class AbstractPropertyHelperMojo
     extends AbstractMojo implements PropertyElementContext {
 
     protected static final Log LOG = Log.findLog();
-    protected final ValueCache valueCache = new ValueCache();
+    protected final ValueCache valueCache = new ValueCache(this);
     private final Map<String, String> values = Maps.newHashMap();
 
     private IgnoreWarnFail onDuplicateProperty = IgnoreWarnFail.FAIL;
@@ -194,6 +195,11 @@ public abstract class AbstractPropertyHelperMojo
     public Map<String, MacroType> getMacros() {
         checkNotNull(macroMap, "macroMap is null");
         return macroMap;
+    }
+
+    @Override
+    public Properties getProperties() {
+        return project.getProperties();
     }
 
     @CheckForNull

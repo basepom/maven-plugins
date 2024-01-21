@@ -74,6 +74,8 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
      */
     String initialValue = null;
 
+    String initialProperty = null;
+
     /**
      * Format for this element. Field injected by Maven.
      */
@@ -125,6 +127,10 @@ public abstract class AbstractDefinition<T extends AbstractDefinition<T>> {
         checkState(initialValue != null, "initialValue is null");
         this.initialValue = initialValue.trim();
         return (T) this;
+    }
+
+    public Optional<String> getInitialProperty() {
+        return Optional.ofNullable(initialProperty);
     }
 
     public boolean isExport() {
