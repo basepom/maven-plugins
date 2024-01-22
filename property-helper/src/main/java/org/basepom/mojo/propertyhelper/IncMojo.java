@@ -33,7 +33,8 @@ public final class IncMojo
     private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     /**
-     * If set to true, all generated properties are persisted to disk using a properties file.
+     * If set to true, all fields that have a {@code <propertyFile>} and a {@code <propertyNameInFile>} configuration
+     * parameter are persisted to disk.
      */
     @Parameter(defaultValue = "true")
     boolean persist = true;

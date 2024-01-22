@@ -123,13 +123,14 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * Number property definitions.
+     *
      * <pre>{@code
      * <numbers>
      *     <number>
      *         <id>...</id>
      *         <skip>true|false</skip>
      *         <export>true|false</export>
-
+     *
      *         <initialValue></initialValue>
      *         <format></format>
      *         <fieldNumber></fieldNumber>
@@ -167,10 +168,10 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <values>
      *             <value>...</value>
      *         </values>
-     *         <transformers>...</transformers>
      *         <blankIsValid>true|false</blankIsValid>
      *         <onMissingValue>ignore|warn|fail</onMissingValue
-
+     *         <transformers>...</transformers>
+     *
      *         <propertyFile></propertyFile>
      *         <propertyNameInFile></propertyNameInFile>
      *         <onMissingFile></onMissingFile>
@@ -190,6 +191,24 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      * Date property definitions.
      *
      * <pre>{@code
+     * <dates>
+     *     <date>
+     *         <id>...</id>
+     *         <skip>true|false</skip>
+     *         <export>true|false</export>
+     *
+     *         <initialValue></initialValue>
+     *         <value></value>
+     *         <format></format>
+     *         <timezone></timezone>
+     *         <transformers>...</transformers>
+     *
+     *         <propertyFile></propertyFile>
+     *         <propertyNameInFile></propertyNameInFile>
+     *         <onMissingFile></onMissingFile>
+     *         <onMissingProperty></onMissingProperty>
+     *     </date>
+     * </dates>
      * }</pre>
      */
     @Parameter
@@ -201,7 +220,30 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * Macro definitions.
+     *
      * <pre>{@code
+     * <macros>
+     *     <macro>
+     *         <id>...</id>
+     *         <skip>true|false</skip>
+     *         <export>true|false</export>
+     *
+     *         <macroType></macroType>
+     *         <macroClass></macroClass>
+     *         <properties>
+     *             <property></property>
+     *         </properties>
+     *
+     *         <initialValue></initialValue>
+     *         <format></format>
+     *         <transformers>...</transformers>
+     *
+     *         <propertyFile></propertyFile>
+     *         <propertyNameInFile></propertyNameInFile>
+     *         <onMissingFile></onMissingFile>
+     *         <onMissingProperty></onMissingProperty>
+     *     </macro>
+     * </macros>
      * }</pre>
      */
     @Parameter
@@ -213,7 +255,25 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * Uuid definitions.
+     *
      * <pre>{@code
+     * <uuids>
+     *     <uuid>
+     *         <id>...</id>
+     *         <skip>true|false</skip>
+     *         <export>true|false</export>
+     *
+     *         <initialValue></initialValue>
+     *         <value></value>
+     *         <format></format>
+     *         <transformers>...</transformers>
+     *
+     *         <propertyFile></propertyFile>
+     *         <propertyNameInFile></propertyNameInFile>
+     *         <onMissingFile></onMissingFile>
+     *         <onMissingProperty></onMissingProperty>
+     *     </uuid>
+     * </uuids>
      * }</pre>
      */
     @Parameter
