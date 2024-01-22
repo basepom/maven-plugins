@@ -50,6 +50,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.interpolation.InterpolationException;
 
 public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements PropertyElementContext {
 
@@ -130,7 +131,6 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <export>true|false</export>
 
      *         <initialValue></initialValue>
-     *         <initialProperty...</initialProperty>
      *         <format></format>
      *         <fieldNumber></fieldNumber>
      *         <increment></increment>
@@ -163,7 +163,6 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <export>true|false</export>
      *
      *         <initialValue>...</initialValue>
-     *         <initialProperty...</initialProperty>
      *         <format></format>
      *         <values>
      *             <value>...</value>
@@ -349,16 +348,20 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
                 numberFields.add((NumberField) field);
             }
 
-            final var fieldValue = field.getValue();
+            try {
+                var fieldValue = interpolatorFactory.interpolate(field.getFieldName(), field.getValue(), IgnoreWarnFail.FAIL, Map.of());
+                builder.put(field.getFieldName(), fieldValue);
 
-            builder.put(field.getFieldName(), fieldValue);
-
-            if (field.isExposeAsProperty()) {
-                project.getProperties().setProperty(field.getFieldName(), fieldValue);
-                LOG.atFine().log("Exporting Property name: %s, value: %s", field.getFieldName(), fieldValue);
-            } else {
-                LOG.atFine().log("Property name: %s, value: %s", field.getFieldName(), fieldValue);
+                if (field.isExposeAsProperty()) {
+                    project.getProperties().setProperty(field.getFieldName(), fieldValue);
+                    LOG.atFine().log("Exporting Property name: %s, value: %s", field.getFieldName(), fieldValue);
+                } else {
+                    LOG.atFine().log("Property name: %s, value: %s", field.getFieldName(), fieldValue);
+                }
+            } catch (InterpolationException e) {
+                throw new MojoExecutionException(format("Could not interpolate '%s' - %s", field.getFieldName(), field.getValue()));
             }
+
         }
 
         this.numberFields = numberFields.build();

@@ -71,16 +71,11 @@ public final class ValueCache {
             () -> format("property '%s' has value '%s'", propertyNameInFile, values.get(propertyNameInFile)),
             () -> format("property '%s' has no value defined", propertyNameInFile));
 
-
         if (hasValue) {
             return new MapValueProvider(values, propertyNameInFile);
         } else if (createProperty) {
             Optional<String> initialValue = definition.getInitialValue();
             initialValue.ifPresent(value -> values.put(propertyNameInFile, value));
-
-            Optional<String> initialProperty = definition.getInitialProperty();
-            initialProperty.ifPresent(propertyName -> values.put(propertyNameInFile,
-                context.getProperties().getProperty(propertyNameInFile, initialValue.orElse(null))));
 
             return new MapValueProvider(values, propertyNameInFile);
         } else {
@@ -94,12 +89,6 @@ public final class ValueCache {
             final String name = definition.getPropertyNameInFile();
             final Optional<String> initialValue = definition.getInitialValue();
             initialValue.ifPresent(s -> ephemeralValues.put(name, s));
-
-            // if a property was defined, retrieve it from the context. If both initial value and initial property
-            // were defined, use the value as default.
-            final Optional<String> initialProperty = definition.getInitialProperty();
-            initialProperty.ifPresent(s -> ephemeralValues.put(name, context.getProperties().getProperty(s, initialValue.orElse(null))));
-
 
             return new MapValueProvider(ephemeralValues, name);
         } else {
@@ -150,7 +139,7 @@ public final class ValueCache {
                     }
                 } else {
                     throw new IllegalStateException(
-                            format("Can not load %s, not a file!", definitionFile.get().getCanonicalPath()));
+                        format("Can not load %s, not a file!", definitionFile.get().getCanonicalPath()));
                 }
             }
         }
@@ -159,7 +148,7 @@ public final class ValueCache {
     }
 
     public void persist()
-            throws IOException {
+        throws IOException {
         for (final Entry<File, ValueCacheEntry> entries : valueFiles.entrySet()) {
             final ValueCacheEntry entry = entries.getValue();
             if (!entry.isDirty()) {
@@ -214,8 +203,8 @@ public final class ValueCache {
         private boolean dirty = false;
 
         ValueCacheEntry(final Properties props,
-                final boolean exists,
-                final boolean create) {
+            final boolean exists,
+            final boolean create) {
             checkNotNull(props, "props is null");
 
             values.putAll(Maps.fromProperties(props));
@@ -225,7 +214,7 @@ public final class ValueCache {
         }
 
         public void store(final OutputStream out, final String comment)
-                throws IOException {
+            throws IOException {
             final Properties p = new Properties();
             for (Entry<String, String> entry : values.entrySet()) {
                 p.setProperty(entry.getKey(), entry.getValue());
@@ -293,11 +282,11 @@ public final class ValueCache {
         @Override
         public String toString() {
             return new StringJoiner(", ", ValueCacheEntry.class.getSimpleName() + "[", "]")
-                    .add("values=" + values)
-                    .add("exists=" + exists)
-                    .add("create=" + create)
-                    .add("dirty=" + dirty)
-                    .toString();
+                .add("values=" + values)
+                .add("exists=" + exists)
+                .add("create=" + create)
+                .add("dirty=" + dirty)
+                .toString();
         }
 
         @Override
@@ -310,7 +299,7 @@ public final class ValueCache {
             }
             ValueCacheEntry that = (ValueCacheEntry) o;
             return exists == that.exists && create == that.create && dirty == that.dirty
-                    && Objects.equals(values, that.values);
+                && Objects.equals(values, that.values);
         }
 
         @Override

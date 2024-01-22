@@ -94,8 +94,6 @@ public abstract class FieldDefinition {
      */
     String initialValue = null;
 
-    String initialProperty = null;
-
     /**
      * Format for this element. Field injected by Maven.
      */
@@ -129,10 +127,6 @@ public abstract class FieldDefinition {
 
     public Optional<String> getInitialValue() {
         return Optional.ofNullable(initialValue);
-    }
-
-    public Optional<String> getInitialProperty() {
-        return Optional.ofNullable(initialProperty);
     }
 
     public boolean isExport() {

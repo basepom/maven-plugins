@@ -114,7 +114,6 @@ All three values combined form the `build.tag` property which is exported as a p
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
-                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
             </date>
@@ -135,7 +134,6 @@ All three values combined form the `build.tag` property which is exported as a p
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
-                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
             </macro>
@@ -153,7 +151,6 @@ All three values combined form the `build.tag` property which is exported as a p
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
-                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
 
@@ -175,7 +172,6 @@ All three values combined form the `build.tag` property which is exported as a p
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
-                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
 
@@ -193,7 +189,6 @@ All three values combined form the `build.tag` property which is exported as a p
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
-                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
             </uuid>

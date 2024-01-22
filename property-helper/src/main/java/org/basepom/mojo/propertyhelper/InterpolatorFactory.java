@@ -45,7 +45,7 @@ public final class InterpolatorFactory {
     private final Model model;
 
     public InterpolatorFactory(final Model model) {
-        this.model = model;
+        this.model = checkNotNull(model, "model is null");
     }
 
     public String interpolate(final String name, final String value, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties)
@@ -58,16 +58,13 @@ public final class InterpolatorFactory {
         interpolator.addValueSource(new EnvarBasedValueSource());
         interpolator.addValueSource(new PropertiesBasedValueSource(System.getProperties()));
 
-        if (model != null) {
-            final Model pomModel = model;
-            interpolator.addValueSource(new PrefixedValueSourceWrapper(new ObjectBasedValueSource(pomModel),
-                    SYNONYM_PREFIXES,
-                    true));
+        interpolator.addValueSource(new PrefixedValueSourceWrapper(new ObjectBasedValueSource(model),
+                SYNONYM_PREFIXES,
+                true));
 
-            interpolator.addValueSource(new PrefixedValueSourceWrapper(new PropertiesBasedValueSource(pomModel.getProperties()),
-                    SYNONYM_PREFIXES,
-                    true));
-        }
+        interpolator.addValueSource(new PrefixedValueSourceWrapper(new PropertiesBasedValueSource(model.getProperties()),
+                SYNONYM_PREFIXES,
+                true));
 
         interpolator.addValueSource(new MapBasedValueSource(properties));
 

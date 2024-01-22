@@ -65,8 +65,7 @@ public class NumberDefinition extends FieldDefinition {
     @Override
     public void check() {
         super.check();
-        checkState(getInitialValue().isPresent() || getInitialProperty().isPresent(),
-            "at least one of initial value or initial property name must be defined");
+        checkState(getInitialValue().isPresent(), "initial value must be defined");
         checkState(fieldNumber >= 0, "the field number must be >= 0");
     }
 
