@@ -19,7 +19,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
-import java.util.function.Function;
 
 import com.google.common.base.Splitter;
 
@@ -40,7 +39,8 @@ public class PropertyDefinition {
      */
     private List<String> transformers = List.of();
 
-    void setTransformers(String transformers) {
+    // called by maven
+    public void setTransformers(String transformers) {
         this.transformers = Splitter.on(",")
             .omitEmptyStrings()
             .trimResults()
@@ -55,27 +55,16 @@ public class PropertyDefinition {
         this.value = checkNotNull(value, "value is null");
     }
 
-    public static Function<PropertyDefinition, String> getNameFunction() {
-        return propertyDefinition -> {
-            checkNotNull(propertyDefinition, "propertyDefinition is null");
-            return propertyDefinition.getName();
-        };
-    }
-
-    public static Function<PropertyDefinition, String> getValueFunction() {
-        return propertyDefinition -> {
-            checkNotNull(propertyDefinition, "propertyDefinition is null");
-            return propertyDefinition.getValue();
-        };
+    public void check() {
+        checkNotNull(name, "property name is null");
+        checkNotNull(value, "property value is null");
     }
 
     public String getName() {
-        checkNotNull(name, "name is null");
         return name;
     }
 
     public String getValue() {
-        checkNotNull(value, "value is null");
         return value;
     }
 

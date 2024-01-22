@@ -14,13 +14,12 @@
 
 package org.basepom.mojo.propertyhelper.groups;
 
-import static com.google.common.base.Functions.identity;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static org.basepom.mojo.propertyhelper.definitions.PropertyDefinition.getNameFunction;
-import static org.basepom.mojo.propertyhelper.definitions.PropertyDefinition.getValueFunction;
+import static java.lang.String.format;
 
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.InterpolatorFactory;
 import org.basepom.mojo.propertyhelper.TransformerRegistry;
@@ -28,13 +27,16 @@ import org.basepom.mojo.propertyhelper.definitions.PropertyDefinition;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.interpolation.InterpolationException;
 
 public class PropertyGroup {
@@ -57,19 +59,38 @@ public class PropertyGroup {
     /**
      * Action if this property group defines a duplicate property. Field injected by Maven.
      */
-    String onDuplicateProperty = "fail";
+    private IgnoreWarnFail onDuplicateProperty = IgnoreWarnFail.FAIL;
+
+    public void setOnDuplicateProperty(String onDuplicateProperty) {
+        this.onDuplicateProperty = IgnoreWarnFail.forString(onDuplicateProperty);
+    }
 
     /**
      * Action if any property from that group could not be defined. Field injected by Maven.
      */
-    String onMissingProperty = "fail";
+    private IgnoreWarnFail onMissingProperty = IgnoreWarnFail.FAIL;
+
+    public PropertyGroup setOnMissingProperty(String onMissingProperty) {
+        this.onMissingProperty = IgnoreWarnFail.forString(onMissingProperty);
+        return this;
+    }
 
     /**
-     * Property definitions in this group. Field injected by Maven.
+     * Property definitions in this group.
      */
-    PropertyDefinition[] properties = new PropertyDefinition[0];
+    Set<PropertyDefinition> propertyDefinitions = Set.of();
 
-    public PropertyGroup() {}
+    // called by maven
+    public PropertyGroup setProperties(PropertyDefinition... propertyDefinitions) {
+        this.propertyDefinitions = ImmutableSet.copyOf(Arrays.asList(propertyDefinitions));
+
+        this.propertyDefinitions.forEach(PropertyDefinition::check);
+
+        return this;
+    }
+
+    public PropertyGroup() {
+    }
 
     @VisibleForTesting
     PropertyGroup(String id) {
@@ -80,83 +101,68 @@ public class PropertyGroup {
         return id;
     }
 
-    public PropertyGroup setId(String id) {
-        this.id = id;
-        return this;
-    }
-
     public boolean isActiveOnRelease() {
         return activeOnRelease;
-    }
-
-    public PropertyGroup setActiveOnRelease(final boolean activeOnRelease) {
-        this.activeOnRelease = activeOnRelease;
-        return this;
     }
 
     public boolean isActiveOnSnapshot() {
         return activeOnSnapshot;
     }
 
-    public PropertyGroup setActiveOnSnapshot(final boolean activeOnSnapshot) {
-        this.activeOnSnapshot = activeOnSnapshot;
-        return this;
-    }
-
     public IgnoreWarnFail getOnDuplicateProperty() {
-        return IgnoreWarnFail.forString(onDuplicateProperty);
-    }
-
-    public PropertyGroup setOnDuplicateProperty(final String onDuplicateProperty) {
-        IgnoreWarnFail.forString(onDuplicateProperty);
-        this.onDuplicateProperty = onDuplicateProperty;
-        return this;
+        return onDuplicateProperty;
     }
 
     public IgnoreWarnFail getOnMissingProperty() {
-        return IgnoreWarnFail.forString(onMissingProperty);
-    }
-
-    public PropertyGroup setOnMissingProperty(final String onMissingProperty) {
-        IgnoreWarnFail.forString(onMissingProperty);
-        this.onMissingProperty = onMissingProperty;
-        return this;
+        return onMissingProperty;
     }
 
     public Map<String, String> getProperties() {
-        return ImmutableMap.copyOf(Arrays.stream(properties).collect(toImmutableMap(getNameFunction(), getValueFunction())));
+        return propertyDefinitions.stream()
+            .collect(toImmutableMap(PropertyDefinition::getName, PropertyDefinition::getValue));
     }
 
-    public PropertyGroup setProperties(final Map<String, String> properties) {
-        checkNotNull(properties, "properties is null");
-        this.properties = new PropertyDefinition[properties.size()];
-
-        int i = 0;
-        for (Entry<String, String> entry : properties.entrySet()) {
-            this.properties[i] = new PropertyDefinition(entry.getKey(), entry.getValue());
-        }
+    @VisibleForTesting
+    PropertyGroup setProperties(final Map<String, String> properties) {
+        this.propertyDefinitions = properties.entrySet()
+            .stream()
+            .map(e -> new PropertyDefinition(e.getKey(), e.getValue()))
+            .collect(toImmutableSet());
         return this;
     }
 
     public Set<String> getPropertyNames() {
-        return ImmutableSet.copyOf(Arrays.stream(properties).map(getNameFunction()).collect(toImmutableSet()));
+        return propertyDefinitions.stream()
+            .map(PropertyDefinition::getName)
+            .collect(toImmutableSet());
     }
 
     public String getPropertyValue(final InterpolatorFactory interpolatorFactory, final String propertyName, final Map<String, String> propElements)
         throws IOException, InterpolationException {
 
-        ImmutableMap<String, PropertyDefinition> definitionMap = ImmutableMap.copyOf(
-            Arrays.stream(properties).collect(toImmutableMap(getNameFunction(), identity())));
-
+        ImmutableMap<String, PropertyDefinition> definitionMap = Maps.uniqueIndex(propertyDefinitions, PropertyDefinition::getName);
         final PropertyDefinition propertyDefinition = definitionMap.get(propertyName);
 
-        String result = "";
+        return TransformerRegistry.INSTANCE.applyTransformers(propertyDefinition.getTransformers(),
+            interpolatorFactory.interpolate(propertyDefinition.getName(),
+                propertyDefinition.getValue(), onMissingProperty, propElements));
+    }
 
-        if (propertyDefinition != null) {
-            result = TransformerRegistry.INSTANCE.applyTransformers(propertyDefinition.getTransformers(),
-                interpolatorFactory.interpolate(propertyDefinition.getValue(), getOnMissingProperty(), propElements));
+    public List<Field> createFields(final Map<String, String> values, InterpolatorFactory interpolatorFactory) throws MojoExecutionException, IOException {
+        checkNotNull(values, "values is null");
+
+        final ImmutableList.Builder<Field> result = ImmutableList.builder();
+        final Map<String, String> properties = getProperties();
+
+        for (String name : properties.keySet()) {
+            try {
+                final String value = getPropertyValue(interpolatorFactory, name, values);
+                result.add(new PropertyField(name, value));
+            } catch (InterpolationException e) {
+                throw new MojoExecutionException(format("Could not interpolate '%s", name), e);
+            }
         }
 
-        return result;
+        return result.build();
     }
 }

@@ -14,11 +14,10 @@
 
 package org.basepom.mojo.propertyhelper;
 
+import static org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate.checkIgnoreWarnFailCreateState;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,10 +29,13 @@ public class TestIgnoreWarnFailCreate {
     public void testValid() {
         IgnoreWarnFailCreate value = IgnoreWarnFailCreate.forString("fail");
         assertSame(IgnoreWarnFailCreate.FAIL, value);
+
         value = IgnoreWarnFailCreate.forString("warn");
         assertSame(IgnoreWarnFailCreate.WARN, value);
+
         value = IgnoreWarnFailCreate.forString("ignore");
         assertSame(IgnoreWarnFailCreate.IGNORE, value);
+
         value = IgnoreWarnFailCreate.forString("create");
         assertSame(IgnoreWarnFailCreate.CREATE, value);
     }
@@ -42,10 +44,13 @@ public class TestIgnoreWarnFailCreate {
     public void testValidCases() {
         IgnoreWarnFailCreate value = IgnoreWarnFailCreate.forString("fail");
         assertSame(IgnoreWarnFailCreate.FAIL, value);
+
         value = IgnoreWarnFailCreate.forString("FAIL");
         assertSame(IgnoreWarnFailCreate.FAIL, value);
+
         value = IgnoreWarnFailCreate.forString("Fail");
         assertSame(IgnoreWarnFailCreate.FAIL, value);
+
         value = IgnoreWarnFailCreate.forString("FaIl");
         assertSame(IgnoreWarnFailCreate.FAIL, value);
     }
@@ -62,18 +67,21 @@ public class TestIgnoreWarnFailCreate {
 
     @Test
     public void testCheckState() {
-        boolean value = IgnoreWarnFailCreate.checkState(IgnoreWarnFailCreate.FAIL, true, "");
+        boolean value = checkIgnoreWarnFailCreateState(true, IgnoreWarnFailCreate.FAIL,  () -> "", () -> "");
         assertFalse(value);
-        value = IgnoreWarnFailCreate.checkState(IgnoreWarnFailCreate.IGNORE, false, "");
+
+        value = checkIgnoreWarnFailCreateState(false, IgnoreWarnFailCreate.IGNORE,  () -> "", () -> "");
         assertFalse(value);
-        value = IgnoreWarnFailCreate.checkState(IgnoreWarnFailCreate.WARN, false, "");
+
+        value = checkIgnoreWarnFailCreateState(false, IgnoreWarnFailCreate.WARN,  () -> "", () -> "");
         assertFalse(value);
-        value = IgnoreWarnFailCreate.checkState(IgnoreWarnFailCreate.CREATE, false, "");
+
+        value = checkIgnoreWarnFailCreateState(false, IgnoreWarnFailCreate.CREATE,  () -> "", () -> "");
         Assertions.assertTrue(value);
     }
 
     @Test
     public void testCheckStateFail() {
-        assertThrows(IllegalStateException.class, () -> IgnoreWarnFailCreate.checkState(IgnoreWarnFailCreate.FAIL, false, ""));
+        assertThrows(IllegalStateException.class, () -> checkIgnoreWarnFailCreateState(false, IgnoreWarnFailCreate.FAIL,  () -> "", () -> ""));
     }
 }

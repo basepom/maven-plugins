@@ -16,7 +16,7 @@ package org.basepom.mojo.propertyhelper.fields;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
 
@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class UuidField
-    implements PropertyElement {
+    implements Field {
 
     private final UuidDefinition uuidDefinition;
     private final ValueProvider valueProvider;
@@ -35,42 +35,30 @@ public class UuidField
     }
 
     @Override
-    public String getPropertyName() {
+    public String getFieldName() {
         return uuidDefinition.getId();
     }
 
     @Override
-    public Optional<String> getPropertyValue() {
-        // Only add the value from the provider if it is not null.
-        UUID result = null;
+    public String getValue() {
         final Optional<String> propValue = valueProvider.getValue();
 
-        if (propValue.isPresent()) {
-            result = UUID.fromString(propValue.get());
-        }
-
-        if (result == null) {
-            final Optional<UUID> definedValue = uuidDefinition.getValue();
-            if (definedValue.isPresent()) {
-                result = definedValue.get();
-            }
-        }
-
-        if (result == null) {
-            result = UUID.randomUUID();
-        }
+        // Only add the value from the provider if it is not null.
+        UUID result = propValue.map(UUID::fromString)
+            .orElse(uuidDefinition.getValue()
+                .orElse(UUID.randomUUID()));
 
         valueProvider.setValue(result.toString());
         return uuidDefinition.formatResult(result.toString());
     }
 
     @Override
-    public boolean isExport() {
+    public boolean isExposeAsProperty() {
         return uuidDefinition.isExport();
     }
 
     @Override
     public String toString() {
-        return getPropertyValue().orElse("");
+        return getValue();
     }
 }

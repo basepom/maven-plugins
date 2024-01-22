@@ -42,7 +42,7 @@ public class TestUuidField {
         uuidFieldDefinition.check();
 
         final UuidField uf1 = new UuidField(uuidFieldDefinition, ValueProvider.NULL_PROVIDER);
-        Assertions.assertEquals(uuid.toString(), uf1.getPropertyValue().get());
+        Assertions.assertEquals(uuid.toString(), uf1.getValue());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class TestUuidField {
         final Properties props = new Properties();
         props.setProperty("hello", uuid.toString());
         final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getPropertyName()));
-        Assertions.assertEquals(uuid.toString(), uf1.getPropertyValue().get());
+        Assertions.assertEquals(uuid.toString(), uf1.getValue());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class TestUuidField {
         final Properties props = new Properties();
         props.setProperty("hello", uuid2.toString());
         final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getPropertyName()));
-        Assertions.assertEquals(uuid2.toString(), uf1.getPropertyValue().get());
+        Assertions.assertEquals(uuid2.toString(), uf1.getValue());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class TestUuidField {
         final Properties props = new Properties();
         props.setProperty("hello2", uuid2.toString());
         final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getPropertyName()));
-        Assertions.assertEquals(uuid1.toString(), uf1.getPropertyValue().get());
+        Assertions.assertEquals(uuid1.toString(), uf1.getValue());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class TestUuidField {
         final ValueProvider provider = new StaticValueProvider();
         provider.setValue(uuid.toString());
         final UuidField uf1 = new UuidField(uuidDefinition, provider);
-        Assertions.assertEquals(uuid.toString(), uf1.getPropertyValue().get());
+        Assertions.assertEquals(uuid.toString(), uf1.getValue());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class TestUuidField {
             final ValueProvider provider = valueCache.findCurrentValueProvider(ImmutableMap.of(), uuidDefinition);
 
             final UuidField uf1 = new UuidField(uuidDefinition, provider);
-            Assertions.assertFalse(uf1.getPropertyValue().isPresent());
+            Assertions.assertEquals("", uf1.getValue());
         });
     }
 }

@@ -25,7 +25,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * Fetches the defined numbers and add properties.
  */
 @Mojo(name = "get", threadSafe = true)
-public final class GetPropertiesMojo extends AbstractPropertyHelperMojo {
+public final class GetMojo extends AbstractPropertyHelperMojo {
 
     private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
@@ -37,9 +37,11 @@ public final class GetPropertiesMojo extends AbstractPropertyHelperMojo {
 
     @Override
     protected void doExecute() throws MojoExecutionException, IOException {
-        LOG.atFine().log("Running GetProperties");
+        LOG.atFine().log("Running property-helper:get");
 
-        loadPropertyElements();
+        createFieldDefinitions();
+        createFields();
+        createGroups();
 
         if (persist) {
             LOG.atFine().log("Persisting value cache");

@@ -43,7 +43,7 @@ public class TestStringField {
         f1.check();
 
         final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-        assertEquals("foo", sf1.getPropertyValue().get());
+        assertEquals("foo", sf1.getValue());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class TestStringField {
         f1.check();
 
         final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-        assertEquals("foo", sf1.getPropertyValue().get());
+        assertEquals("foo", sf1.getValue());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class TestStringField {
         f1.check();
 
         final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-        assertEquals("baz", sf1.getPropertyValue().get());
+        assertEquals("baz", sf1.getValue());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class TestStringField {
         f1.check();
 
         final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-        assertEquals("      ", sf1.getPropertyValue().get());
+        assertEquals("      ", sf1.getValue());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class TestStringField {
         f1.check();
 
         final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-        assertEquals("", sf1.getPropertyValue().get());
+        assertEquals("", sf1.getValue());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class TestStringField {
         f1.check();
 
         final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-        assertEquals("", sf1.getPropertyValue().get());
+        assertEquals("", sf1.getValue());
     }
 
     @Test
@@ -114,7 +114,7 @@ public class TestStringField {
         final Properties props = new Properties();
         props.setProperty("hello", "foo");
         final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getPropertyName()));
-        assertEquals("foo", sf1.getPropertyValue().get());
+        assertEquals("foo", sf1.getValue());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class TestStringField {
         final Properties props = new Properties();
         props.setProperty("hello", "foo");
         final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getPropertyName()));
-        assertEquals("foo", sf1.getPropertyValue().get());
+        assertEquals("foo", sf1.getValue());
     }
 
     @Test
@@ -140,7 +140,7 @@ public class TestStringField {
         final Properties props = new Properties();
         props.setProperty("hello2", "foo");
         final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getPropertyName()));
-        assertEquals("baz", sf1.getPropertyValue().get());
+        assertEquals("baz", sf1.getValue());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class TestStringField {
         final Properties props = new Properties();
         props.setProperty("hello", "");
         final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getPropertyName()));
-        assertEquals("baz", sf1.getPropertyValue().get());
+        assertEquals("baz", sf1.getValue());
     }
 
     @Test
@@ -167,7 +167,7 @@ public class TestStringField {
             f1.check();
 
             final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-            assertEquals("baz", sf1.getPropertyValue().get());
+            assertEquals("baz", sf1.getValue());
         });
     }
 
@@ -180,7 +180,7 @@ public class TestStringField {
         f1.check();
 
         final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-        assertFalse(sf1.getPropertyValue().isPresent());
+        assertEquals("", sf1.getValue());
     }
 
     @Test
@@ -198,7 +198,7 @@ public class TestStringField {
             final ValueProvider provider = valueCache.findCurrentValueProvider(ImmutableMap.<String, String>of(), f1);
 
             final StringField sf1 = new StringField(f1, provider);
-            assertFalse(sf1.getPropertyValue().isPresent());
+            assertEquals("", sf1.getValue());
         });
     }
 
@@ -215,7 +215,7 @@ public class TestStringField {
         final ValueProvider provider = valueCache.findCurrentValueProvider(props, f1);
 
         final StringField sf1 = new StringField(f1, provider);
-        assertEquals("", sf1.getPropertyValue().get());
+        assertEquals("", sf1.getValue());
     }
 
     @Test
@@ -227,6 +227,6 @@ public class TestStringField {
         f1.check();
 
         final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
-        assertEquals("", sf1.getPropertyValue().get());
+        assertEquals("", sf1.getValue());
     }
 }

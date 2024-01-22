@@ -15,9 +15,9 @@
 package org.basepom.mojo.propertyhelper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import com.google.common.flogger.FluentLogger;
 
@@ -32,28 +32,38 @@ public enum IgnoreWarnFail {
     }
 
     /**
-     * Reacts on a given thing existing or not existing.
-     * <p>
-     * IGNORE: Do nothing. WARN: Display a warning message if the thing does not exist, otherwise do nothing. FAIL: Throws an exception if the thing does not
-     * exist.
-     * <p>
-     * Returns true if the thing should be create, false otherwise.
+     * Ensure that a given element exists. If it does not exist, react based on the {@link IgnoreWarnFail} attribute:
+     * <ul>
+     *     <li>IGNORE - do nothing</li>
+     *     <li>WARN - warn that an element does not exist</li>
+     *     <li>FAIL - throw an exception</li>
+     * </ul>
+     *
+     * @param check Should be true
+     * @param iwf    What to do
+     * @return True if the thing exists, false otherwise
      */
-    public static void checkState(final IgnoreWarnFail iwf, final boolean exists, final String thing) {
-        if (exists) {
-            return;
+    public static boolean checkIgnoreWarnFailState(final boolean check, final IgnoreWarnFail iwf,
+        final Supplier<String> checkMessage, final Supplier<String> errorMessage) {
+
+        if (check) {
+            LOG.atFine().log(checkMessage.get());
+            return true;
         }
 
         switch (iwf) {
             case IGNORE:
-                return;
+                LOG.atFine().log(errorMessage.get());
+                break;
             case WARN:
-                LOG.atWarning().log("'%s' does not exist!", thing);
+                LOG.atWarning().log(errorMessage.get());
                 break;
             case FAIL:
-                throw new IllegalStateException(format("'%s' does not exist!", thing));
+                throw new IllegalStateException(errorMessage.get());
             default:
                 throw new IllegalStateException("Unknown state: " + iwf);
         }
+
+        return false;
     }
 }

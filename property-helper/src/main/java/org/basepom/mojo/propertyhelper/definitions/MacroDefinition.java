@@ -17,7 +17,7 @@ package org.basepom.mojo.propertyhelper.definitions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
@@ -34,7 +34,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-public class MacroDefinition extends ElementDefinition {
+public class MacroDefinition extends FieldDefinition {
 
     /**
      * Macro type. Field injected by Maven.
@@ -79,7 +79,7 @@ public class MacroDefinition extends ElementDefinition {
     }
 
     @Override
-    public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+    public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
         checkNotNull(context, "context is null");
         checkNotNull(valueCache, "valueCache is null");
 

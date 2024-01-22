@@ -34,15 +34,15 @@ public final class DefinitionHelper {
         return new StringDefinition(id);
     }
 
-    public static void setOnMissingProperty(ElementDefinition baseDefinition, String value) {
+    public static void setOnMissingProperty(FieldDefinition baseDefinition, String value) {
         baseDefinition.setOnMissingProperty(value);
     }
 
-    public static void setOnMissingFile(ElementDefinition baseDefinition, String value) {
+    public static void setOnMissingFile(FieldDefinition baseDefinition, String value) {
         baseDefinition.setOnMissingFile(value);
     }
 
-    public static void setPropertyFile(ElementDefinition baseDefinition, File value) {
+    public static void setPropertyFile(FieldDefinition baseDefinition, File value) {
         baseDefinition.propertyFile = value;
     }
 

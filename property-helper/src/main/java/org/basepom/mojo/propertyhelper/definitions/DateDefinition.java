@@ -16,7 +16,7 @@ package org.basepom.mojo.propertyhelper.definitions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
@@ -28,7 +28,7 @@ import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 
-public class DateDefinition extends ElementDefinition {
+public class DateDefinition extends FieldDefinition {
 
     /**
      * Timezone for this date. Field injected by Maven.
@@ -57,7 +57,7 @@ public class DateDefinition extends ElementDefinition {
     }
 
     @Override
-    public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+    public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
         checkNotNull(context, "context is null");
         checkNotNull(valueCache, "valueCache is null");
 

@@ -14,18 +14,21 @@
 
 package org.basepom.mojo.propertyhelper.fields;
 
-import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
-import org.basepom.mojo.propertyhelper.PropertyElement;
+import static java.lang.String.format;
+import static org.basepom.mojo.propertyhelper.IgnoreWarnFail.checkIgnoreWarnFailState;
+
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
 
 import java.util.List;
 import java.util.Optional;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class StringField
-    implements PropertyElement {
+    implements Field {
 
     private final StringDefinition stringDefinition;
     private final ValueProvider valueProvider;
@@ -36,14 +39,14 @@ public class StringField
     }
 
     @Override
-    public String getPropertyName() {
+    public String getFieldName() {
         // This is not the property name (because many definitions can map onto one prop)
         // but the actual id.
         return stringDefinition.getId();
     }
 
     @Override
-    public Optional<String> getPropertyValue() {
+    public String getValue() {
         final List<String> values = Lists.newArrayList();
 
         final Optional<String> propValue = valueProvider.getValue();
@@ -55,23 +58,26 @@ public class StringField
         values.addAll(definedValues);
 
         for (String value : values) {
-            if (stringDefinition.isBlankIsValid() || (value != null && !value.trim().isEmpty())) {
+            var stringResult = Strings.nullToEmpty(value);
+            if (stringDefinition.isBlankIsValid() || !stringResult.isBlank()) {
                 return stringDefinition.formatResult(value);
             }
         }
 
-        IgnoreWarnFail.checkState(stringDefinition.getOnMissingValue(), false, "value");
+        checkIgnoreWarnFailState(false, stringDefinition.getOnMissingValue(),
+            () -> "",
+            () -> format("No value for string field %s found, using an empty value!", getFieldName()));
 
-        return Optional.empty();
+        return "";
     }
 
     @Override
-    public boolean isExport() {
+    public boolean isExposeAsProperty() {
         return stringDefinition.isExport();
     }
 
     @Override
     public String toString() {
-        return getPropertyValue().orElse("");
+        return getValue();
     }
 }

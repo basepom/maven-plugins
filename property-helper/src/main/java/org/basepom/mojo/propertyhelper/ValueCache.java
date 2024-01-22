@@ -17,9 +17,10 @@ package org.basepom.mojo.propertyhelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
+import static org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate.checkIgnoreWarnFailCreateState;
 
 import org.basepom.mojo.propertyhelper.ValueProvider.MapValueProvider;
-import org.basepom.mojo.propertyhelper.definitions.ElementDefinition;
+import org.basepom.mojo.propertyhelper.definitions.FieldDefinition;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +33,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.StringJoiner;
-import javax.annotation.Nonnull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ForwardingMap;
@@ -61,14 +61,16 @@ public final class ValueCache {
     }
 
     @VisibleForTesting
-    ValueProvider findCurrentValueProvider(final Map<String, String> values, final ElementDefinition definition) {
+    ValueProvider findCurrentValueProvider(final Map<String, String> values, final FieldDefinition definition) {
         checkNotNull(values, "values is null");
 
         final String name = definition.getPropertyName();
         final boolean hasValue = values.containsKey(name);
 
-        final boolean createProperty = IgnoreWarnFailCreate.checkState(
-                definition.getOnMissingProperty(), hasValue, name);
+        final boolean createProperty = checkIgnoreWarnFailCreateState(hasValue, definition.getOnMissingProperty(),
+            () -> format("property '%s' has value '%s'", name, values.get(name)),
+            () -> format("property '%s' has no value defined", name));
+
 
         if (hasValue) {
             return new MapValueProvider(values, name);
@@ -86,7 +88,7 @@ public final class ValueCache {
         }
     }
 
-    public ValueProvider getValueProvider(final ElementDefinition definition) throws IOException {
+    public ValueProvider getValueProvider(final FieldDefinition definition) throws IOException {
         final Optional<Map<String, String>> values = getValues(definition);
         if (values.isEmpty()) {
             final String name = definition.getPropertyName();
@@ -106,7 +108,7 @@ public final class ValueCache {
     }
 
     @VisibleForTesting
-    Optional<Map<String, String>> getValues(final ElementDefinition definition) throws IOException {
+    Optional<Map<String, String>> getValues(final FieldDefinition definition) throws IOException {
         final Optional<File> definitionFile = definition.getPropertyFile();
 
         // Ephemeral, so return null.
@@ -116,11 +118,12 @@ public final class ValueCache {
 
         ValueCacheEntry cacheEntry;
         final File canonicalFile = definitionFile.get().getCanonicalFile();
+        final String canonicalPath = definitionFile.get().getCanonicalPath();
 
         // Throws an exception if the file must exist and does not.
-        final boolean createFile = IgnoreWarnFailCreate.checkState(definition.getOnMissingFile(),
-                canonicalFile.exists(),
-                definitionFile.get().getCanonicalPath());
+        final boolean createFile = checkIgnoreWarnFailCreateState(canonicalFile.exists(), definition.getOnMissingFile(),
+            () -> format("property file '%s' exists", canonicalPath),
+            () -> format("property file '%s' does not exist!", canonicalPath));
 
         cacheEntry = valueFiles.get(canonicalFile);
 
@@ -210,7 +213,7 @@ public final class ValueCache {
 
         private boolean dirty = false;
 
-        ValueCacheEntry(@Nonnull final Properties props,
+        ValueCacheEntry(final Properties props,
                 final boolean exists,
                 final boolean create) {
             checkNotNull(props, "props is null");

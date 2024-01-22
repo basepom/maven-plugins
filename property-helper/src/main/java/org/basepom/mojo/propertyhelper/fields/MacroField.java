@@ -17,7 +17,7 @@ package org.basepom.mojo.propertyhelper.fields;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
@@ -28,7 +28,7 @@ import java.util.Optional;
 import org.apache.maven.plugin.MojoExecutionException;
 
 public class MacroField
-    implements PropertyElement {
+    implements Field {
 
     private final MacroDefinition macroDefinition;
     private final ValueProvider valueProvider;
@@ -43,12 +43,12 @@ public class MacroField
     }
 
     @Override
-    public String getPropertyName() {
+    public String getFieldName() {
         return macroDefinition.getId();
     }
 
     @Override
-    public Optional<String> getPropertyValue() throws MojoExecutionException {
+    public String getValue() throws MojoExecutionException {
         final Optional<String> type = macroDefinition.getMacroType();
         final MacroType macroType;
 
@@ -59,29 +59,28 @@ public class MacroField
             } else {
                 final Optional<String> macroClassName = macroDefinition.getMacroClass();
                 checkState(macroClassName.isPresent(), "No definition for macro '%s' found!", macroDefinition.getId());
-                final Class<?> macroClass = Class.forName(macroClassName.get());
-                macroType = (MacroType) macroClass.getDeclaredConstructor().newInstance();
+                final Class<? extends MacroType> macroClass = (Class<? extends MacroType>) Class.forName(macroClassName.get());
+                macroType = macroClass.getDeclaredConstructor().newInstance();
             }
 
-            Optional<String> result = macroType.getValue(macroDefinition, valueProvider, context);
-            if (result.isPresent()) {
-                return macroDefinition.formatResult(result.get());
-            }
-            return result;
+            return macroType.getValue(macroDefinition, valueProvider, context)
+                .map(macroDefinition::formatResult)
+                .orElse("");
+
         } catch (ReflectiveOperationException e) {
             throw new MojoExecutionException(format("Could not instantiate '%s'", macroDefinition), e);
         }
     }
 
     @Override
-    public boolean isExport() {
+    public boolean isExposeAsProperty() {
         return macroDefinition.isExport();
     }
 
     @Override
     public String toString() {
         try {
-            return getPropertyValue().orElse("");
+            return getValue();
         } catch (Exception e) {
             return "<unset>";
         }

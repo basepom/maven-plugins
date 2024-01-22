@@ -17,8 +17,8 @@ package org.basepom.mojo.propertyhelper.definitions;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate;
-import org.basepom.mojo.propertyhelper.PropertyElement;
 import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueCache;
@@ -33,13 +33,16 @@ import java.util.StringJoiner;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 
-public abstract class ElementDefinition {
+/**
+ * Common properties for a field.
+ */
+public abstract class FieldDefinition {
 
-    protected ElementDefinition() {
+    protected FieldDefinition() {
     }
 
     @VisibleForTesting
-    protected ElementDefinition(String id) {
+    protected FieldDefinition(String id) {
         this.id = id;
     }
 
@@ -110,7 +113,7 @@ public abstract class ElementDefinition {
             .splitToList(transformers);
     }
 
-    public abstract PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException;
+    public abstract Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException;
 
     public String getId() {
         return id;
@@ -152,13 +155,13 @@ public abstract class ElementDefinition {
         return onMissingProperty;
     }
 
-    public Optional<String> formatResult(final String value) {
+    public String formatResult(final String value) {
         final Optional<String> format = getFormat();
-        String res = format.isPresent() ? format(format.get(), value) : value;
+        String res = format.map(f -> format(f, value)).orElse(value);
 
         res = TransformerRegistry.INSTANCE.applyTransformers(transformers, res);
 
-        return Optional.ofNullable(res);
+        return Optional.ofNullable(res).orElse("");
     }
 
     public Optional<String> getFormat() {
@@ -171,7 +174,7 @@ public abstract class ElementDefinition {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", ElementDefinition.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", FieldDefinition.class.getSimpleName() + "[", "]")
             .add("id='" + id + "'")
             .add("skip=" + skip)
             .add("export=" + export)
@@ -193,7 +196,7 @@ public abstract class ElementDefinition {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ElementDefinition that = (ElementDefinition) o;
+        FieldDefinition that = (FieldDefinition) o;
         return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyName, that.propertyName)
             && Objects.equals(propertyFile, that.propertyFile) && Objects.equals(onMissingFile, that.onMissingFile)
             && Objects.equals(onMissingProperty, that.onMissingProperty) && Objects.equals(initialValue, that.initialValue)

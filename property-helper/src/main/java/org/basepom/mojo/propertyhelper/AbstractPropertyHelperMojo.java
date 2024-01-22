@@ -16,15 +16,15 @@ package org.basepom.mojo.propertyhelper;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
+import static org.basepom.mojo.propertyhelper.IgnoreWarnFail.checkIgnoreWarnFailState;
 
 import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
-import org.basepom.mojo.propertyhelper.definitions.ElementDefinition;
+import org.basepom.mojo.propertyhelper.definitions.FieldDefinition;
 import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
 import org.basepom.mojo.propertyhelper.fields.NumberField;
-import org.basepom.mojo.propertyhelper.groups.PropertyField;
 import org.basepom.mojo.propertyhelper.groups.PropertyGroup;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
 
@@ -32,48 +32,42 @@ import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import javax.annotation.CheckForNull;
 import javax.inject.Inject;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.flogger.FluentLogger;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
-/**
- * Base code for all the mojos.
- */
 public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements PropertyElementContext {
 
     private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     protected final ValueCache valueCache = new ValueCache(this);
-    private final Map<String, String> values = Maps.newHashMap();
-
-    private IgnoreWarnFail onDuplicateProperty = IgnoreWarnFail.FAIL;
+    private IgnoreWarnFail onDuplicateField = IgnoreWarnFail.FAIL;
 
     /**
-     * Defines the action to take if a property is present multiple times.
+     * Defines the action to take if a field is defined multiple times (e.g. as a number and a string).
      */
-    @Parameter(defaultValue = "fail")
-    public void setOnDuplicateProperty(String onDuplicateProperty) {
-        this.onDuplicateProperty = IgnoreWarnFail.forString(onDuplicateProperty);
+    @Parameter(defaultValue = "fail", alias = "onDuplicateProperty")
+    public void setOnDuplicateField(String onDuplicateField) {
+        this.onDuplicateField = IgnoreWarnFail.forString(onDuplicateField);
     }
 
     /**
-     * List of the property group ids to activate for a plugin execution.
+     * List of the property group ids to activate for a plugin execution. If no groups are defined, all groups are active.
      */
     private List<String> activeGroups = List.of();
 
@@ -135,7 +129,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     /**
      * Uuid definitions.
      */
-    @Parameter(name = "uuids")
+    @Parameter
     public void setUuids(UuidDefinition... uuidDefinitions) {
         this.uuidDefinitions = Arrays.asList(uuidDefinitions);
     }
@@ -168,26 +162,30 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     private Map<String, MacroType> macroMap = Map.of();
 
+    // internal mojo state.
     private boolean isSnapshot;
+    private InterpolatorFactory interpolatorFactory;
+
+    private Map<String, FieldDefinition> fieldDefinitions = Map.of();
     private List<NumberField> numberFields = List.of();
+    private Map<String, String> values = Map.of();
 
     @Override
-    public void execute()
-        throws MojoExecutionException {
-        isSnapshot = project.getArtifact().isSnapshot();
-        LOG.atFine().log("Project is a %s.", isSnapshot ? "snapshot" : "release");
-        LOG.atFiner().log("%s on duplicate definitions", onDuplicateProperty);
+    public void execute() throws MojoExecutionException {
+        this.isSnapshot = project.getArtifact().isSnapshot();
+        this.interpolatorFactory = new InterpolatorFactory(project.getModel());
+
+        LOG.atFine().log("Current build is a %s project.", isSnapshot ? "snapshot" : "release");
+        LOG.atFiner().log("On duplicate field definitions: %s", onDuplicateField);
 
         try {
             if (skip) {
-                LOG.atFine().log("Skipping execution!");
+                LOG.atFine().log("skipping plugin execution!");
             } else {
                 doExecute();
             }
         } catch (IOException e) {
             throw new MojoExecutionException("While running mojo: ", e);
-        } finally {
-            LOG.atFine().log("Ended %s mojo run!", this.getClass().getSimpleName());
         }
     }
 
@@ -216,7 +214,6 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
         return project.getProperties();
     }
 
-    @CheckForNull
     protected List<NumberField> getNumbers() {
         return numberFields;
     }
@@ -226,96 +223,100 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      */
     protected abstract void doExecute() throws IOException, MojoExecutionException;
 
-    private void addDefinitions(ImmutableMap.Builder<String, ElementDefinition> builder, List<? extends ElementDefinition> newDefinitions) {
-        Map<String, ElementDefinition> existingDefinitions = builder.build();
+    private void addDefinitions(ImmutableMap.Builder<String, FieldDefinition> builder, List<? extends FieldDefinition> newDefinitions) {
+        Map<String, FieldDefinition> existingDefinitions = builder.build();
 
-        for (ElementDefinition definition : newDefinitions) {
+        for (FieldDefinition definition : newDefinitions) {
             final String propertyName = definition.getId();
-            if (!existingDefinitions.containsKey(propertyName)) {
+
+            if (checkIgnoreWarnFailState(!existingDefinitions.containsKey(propertyName), onDuplicateField,
+                () -> format("field definition '%s' does not exist", propertyName),
+                () -> format("field definition '%s' already exists!", propertyName))) {
                 builder.put(propertyName, definition);
-            } else {
-                var existingElement = existingDefinitions.get(propertyName);
-                switch (onDuplicateProperty) {
-                    case FAIL:
-                        throw new IllegalStateException(format("Can not create property %s, already exists (%s)!", propertyName, existingElement));
-                    case WARN:
-                        LOG.atWarning().log("Property %s already defined (%s), ignoring second definition (%s)!", propertyName, existingElement, definition);
-                        break;
-                    case IGNORE:
-                        LOG.atFine().log("Property %s already defined (%s), ignoring second definition (%s)!", propertyName, existingElement, definition);
-                        builder.put(propertyName, definition);
-                        break;
-                    default:
-                        break;
-                }
             }
         }
     }
 
-    protected void loadPropertyElements() throws MojoExecutionException, IOException {
-        final ImmutableMap.Builder<String, ElementDefinition> builder = ImmutableMap.builder();
+    protected void createFieldDefinitions() {
+
+        final ImmutableMap.Builder<String, FieldDefinition> builder = ImmutableMap.builder();
         addDefinitions(builder, numberDefinitions);
         addDefinitions(builder, stringDefinitions);
         addDefinitions(builder, macroDefinitions);
         addDefinitions(builder, dateDefinitions);
         addDefinitions(builder, uuidDefinitions);
 
-        ImmutableList.Builder<NumberField> numberFields = ImmutableList.builder();
-        for (ElementDefinition definition : builder.build().values()) {
-            PropertyElement propertyElement = definition.createPropertyElement(this, valueCache);
+        this.fieldDefinitions = builder.build();
+    }
 
-            if (propertyElement instanceof NumberField) {
-                numberFields.add((NumberField) propertyElement);
+    protected void createFields() throws MojoExecutionException, IOException {
+        ImmutableList.Builder<NumberField> numberFields = ImmutableList.builder();
+
+        var builder = ImmutableMap.<String, String>builder();
+
+        for (FieldDefinition definition : fieldDefinitions.values()) {
+            Field field = definition.createPropertyElement(this, valueCache);
+
+            if (field instanceof NumberField) {
+                numberFields.add((NumberField) field);
             }
 
-            final Optional<String> value = propertyElement.getPropertyValue();
-            values.put(propertyElement.getPropertyName(), value.orElse(null));
+            final var fieldValue = field.getValue();
 
-            if (propertyElement.isExport()) {
-                final String result = value.orElse("");
-                project.getProperties().setProperty(propertyElement.getPropertyName(), result);
-                LOG.atFine().log("Exporting Property name: %s, value: %s", propertyElement.getPropertyName(), result);
+            builder.put(field.getFieldName(), fieldValue);
+
+            if (field.isExposeAsProperty()) {
+                project.getProperties().setProperty(field.getFieldName(), fieldValue);
+                LOG.atFine().log("Exporting Property name: %s, value: %s", field.getFieldName(), fieldValue);
             } else {
-                LOG.atFine().log("Property name: %s, value: %s", propertyElement.getPropertyName(), value.orElse("<null>"));
+                LOG.atFine().log("Property name: %s, value: %s", field.getFieldName(), fieldValue);
             }
         }
 
         this.numberFields = numberFields.build();
+        this.values = builder.build();
+    }
 
-        // Now generate the property groups.
-        final ImmutableMap.Builder<String, Entry<PropertyGroup, List<PropertyElement>>> propertyGroupBuilder = ImmutableMap.builder();
+    // generates the property groups.
+    @SuppressFBWarnings(value = "WMI_WRONG_MAP_ITERATOR")
+    public void createGroups() throws MojoExecutionException, IOException {
+        final ImmutableMap.Builder<String, Entry<PropertyGroup, List<Field>>> propertyGroupBuilder = ImmutableMap.builder();
 
-        final Set<String> propertyNames = Sets.newHashSet();
+        Set<String> exportedFields = fieldDefinitions.values().stream()
+            .filter(FieldDefinition::isExport)
+            .map(FieldDefinition::getId).collect(ImmutableSet.toImmutableSet());
 
-        if (propertyGroups != null) {
-            for (final PropertyGroup propertyGroup : propertyGroups) {
-                final List<PropertyElement> propertyFields = PropertyField.createProperties(project.getModel(), values, propertyGroup);
-                propertyGroupBuilder.put(propertyGroup.getId(), new SimpleImmutableEntry<>(propertyGroup, propertyFields));
-            }
+        final Set<String> propertyNames = new LinkedHashSet<>(exportedFields);
+
+        for (final PropertyGroup propertyGroup : propertyGroups) {
+            final List<Field> propertyFields = propertyGroup.createFields(values, interpolatorFactory);
+            propertyGroupBuilder.put(propertyGroup.getId(), new SimpleImmutableEntry<>(propertyGroup, propertyFields));
         }
 
-        final Map<String, Entry<PropertyGroup, List<PropertyElement>>> propertyPairs = propertyGroupBuilder.build();
+        final Map<String, Entry<PropertyGroup, List<Field>>> propertyPairs = propertyGroupBuilder.build();
 
-        if (activeGroups != null) {
-            for (final String activeGroup : activeGroups) {
-                final Entry<PropertyGroup, List<PropertyElement>> propertyElement = propertyPairs.get(activeGroup);
-                checkState(propertyElement != null, "activated group '%s' does not exist", activeGroup);
+        var groupsToAdd = !this.activeGroups.isEmpty() ? this.activeGroups : propertyPairs.keySet();
 
-                final PropertyGroup propertyGroup = propertyElement.getKey();
-                if ((propertyGroup.isActiveOnRelease() && !isSnapshot) || (propertyGroup.isActiveOnSnapshot() && isSnapshot)) {
-                    for (final PropertyElement pe : propertyElement.getValue()) {
-                        final Optional<String> value = pe.getPropertyValue();
-                        final String propertyName = pe.getPropertyName();
-                        IgnoreWarnFail.checkState(propertyGroup.getOnDuplicateProperty(), !propertyNames.contains(propertyName),
-                            "property name '" + propertyName + "'");
-                        propertyNames.add(propertyName);
+        for (final String groupToAdd : groupsToAdd) {
+            final var activeGroup = propertyPairs.get(groupToAdd);
+            checkState(activeGroup != null, "activated group '%s' does not exist", activeGroup);
 
-                        project.getProperties().setProperty(propertyName, value.orElse(""));
+            final PropertyGroup propertyGroup = activeGroup.getKey();
+
+            if ((propertyGroup.isActiveOnRelease() && !isSnapshot) || (propertyGroup.isActiveOnSnapshot() && isSnapshot)) {
+                for (final Field field : activeGroup.getValue()) {
+                    final String fieldName = field.getFieldName();
+
+                    if (checkIgnoreWarnFailState(!propertyNames.contains(fieldName), propertyGroup.getOnDuplicateProperty(),
+                        () -> format("property '%s' is not exposed", fieldName),
+                        () -> format("property '%s' is already exposed!", fieldName))) {
+
+                        project.getProperties().setProperty(fieldName, field.getValue());
                     }
-                } else {
-                    LOG.atFine().log("Skipping property group %s: Snapshot: %b, activeOnSnapshot: %b, activeOnRelease: %b", activeGroup, isSnapshot,
-                        propertyGroup.isActiveOnSnapshot(), propertyGroup.isActiveOnRelease());
                 }
+            } else {
+                LOG.atFine().log("Skipping property group %s: Snapshot: %b, activeOnSnapshot: %b, activeOnRelease: %b", activeGroup, isSnapshot,
+                    propertyGroup.isActiveOnSnapshot(), propertyGroup.isActiveOnRelease());
             }
         }
     }

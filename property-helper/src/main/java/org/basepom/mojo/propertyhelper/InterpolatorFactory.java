@@ -15,10 +15,13 @@
 package org.basepom.mojo.propertyhelper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.String.format;
+import static org.basepom.mojo.propertyhelper.IgnoreWarnFail.checkIgnoreWarnFailState;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
@@ -45,8 +48,9 @@ public final class InterpolatorFactory {
         this.model = model;
     }
 
-    public String interpolate(final String value, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties)
+    public String interpolate(final String name, final String value, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties)
             throws IOException, InterpolationException {
+        checkNotNull(name, "name is null");
         checkNotNull(value, "value is null");
         checkNotNull(properties, "properties is null");
 
@@ -68,8 +72,13 @@ public final class InterpolatorFactory {
         interpolator.addValueSource(new MapBasedValueSource(properties));
 
         final String result = interpolator.interpolate(value, new PrefixAwareRecursionInterceptor(SYNONYM_PREFIXES, true));
-        final String stripped = result.replaceAll(Pattern.quote(PREFIX) + ".*?" + Pattern.quote(POSTFIX), "");
-        IgnoreWarnFail.checkState(onMissingProperty, stripped.equals(result), "property");
-        return stripped;
+
+        Matcher matcher = Pattern.compile(Pattern.quote(PREFIX) + ".*?" + Pattern.quote(POSTFIX)).matcher(result);
+
+        checkIgnoreWarnFailState(!matcher.find(), onMissingProperty,
+            () -> format("template %s evaluated to %s", value, result),
+            () -> format("could not evaluate %s! (result is %s)", value, result));
+
+        return matcher.replaceAll("");
     }
 }

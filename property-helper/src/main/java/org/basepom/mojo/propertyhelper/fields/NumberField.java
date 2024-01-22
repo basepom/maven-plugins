@@ -16,7 +16,7 @@ package org.basepom.mojo.propertyhelper.fields;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 
@@ -29,7 +29,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 public class NumberField
-    implements PropertyElement {
+    implements Field {
 
     private static final Pattern MATCH_GROUPS = Pattern.compile("\\d+|\\D+");
 
@@ -45,21 +45,21 @@ public class NumberField
     }
 
     @Override
-    public String getPropertyName() {
+    public String getFieldName() {
         // This is not the property name (because many definitions can map onto one prop)
         // but the actual id.
         return numberDefinition.getId();
     }
 
     @Override
-    public Optional<String> getPropertyValue() {
+    public String getValue() {
         parse();
         final String value = Joiner.on("").join(elements);
         return numberDefinition.formatResult(value);
     }
 
     @Override
-    public boolean isExport() {
+    public boolean isExposeAsProperty() {
         return numberDefinition.isExport();
     }
 
@@ -115,6 +115,6 @@ public class NumberField
 
     @Override
     public String toString() {
-        return getPropertyValue().orElse("");
+        return getValue();
     }
 }

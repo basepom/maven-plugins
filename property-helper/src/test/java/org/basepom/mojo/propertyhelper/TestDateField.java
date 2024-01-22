@@ -47,7 +47,7 @@ public class TestDateField {
         d1.check();
 
         final DateField sd1 = new DateField(d1, ValueProvider.NULL_PROVIDER);
-        assertEquals("19700101_000000", sd1.getPropertyValue().get());
+        assertEquals("19700101_000000", sd1.getValue());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TestDateField {
         props.setProperty("hello", value);
         final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getPropertyName()));
 
-        assertEquals(value, sd1.getPropertyValue().get());
+        assertEquals(value, sd1.getValue());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class TestDateField {
         props.setProperty("hello", Long.toString(now));
         final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getPropertyName()));
 
-        assertEquals(new DateTime(now).toString(), sd1.getPropertyValue().get());
+        assertEquals(new DateTime(now).toString(), sd1.getValue());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class TestDateField {
         props.setProperty("hello", value);
         final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getPropertyName()));
 
-        assertEquals(value, sd1.getPropertyValue().get());
+        assertEquals(value, sd1.getValue());
     }
 
     @Test
@@ -106,12 +106,11 @@ public class TestDateField {
 
         final DateField sd1 = new DateField(d1, ValueProvider.NULL_PROVIDER);
 
-        final Optional<String> value = sd1.getPropertyValue();
-        assertTrue(value.isPresent());
+        final var value = sd1.getValue();
 
         final DateTime now = new DateTime().withMillisOfSecond(0);
 
-        final DateTime propTime = DateTimeFormat.forPattern(format).parseDateTime(value.get());
+        final DateTime propTime = DateTimeFormat.forPattern(format).parseDateTime(value);
         final Duration d = new Duration(propTime, now);
         assertTrue(d.getStandardSeconds() <= 1, format("propTime: %s,  now: %s, diff is %s", propTime, now, d));
     }

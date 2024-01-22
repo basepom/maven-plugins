@@ -15,10 +15,9 @@
 package org.basepom.mojo.propertyhelper;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.lang.String.format;
 
 import java.util.Locale;
-import javax.annotation.Nonnull;
+import java.util.function.Supplier;
 
 import com.google.common.flogger.FluentLogger;
 
@@ -32,16 +31,11 @@ public enum IgnoreWarnFailCreate {
         return Enum.valueOf(IgnoreWarnFailCreate.class, value.toUpperCase(Locale.getDefault()));
     }
 
-    /**
-     * Reacts on a given thing existing or not existing.
-     * <p>
-     * IGNORE: Do nothing. WARN: Display a warning message if the thing does not exist, otherwise do nothing. FAIL: Throws an exception if the thing does not
-     * exist. CREATE: Suggest creation of the thing.
-     * <p>
-     * Returns true if the thing should be create, false otherwise.
-     */
-    public static boolean checkState(@Nonnull final IgnoreWarnFailCreate iwfc, final boolean exists, final String thing) {
-        if (exists) {
+    public static boolean checkIgnoreWarnFailCreateState(final boolean check, final IgnoreWarnFailCreate iwfc,
+        final Supplier<String> checkMessage, final Supplier<String> errorMessage) {
+
+        if (check) {
+            LOG.atFine().log(checkMessage.get());
             return false;
         }
 
@@ -49,12 +43,12 @@ public enum IgnoreWarnFailCreate {
             case IGNORE:
                 return false;
             case WARN:
-                LOG.atWarning().log("'%s' does not exist!", thing);
+                LOG.atWarning().log(errorMessage.get());
                 return false;
             case FAIL:
-                throw new IllegalStateException(format("'%s' does not exist!", thing));
+                throw new IllegalStateException(errorMessage.get());
             case CREATE:
-                LOG.atFine().log("'%s' does not exist, suggesting creation.", thing);
+                LOG.atFine().log(errorMessage.get());
                 return true;
             default:
                 throw new IllegalStateException("Unknown state: " + iwfc);

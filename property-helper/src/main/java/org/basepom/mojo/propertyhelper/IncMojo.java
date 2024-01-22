@@ -28,7 +28,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * Fetches the defined numbers, adds properties and increments all numbers.
  */
 @Mojo(name = "inc", threadSafe = true)
-public final class IncrementNumbersMojo
+public final class IncMojo
         extends AbstractPropertyHelperMojo {
     private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
@@ -42,7 +42,9 @@ public final class IncrementNumbersMojo
     protected void doExecute() throws IOException, MojoExecutionException {
         LOG.atFine().log("Running IncrementNumbers");
 
-        loadPropertyElements();
+        createFieldDefinitions();
+        createFields();
+        createGroups();
 
         final List<NumberField> numberFields = getNumbers();
 

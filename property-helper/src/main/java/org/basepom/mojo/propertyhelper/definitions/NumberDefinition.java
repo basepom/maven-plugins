@@ -17,7 +17,7 @@ package org.basepom.mojo.propertyhelper.definitions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
@@ -29,7 +29,7 @@ import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 
-public class NumberDefinition extends ElementDefinition {
+public class NumberDefinition extends FieldDefinition {
 
     public static final String INITIAL_VALUE = "0";
 
@@ -71,7 +71,7 @@ public class NumberDefinition extends ElementDefinition {
     }
 
     @Override
-    public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+    public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
         checkNotNull(context, "context is null");
         checkNotNull(valueCache, "valueCache is null");
 

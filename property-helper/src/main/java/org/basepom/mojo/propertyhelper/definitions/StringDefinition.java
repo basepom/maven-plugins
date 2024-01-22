@@ -16,8 +16,8 @@ package org.basepom.mojo.propertyhelper.definitions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
-import org.basepom.mojo.propertyhelper.PropertyElement;
 import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Defines a string field. This is a config element that is populated by maven.
  */
-public class StringDefinition extends ElementDefinition {
+public class StringDefinition extends FieldDefinition {
 
     private List<String> values = ImmutableList.of();
 
@@ -42,7 +42,7 @@ public class StringDefinition extends ElementDefinition {
     /**
      * called by maven
      */
-    StringDefinition setValues(final List<String> values) {
+    public StringDefinition setValues(final List<String> values) {
         checkNotNull(values, "values is null");
         this.values = values.stream().map(v -> Objects.requireNonNullElse(v, "")).collect(ImmutableList.toImmutableList());
         return this;
@@ -55,14 +55,20 @@ public class StringDefinition extends ElementDefinition {
     boolean blankIsValid = true;
 
     /**
-     * Default action on missing value. Field injected by Maven.
+     * Default action on missing value.
      */
     private IgnoreWarnFail onMissingValue = IgnoreWarnFail.FAIL;
 
-    void setOnMissingValue(String onMissingValue) {
+    /**
+     * called by maven
+     */
+    public void setOnMissingValue(String onMissingValue) {
         this.onMissingValue = IgnoreWarnFail.forString(onMissingValue);
     }
 
+    /**
+     * called by maven
+     */
     public StringDefinition() {
     }
 
@@ -84,7 +90,7 @@ public class StringDefinition extends ElementDefinition {
     }
 
     @Override
-    public PropertyElement createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+    public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
         checkNotNull(context, "context is null");
         checkNotNull(valueCache, "valueCache is null");
 

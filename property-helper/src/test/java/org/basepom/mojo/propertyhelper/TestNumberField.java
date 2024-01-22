@@ -65,9 +65,9 @@ public class TestNumberField {
         assertEquals(8L, nf2.getNumberValue().longValue());
         assertEquals(15L, nf3.getNumberValue().longValue());
 
-        assertEquals(value, nf1.getPropertyValue().get());
-        assertEquals(value, nf2.getPropertyValue().get());
-        assertEquals(value, nf3.getPropertyValue().get());
+        assertEquals(value, nf1.getValue());
+        assertEquals(value, nf2.getValue());
+        assertEquals(value, nf3.getValue());
     }
 
     @Test
@@ -100,10 +100,10 @@ public class TestNumberField {
         assertEquals(1L, nf3.getNumberValue().longValue());
         assertEquals(4L, nf4.getNumberValue().longValue());
 
-        assertEquals(value, nf1.getPropertyValue().get());
-        assertEquals(value, nf2.getPropertyValue().get());
-        assertEquals(value, nf3.getPropertyValue().get());
-        assertEquals(value, nf4.getPropertyValue().get());
+        assertEquals(value, nf1.getValue());
+        assertEquals(value, nf2.getValue());
+        assertEquals(value, nf3.getValue());
+        assertEquals(value, nf4.getValue());
     }
 
     @Test
@@ -119,12 +119,12 @@ public class TestNumberField {
         final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getPropertyName()));
 
         assertEquals(1L, nf1.getNumberValue().longValue());
-        assertEquals(value, nf1.getPropertyValue().get());
+        assertEquals(value, nf1.getValue());
 
         nf1.increment();
 
         assertEquals(2L, nf1.getNumberValue().longValue());
-        assertEquals("foobar-2.2-barfoo-3", nf1.getPropertyValue().get());
+        assertEquals("foobar-2.2-barfoo-3", nf1.getValue());
     }
 
     @Test
@@ -146,20 +146,20 @@ public class TestNumberField {
 
         assertEquals(4L, nf1.getNumberValue().longValue());
         assertEquals(8L, nf2.getNumberValue().longValue());
-        assertEquals(value, nf1.getPropertyValue().get());
-        assertEquals(value, nf2.getPropertyValue().get());
+        assertEquals(value, nf1.getValue());
+        assertEquals(value, nf2.getValue());
 
         nf1.increment();
         assertEquals(5L, nf1.getNumberValue().longValue());
         assertEquals(8L, nf2.getNumberValue().longValue());
-        assertEquals("5.8", nf1.getPropertyValue().get());
-        assertEquals("5.8", nf2.getPropertyValue().get());
+        assertEquals("5.8", nf1.getValue());
+        assertEquals("5.8", nf2.getValue());
 
         nf2.increment();
         assertEquals(5L, nf1.getNumberValue().longValue());
         assertEquals(9L, nf2.getNumberValue().longValue());
-        assertEquals("5.9", nf1.getPropertyValue().get());
-        assertEquals("5.9", nf2.getPropertyValue().get());
+        assertEquals("5.9", nf1.getValue());
+        assertEquals("5.9", nf2.getValue());
     }
 
     @Test
@@ -181,20 +181,20 @@ public class TestNumberField {
 
         assertEquals(4L, nf1.getNumberValue().longValue());
         assertEquals(4L, nf2.getNumberValue().longValue());
-        assertEquals(value, nf1.getPropertyValue().get());
-        assertEquals(value, nf2.getPropertyValue().get());
+        assertEquals(value, nf1.getValue());
+        assertEquals(value, nf2.getValue());
 
         nf1.increment();
         assertEquals(5L, nf1.getNumberValue().longValue());
         assertEquals(5L, nf2.getNumberValue().longValue());
-        assertEquals("5.8", nf1.getPropertyValue().get());
-        assertEquals("5.8", nf2.getPropertyValue().get());
+        assertEquals("5.8", nf1.getValue());
+        assertEquals("5.8", nf2.getValue());
 
         nf2.increment();
         assertEquals(6L, nf1.getNumberValue().longValue());
         assertEquals(6L, nf2.getNumberValue().longValue());
-        assertEquals("6.8", nf1.getPropertyValue().get());
-        assertEquals("6.8", nf2.getPropertyValue().get());
+        assertEquals("6.8", nf1.getValue());
+        assertEquals("6.8", nf2.getValue());
     }
 }
 

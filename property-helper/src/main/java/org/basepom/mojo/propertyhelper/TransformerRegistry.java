@@ -22,7 +22,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
@@ -73,7 +72,7 @@ public final class TransformerRegistry {
         implements Function<String, String> {
 
         @Override
-        public String apply(@Nonnull String value) {
+        public String apply(String value) {
             return value.toLowerCase(Locale.ENGLISH);
         }
     }
@@ -82,7 +81,7 @@ public final class TransformerRegistry {
         implements Function<String, String> {
 
         @Override
-        public String apply(@Nonnull String value) {
+        public String apply(String value) {
             return value.toUpperCase(Locale.ENGLISH);
         }
     }
@@ -91,7 +90,7 @@ public final class TransformerRegistry {
         implements Function<String, String> {
 
         @Override
-        public String apply(@Nonnull String value) {
+        public String apply(String value) {
             return CharMatcher.whitespace().removeFrom(value);
         }
     }
@@ -100,7 +99,7 @@ public final class TransformerRegistry {
         implements Function<String, String> {
 
         @Override
-        public String apply(@Nonnull String value) {
+        public String apply(String value) {
             return CharMatcher.whitespace().collapseFrom(value, '_');
         }
     }
@@ -109,7 +108,7 @@ public final class TransformerRegistry {
         implements Function<String, String> {
 
         @Override
-        public String apply(@Nonnull String value) {
+        public String apply(String value) {
             return CharMatcher.whitespace().collapseFrom(value, '-');
         }
     }
@@ -118,7 +117,7 @@ public final class TransformerRegistry {
         implements Function<String, String> {
 
         @Override
-        public String apply(@Nonnull String value) {
+        public String apply(String value) {
             return CharMatcher.whitespace().or(CharMatcher.anyOf("-_")).collapseFrom(value, '_');
         }
     }
@@ -127,7 +126,7 @@ public final class TransformerRegistry {
         implements Function<String, String> {
 
         @Override
-        public String apply(@Nonnull String value) {
+        public String apply(String value) {
             return CharMatcher.whitespace().or(CharMatcher.anyOf("-_")).collapseFrom(value, '-');
         }
     }
@@ -136,7 +135,7 @@ public final class TransformerRegistry {
         implements Function<String, String> {
 
         @Override
-        public String apply(@Nonnull String value) {
+        public String apply(String value) {
             return CharMatcher.whitespace().trimFrom(value);
         }
     }

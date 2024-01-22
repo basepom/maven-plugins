@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test-group</groupId>
+    <artifactId>test-readme-example-1</artifactId>
+    <version>1.0</version>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>@project.groupId@</groupId>
+                    <artifactId>property-helper-maven-plugin</artifactId>
+                    <version>@project.version@</version>
+
+                    <configuration>
+                        <persist>true</persist>
+                        <propertyGroups>
+                            <propertyGroup>
+                                <id>build-tag</id>
+                                <properties>
+                                    <property>
+                                        <name>build.tag</name>
+                                        <value>
+                                            #{build-tag}-#{build-number}-#{build-date}</value>
+                                    </property>
+                                </properties>
+                            </propertyGroup>
+                        </propertyGroups>
+                        <dates>
+                            <date>
+                                <id>build-date</id>
+                                <timezone>UTC</timezone>
+                                <format>yyyyMMdd_HHmmss</format>
+                            </date>
+                        </dates>
+                        <uuids>
+                            <uuid>
+                                <id>build-tag</id>
+                            </uuid>
+                        </uuids>
+                        <numbers>
+                            <number>
+                                <id>build-number</id>
+                                <propertyName>build.number</propertyName>
+                                <propertyFile>${project.basedir}/build.properties</propertyFile>
+                                <onMissingFile>create</onMissingFile>
+                                <onMissingProperty>create</onMissingProperty>
+                                <initialValue>1</initialValue>
+                            </number>
+                        </numbers>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>property-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>test-git-id</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

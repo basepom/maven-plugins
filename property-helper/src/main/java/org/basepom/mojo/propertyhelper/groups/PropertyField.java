@@ -15,24 +15,11 @@
 package org.basepom.mojo.propertyhelper.groups;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.InterpolatorFactory;
-import org.basepom.mojo.propertyhelper.PropertyElement;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.interpolation.InterpolationException;
+import org.basepom.mojo.propertyhelper.Field;
 
 public class PropertyField
-        implements PropertyElement {
+    implements Field {
 
     private final String propertyName;
     private final String propertyValue;
@@ -42,40 +29,18 @@ public class PropertyField
         this.propertyValue = checkNotNull(propertyValue, "propertyValue is null");
     }
 
-    public static List<PropertyElement> createProperties(final Model model, final Map<String, String> values, final PropertyGroup propertyGroup)
-            throws MojoExecutionException, IOException {
-        checkNotNull(model, "model is null");
-        checkNotNull(values, "values is null");
-        checkNotNull(propertyGroup, "propertyGroup is null");
-
-        final InterpolatorFactory interpolatorFactory = new InterpolatorFactory(model);
-
-        final Builder<PropertyElement> result = ImmutableList.builder();
-        final Map<String, String> properties = propertyGroup.getProperties();
-
-        for (String name : properties.keySet()) {
-            try {
-                final String value = propertyGroup.getPropertyValue(interpolatorFactory, name, values);
-                result.add(new PropertyField(name, value));
-            } catch (InterpolationException e) {
-                throw new MojoExecutionException(format("Could not interpolate '%s", model), e);
-            }
-        }
-        return result.build();
-    }
-
     @Override
-    public String getPropertyName() {
+    public String getFieldName() {
         return propertyName;
     }
 
     @Override
-    public Optional<String> getPropertyValue() {
-        return Optional.of(propertyValue);
+    public String getValue() {
+        return propertyValue;
     }
 
     @Override
-    public boolean isExport() {
+    public boolean isExposeAsProperty() {
         return true;
     }
 }

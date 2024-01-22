@@ -21,22 +21,22 @@ import java.util.Optional;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * Defines a property element.
+ * Describe all the fields.
  */
-public interface PropertyElement {
+public interface Field {
 
     /**
-     * The name of the property element.
+     * The name of the field.
      */
-    String getPropertyName();
+    String getFieldName();
 
     /**
-     * The value of the property. {@link Optional#empty()} can be returned if the value is not defined.
+     * The value of the field. {@link Optional#empty()} can be returned if the value is not defined.
      */
-    Optional<String> getPropertyValue() throws MojoExecutionException, IOException;
+    String getValue() throws MojoExecutionException, IOException;
 
     /**
      * True if the value of this element should be exposed as a maven property.
      */
-    boolean isExport();
+    boolean isExposeAsProperty();
 }

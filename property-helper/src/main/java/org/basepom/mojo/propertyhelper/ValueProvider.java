@@ -22,26 +22,14 @@ import java.util.Properties;
 
 public interface ValueProvider {
 
-    ValueProvider NULL_PROVIDER = new NullProvider();
+    ValueProvider NULL_PROVIDER = Optional::empty;
 
     Optional<String> getValue();
 
-    default void setValue(String value) {}
-
-    class NullProvider
-            implements ValueProvider {
-
-        private NullProvider() {
-        }
-
-        @Override
-        public Optional<String> getValue() {
-            return Optional.empty();
-        }
+    default void setValue(String value) {
     }
 
-    class StaticValueProvider
-            implements ValueProvider {
+    class StaticValueProvider implements ValueProvider {
 
         private String value;
 
@@ -59,8 +47,7 @@ public interface ValueProvider {
         }
     }
 
-    class MapValueProvider
-            implements ValueProvider {
+    class MapValueProvider implements ValueProvider {
 
         private final Map<String, String> values;
         private final String valueName;
@@ -82,8 +69,7 @@ public interface ValueProvider {
         }
     }
 
-    class PropertyProvider
-            implements ValueProvider {
+    class PropertyProvider implements ValueProvider {
 
         private final Properties props;
         private final String propertyName;

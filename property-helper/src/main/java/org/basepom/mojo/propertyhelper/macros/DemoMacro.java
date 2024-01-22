@@ -22,7 +22,6 @@ import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 import org.codehaus.plexus.component.annotations.Component;
 
@@ -31,9 +30,9 @@ public class DemoMacro
     implements MacroType {
 
     @Override
-    public Optional<String> getValue(@Nonnull final MacroDefinition macroDefinition,
-        @Nonnull final ValueProvider valueProvider,
-        @Nonnull final PropertyElementContext context) {
+    public Optional<String> getValue(final MacroDefinition macroDefinition,
+        final ValueProvider valueProvider,
+        final PropertyElementContext context) {
         checkNotNull(valueProvider, "valueProvider is null");
         checkNotNull(context, "context is null");
 

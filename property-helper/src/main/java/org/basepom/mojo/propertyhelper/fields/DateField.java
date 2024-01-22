@@ -14,7 +14,7 @@
 
 package org.basepom.mojo.propertyhelper.fields;
 
-import org.basepom.mojo.propertyhelper.PropertyElement;
+import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
@@ -26,7 +26,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class DateField implements PropertyElement {
+public class DateField implements Field {
 
     private final DateDefinition dateDefinition;
     private final ValueProvider valueProvider;
@@ -37,65 +37,61 @@ public class DateField implements PropertyElement {
     }
 
     @Override
-    public String getPropertyName() {
+    public String getFieldName() {
         return dateDefinition.getId();
     }
 
     @Override
-    public Optional<String> getPropertyValue() {
+    public String getValue() {
+
         final DateTimeZone timeZone = dateDefinition.getTimezone()
             .map(DateTimeZone::forID)
             .orElse(DateTimeZone.getDefault());
 
-        final Optional<String> format = dateDefinition.getFormat();
-        final DateTimeFormatter formatter = format.map(DateTimeFormat::forPattern)
-            .orElse(null);
+        final Optional<DateTimeFormatter> formatter = dateDefinition.getFormat()
+            .map(DateTimeFormat::forPattern);
 
         DateTime date = valueProvider.getValue()
             .map(value -> getDateTime(value, formatter, timeZone))
-            .orElse(null);
-
-        if (date == null) {
-            date = dateDefinition.getValue()
+            .orElseGet(() -> dateDefinition.getValue()
                 .map(definition -> new DateTime(definition, timeZone))
-                .orElse(new DateTime(timeZone));
-        }
+                .orElse(new DateTime(timeZone)));
 
-        final String result;
-        if (formatter != null) {
-            result = formatter.print(date);
+        String result = formatter.map(f -> f.print(date))
+            .orElse(date.toString());
+
+        if (formatter.isPresent()) {
             valueProvider.setValue(result);
         } else {
-            result = date.toString();
             valueProvider.setValue(Long.toString(date.getMillis()));
         }
 
-        return Optional.ofNullable(TransformerRegistry.INSTANCE.applyTransformers(dateDefinition.getTransformers(), result));
+        return Optional.ofNullable(TransformerRegistry.INSTANCE.applyTransformers(dateDefinition.getTransformers(), result))
+            .orElse("");
     }
 
-    private DateTime getDateTime(String value, final DateTimeFormatter formatter, final DateTimeZone timeZone) {
+    @Override
+    public boolean isExposeAsProperty() {
+        return dateDefinition.isExport();
+    }
+
+    private DateTime getDateTime(String value, final Optional<DateTimeFormatter> formatter, final DateTimeZone timeZone) {
         if (value == null) {
             return null;
         }
 
-        if (formatter != null) {
-            return formatter.parseDateTime(value).withZone(timeZone);
-        }
-
-        try {
-            return new DateTime(Long.parseLong(value), timeZone);
-        } catch (NumberFormatException nfe) {
-            return new DateTime(value, timeZone);
-        }
-    }
-
-    @Override
-    public boolean isExport() {
-        return dateDefinition.isExport();
+        return formatter.map(f -> f.parseDateTime(value).withZone(timeZone))
+            .orElseGet(() -> {
+                try {
+                    return new DateTime(Long.parseLong(value), timeZone);
+                } catch (NumberFormatException nfe) {
+                    return new DateTime(value, timeZone);
+                }
+            });
     }
 
     @Override
     public String toString() {
-        return getPropertyValue().orElse("");
+        return getValue();
     }
 }

@@ -34,115 +34,115 @@ public class TestPropertyGroup {
 
     @Test
     public void testConstant() throws Exception {
-        final Map<String, String> props = ImmutableMap.of("hello", "world");
+        final Map<String, String> propertyValues = ImmutableMap.of("hello", "world");
 
-        final PropertyGroup pg = new PropertyGroup("hello")
-                .setProperties(props);
+        final PropertyGroup propertyGroup = new PropertyGroup("hello-group")
+                .setProperties(propertyValues);
 
-        final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
-        Assertions.assertEquals(1, propNames.size());
-        Assertions.assertEquals("hello", propNames.get(0));
+        final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
+        Assertions.assertEquals(1, propertyNames.size());
+        Assertions.assertEquals("hello", propertyNames.get(0));
 
-        final String propValue = pg.getPropertyValue(interpolatorFactory, "hello", Collections.emptyMap());
-        Assertions.assertEquals("world", propValue);
+        final String propertyValue = propertyGroup.getPropertyValue(interpolatorFactory, "hello", Collections.emptyMap());
+        Assertions.assertEquals("world", propertyValue);
     }
 
     @Test
     public void testRenderSingle() throws Exception {
-        final Map<String, String> props = ImmutableMap.of("hello", "#{world}");
+        final Map<String, String> propertyValues = ImmutableMap.of("hello", "#{world}");
 
-        final PropertyGroup pg = new PropertyGroup("hello")
-                .setProperties(props);
+        final PropertyGroup propertyGroup = new PropertyGroup("hello")
+                .setProperties(propertyValues);
 
-        final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
-        Assertions.assertEquals(1, propNames.size());
-        Assertions.assertEquals("hello", propNames.get(0));
+        final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
+        Assertions.assertEquals(1, propertyNames.size());
+        Assertions.assertEquals("hello", propertyNames.get(0));
 
-        final String propValue = pg.getPropertyValue(interpolatorFactory, "hello", ImmutableMap.of("world", "pizza"));
-        Assertions.assertEquals("pizza", propValue);
+        final String propertyValue = propertyGroup.getPropertyValue(interpolatorFactory, "hello", ImmutableMap.of("world", "pizza"));
+        Assertions.assertEquals("pizza", propertyValue);
     }
 
     @Test
     public void testRenderEmptyFail() {
         assertThrows(IllegalStateException.class, () -> {
-            final Map<String, String> props = ImmutableMap.of("hello", "#{world}");
+            final Map<String, String> propertyValues = ImmutableMap.of("hello", "#{world}");
 
-            final PropertyGroup pg = new PropertyGroup("hello")
-                    .setProperties(props);
+            final PropertyGroup propertyGroup = new PropertyGroup("hello")
+                    .setProperties(propertyValues);
 
-            final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
-            Assertions.assertEquals(1, propNames.size());
-            Assertions.assertEquals("hello", propNames.get(0));
+            final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
+            Assertions.assertEquals(1, propertyNames.size());
+            Assertions.assertEquals("hello", propertyNames.get(0));
 
-            final String propValue = pg.getPropertyValue(interpolatorFactory, "hello", Collections.emptyMap());
-            Assertions.assertEquals("", propValue);
+            final String propertyValue = propertyGroup.getPropertyValue(interpolatorFactory, "hello", Collections.emptyMap());
+            Assertions.assertEquals("", propertyValue);
         });
     }
 
     @Test
     public void testRenderEmptyOk() throws Exception {
-        final Map<String, String> props = ImmutableMap.of("hello", "nice-#{world}-hat");
+        final Map<String, String> propertyValues = ImmutableMap.of("hello", "nice-#{world}-hat");
 
-        final PropertyGroup pg = new PropertyGroup("hello")
-                .setProperties(props)
+        final PropertyGroup propertyGroup = new PropertyGroup("hello")
+                .setProperties(propertyValues)
                 .setOnMissingProperty("ignore");
 
-        final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
-        Assertions.assertEquals(1, propNames.size());
-        Assertions.assertEquals("hello", propNames.get(0));
+        final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
+        Assertions.assertEquals(1, propertyNames.size());
+        Assertions.assertEquals("hello", propertyNames.get(0));
 
-        final String propValue = pg.getPropertyValue(interpolatorFactory, "hello", Collections.emptyMap());
-        Assertions.assertEquals("nice--hat", propValue);
+        final String propertyValue = propertyGroup.getPropertyValue(interpolatorFactory, "hello", Collections.emptyMap());
+        Assertions.assertEquals("nice--hat", propertyValue);
     }
 
     @Test
     public void testRenderIsReluctant() throws Exception {
-        final Map<String, String> props = ImmutableMap.of("hello", "nice-#{first}-#{world}-hat");
+        final Map<String, String> propertyValues = ImmutableMap.of("hello", "nice-#{first}-#{world}-hat");
 
-        final PropertyGroup pg = new PropertyGroup("hello")
-                .setProperties(props)
+        final PropertyGroup propertyGroup = new PropertyGroup("hello")
+                .setProperties(propertyValues)
                 .setOnMissingProperty("ignore");
 
-        final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
-        Assertions.assertEquals(1, propNames.size());
-        Assertions.assertEquals("hello", propNames.get(0));
+        final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
+        Assertions.assertEquals(1, propertyNames.size());
+        Assertions.assertEquals("hello", propertyNames.get(0));
 
-        final String propValue = pg.getPropertyValue(interpolatorFactory, "hello", Collections.emptyMap());
-        Assertions.assertEquals("nice---hat", propValue);
+        final String propertyValue = propertyGroup.getPropertyValue(interpolatorFactory, "hello", Collections.emptyMap());
+        Assertions.assertEquals("nice---hat", propertyValue);
     }
 
     @Test
     public void testRenderFriendOfAFriend() throws Exception {
-        final Map<String, String> props = ImmutableMap.of("hello", "nice-#{whatWorld}-#{world}-hat");
+        final Map<String, String> propertyValues = ImmutableMap.of("hello", "nice-#{whatWorld}-#{world}-hat");
 
-        final PropertyGroup pg = new PropertyGroup("hello")
-                .setProperties(props)
+        final PropertyGroup propertyGroup = new PropertyGroup("hello")
+                .setProperties(propertyValues)
                 .setOnMissingProperty("ignore");
 
-        final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
-        Assertions.assertEquals(1, propNames.size());
-        Assertions.assertEquals("hello", propNames.get(0));
+        final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
+        Assertions.assertEquals(1, propertyNames.size());
+        Assertions.assertEquals("hello", propertyNames.get(0));
 
-        final String propValue = pg.getPropertyValue(interpolatorFactory, "hello",
+        final String propertyValue = propertyGroup.getPropertyValue(interpolatorFactory, "hello",
                 ImmutableMap.of("whatWorld", "#{first}", "first", "decadent", "world", "rome"));
-        Assertions.assertEquals("nice-decadent-rome-hat", propValue);
+        Assertions.assertEquals("nice-decadent-rome-hat", propertyValue);
     }
 
 
     @Test
     public void testRenderDotsAreCool() throws Exception {
-        final Map<String, String> props = ImmutableMap.of("hello", "nice-#{foo.bar.world}-hat");
+        final Map<String, String> propertyValues = ImmutableMap.of("hello", "nice-#{foo.bar.world}-hat");
 
-        final PropertyGroup pg = new PropertyGroup("hello")
-                .setProperties(props)
+        final PropertyGroup propertyGroup = new PropertyGroup("hello")
+                .setProperties(propertyValues)
                 .setOnMissingProperty("ignore");
 
-        final List<String> propNames = Lists.newArrayList(pg.getPropertyNames());
-        Assertions.assertEquals(1, propNames.size());
-        Assertions.assertEquals("hello", propNames.get(0));
+        final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
+        Assertions.assertEquals(1, propertyNames.size());
+        Assertions.assertEquals("hello", propertyNames.get(0));
 
-        final String propValue = pg.getPropertyValue(interpolatorFactory, "hello", ImmutableMap.of("foo.bar.world", "strange"));
-        Assertions.assertEquals("nice-strange-hat", propValue);
+        final String propertyValue = propertyGroup.getPropertyValue(interpolatorFactory, "hello", ImmutableMap.of("foo.bar.world", "strange"));
+        Assertions.assertEquals("nice-strange-hat", propertyValue);
     }
 
 }
