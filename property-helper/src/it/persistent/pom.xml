@@ -48,7 +48,7 @@
                             <id>build.id</id>
                             <export>true</export>
                             <propertyFile>target/build.properties</propertyFile>
-                            <propertyName>build.id</propertyName>
+                            <propertyNameInFile>build.id</propertyNameInFile>
                             <onMissingFile>create</onMissingFile>
                             <onMissingProperty>create</onMissingProperty>
                         </uuid>

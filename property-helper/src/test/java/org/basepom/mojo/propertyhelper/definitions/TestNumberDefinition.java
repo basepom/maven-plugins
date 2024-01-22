@@ -54,7 +54,7 @@ public class TestNumberDefinition {
         assertEquals("0", nd.getInitialValue().get());
         assertEquals(0, nd.getFieldNumber());
         assertEquals(1, nd.getIncrement());
-        assertEquals(id, nd.getPropertyName());
+        assertEquals(id, nd.getId());
         assertFalse(nd.getPropertyFile().isPresent());
         assertEquals(IgnoreWarnFailCreate.FAIL, nd.getOnMissingFile());
         assertEquals(IgnoreWarnFailCreate.FAIL, nd.getOnMissingProperty());
@@ -64,10 +64,10 @@ public class TestNumberDefinition {
     @Test
     public void testPropNameOverridesId() {
         final NumberDefinition nd = numberDefinition("hello");
-        nd.propertyName = "world";
+        nd.propertyNameInFile = "world";
 
         assertEquals("hello", nd.getId());
-        assertEquals("world", nd.getPropertyName());
+        assertEquals("world", nd.getPropertyNameInFile());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class TestNumberDefinition {
         final NumberDefinition nd = numberDefinition("hello");
 
         assertEquals("hello", nd.getId());
-        assertEquals("hello", nd.getPropertyName());
+        assertEquals("hello", nd.getPropertyNameInFile());
     }
 
     @Test

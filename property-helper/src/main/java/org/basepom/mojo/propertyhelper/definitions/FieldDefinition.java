@@ -64,7 +64,7 @@ public abstract class FieldDefinition {
     /**
      * Name of the property from the properties file. Field injected by Maven.
      */
-    String propertyName = null;
+    String propertyNameInFile = null;
 
     /**
      * Name of the properties file to persist the count. Field injected by Maven.
@@ -139,8 +139,8 @@ public abstract class FieldDefinition {
         return export;
     }
 
-    public String getPropertyName() {
-        return Objects.requireNonNullElse(propertyName, id);
+    public String getPropertyNameInFile() {
+        return Objects.requireNonNullElse(propertyNameInFile, id);
     }
 
     public Optional<File> getPropertyFile() {
@@ -170,6 +170,10 @@ public abstract class FieldDefinition {
 
     public void check() {
         checkState(id != null, "the id element must not be empty!");
+
+        if (propertyNameInFile != null) {
+            checkState(propertyFile != null, "can not define <propertyNameInFile> without defining <propertyFile>!");
+        }
     }
 
     @Override
@@ -178,7 +182,7 @@ public abstract class FieldDefinition {
             .add("id='" + id + "'")
             .add("skip=" + skip)
             .add("export=" + export)
-            .add("propertyName='" + propertyName + "'")
+            .add("propertyNameInFile='" + propertyNameInFile + "'")
             .add("propertyFile=" + propertyFile)
             .add("onMissingFile='" + onMissingFile + "'")
             .add("onMissingProperty='" + onMissingProperty + "'")
@@ -197,7 +201,7 @@ public abstract class FieldDefinition {
             return false;
         }
         FieldDefinition that = (FieldDefinition) o;
-        return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyName, that.propertyName)
+        return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyNameInFile, that.propertyNameInFile)
             && Objects.equals(propertyFile, that.propertyFile) && Objects.equals(onMissingFile, that.onMissingFile)
             && Objects.equals(onMissingProperty, that.onMissingProperty) && Objects.equals(initialValue, that.initialValue)
             && Objects.equals(format, that.format) && Objects.equals(transformers, that.transformers);
@@ -205,6 +209,6 @@ public abstract class FieldDefinition {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, skip, export, propertyName, propertyFile, onMissingFile, onMissingProperty, initialValue, format, transformers);
+        return Objects.hash(id, skip, export, propertyNameInFile, propertyFile, onMissingFile, onMissingProperty, initialValue, format, transformers);
     }
 }

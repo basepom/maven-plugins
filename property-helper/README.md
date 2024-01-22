@@ -50,7 +50,7 @@ Example:
     <numbers>
         <number>
             <id>build-number</id>
-            <propertyName>build.number</propertyName>
+            <propertyNameInFile>build.number</propertyNameInFile>
             <propertyFile>${user.home}/build.properties</propertyFile>
             <onMissingFile>create</onMissingFile>
             <onMissingProperty>create</onMissingProperty>
@@ -80,7 +80,7 @@ All three values combined form the `build.tag` property which is exported as a p
     <configuration>
         <skip>true|false</skip>
         <persist>true|false</persist>
-        <onDuplicateProperty>ignore|warn|fail</onDuplicateProperty>
+        <onDuplicateField>ignore|warn|fail</onDuplicateField>
         <onMissingProperty>ignore|warn|fail</onMissingProperty>
         <propertyGroups>
             <propertyGroup>
@@ -109,11 +109,12 @@ All three values combined form the `build.tag` property which is exported as a p
                 <id>...</id>
                 <skip>true|false</skip>
                 <export>true|false</export>
-                <propertyName></propertyName>
+                <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
+                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
             </date>
@@ -129,11 +130,12 @@ All three values combined form the `build.tag` property which is exported as a p
                 <id>...</id>
                 <skip>true|false</skip>
                 <export>true|false</export>
-                <propertyName></propertyName>
+                <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
+                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
             </macro>
@@ -146,11 +148,12 @@ All three values combined form the `build.tag` property which is exported as a p
                 <id>...</id>
                 <skip>true|false</skip>
                 <export>true|false</export>
-                <propertyName></propertyName>
+                <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
+                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
 
@@ -167,11 +170,12 @@ All three values combined form the `build.tag` property which is exported as a p
                 <id>...</id>
                 <skip>true|false</skip>
                 <export>true|false</export>
-                <propertyName></propertyName>
+                <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
+                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
 
@@ -184,15 +188,16 @@ All three values combined form the `build.tag` property which is exported as a p
                 <id>...</id>
                 <skip>true|false</skip>
                 <export>true|false</export>
-                <propertyName></propertyName>
+                <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
                 <onMissingFile></onMissingFile>
                 <onMissingProperty></onMissingProperty>
                 <initialValue></initialValue>
+                <initialProperty></initialProperty>
                 <format></format>
                 <transformers>...</transformers>
             </uuid>
         </uuids>
     </configuration>
-
+</plugin>
 ```

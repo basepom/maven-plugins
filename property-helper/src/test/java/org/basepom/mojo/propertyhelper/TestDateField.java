@@ -26,7 +26,6 @@ import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
 import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
 import org.basepom.mojo.propertyhelper.fields.DateField;
 
-import java.util.Optional;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
@@ -62,7 +61,7 @@ public class TestDateField {
         final Properties props = new Properties();
         final String value = DateTimeFormat.forPattern(format).print(now);
         props.setProperty("hello", value);
-        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getPropertyName()));
+        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getId()));
 
         assertEquals(value, sd1.getValue());
     }
@@ -76,7 +75,7 @@ public class TestDateField {
         final long now = System.currentTimeMillis();
         final Properties props = new Properties();
         props.setProperty("hello", Long.toString(now));
-        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getPropertyName()));
+        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getId()));
 
         assertEquals(new DateTime(now).toString(), sd1.getValue());
     }
@@ -91,7 +90,7 @@ public class TestDateField {
 
         final Properties props = new Properties();
         props.setProperty("hello", value);
-        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getPropertyName()));
+        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getId()));
 
         assertEquals(value, sd1.getValue());
     }

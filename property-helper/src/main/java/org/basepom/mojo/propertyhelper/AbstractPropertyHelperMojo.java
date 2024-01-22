@@ -60,24 +60,58 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * Defines the action to take if a field is defined multiple times (e.g. as a number and a string).
+     * <br>
+     * Options are
+     * <ul>
+     *     <li><code>ignore</code> - ignore multiple definitions silently, retain just the first one found</li>
+     *     <li><code>warn</code> - like ignore, but also log a warning message</li>
+     *     <li><code>fail</code> - fail the build with an exception</li>
+     * </ul>
      */
     @Parameter(defaultValue = "fail", alias = "onDuplicateProperty")
     public void setOnDuplicateField(String onDuplicateField) {
         this.onDuplicateField = IgnoreWarnFail.forString(onDuplicateField);
     }
 
-    /**
-     * List of the property group ids to activate for a plugin execution. If no groups are defined, all groups are active.
-     */
     private List<String> activeGroups = List.of();
 
+    /**
+     * The property groups to activate. If none are given, all property groups are activated.
+     * <pre>{@code
+     * <activeGroups>
+     *     <activeGroup>group1</activeGroup>
+     *     <activeGroup>group2</activeGroup>
+     *     ...
+     * </activeGroups>
+     * }</pre>
+     */
     @Parameter
     public void setActiveGroups(String... activeGroups) {
         this.activeGroups = Arrays.asList(activeGroups);
     }
 
     /**
-     * List of available property groups. A property group contains one or more property definitions and must be activated with activeGroups.
+     * Define property groups. A property group contains one or more property definitions. Property groups are active by default
+     * unless they are explicitly listed with {@code <activeGroups>...</activeGroups}.
+     * <pre>{@code
+     * <propertyGroups>
+     *     <propertyGroup>
+     *         <id>...</id>
+     *         <activeOnRelease>true|false</activeOnRelease>
+     *         <activeOnSnapshot>true|false</activeOnSnapshot>
+     *         <onDuplicateProperty>ignore|warn|fail</onDuplicateProperty>
+     *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
+     *         <properties>
+     *             <property>
+     *                 <name></name>
+     *                 <value></value>
+     *                 <transformers>...</transformers>
+     *             </property>
+     *         </properties>
+     *     </propertyGroup>
+     *     ...
+     * </propertyGroups>
+     * }</pre>
      */
     @Parameter
     public void setPropertyGroups(PropertyGroup... propertyGroups) {
@@ -88,6 +122,28 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * Number property definitions.
+     * <pre>{@code
+     * <numbers>
+     *     <number>
+     *         <id>...</id>
+     *         <skip>true|false</skip>
+     *         <export>true|false</export>
+
+     *         <initialValue></initialValue>
+     *         <initialProperty...</initialProperty>
+     *         <format></format>
+     *         <fieldNumber></fieldNumber>
+     *         <increment></increment>
+     *         <transformers>...</transformers>
+     *
+     *         <propertyFile></propertyFile>
+     *         <propertyNameInFile></propertyNameInFile>
+     *         <onMissingFile></onMissingFile>
+     *         <onMissingProperty></onMissingProperty>
+     *     </number>
+     *     ...
+     * </numbers>
+     * }</pre>
      */
     @Parameter
     public void setNumbers(NumberDefinition... numberDefinitions) {
@@ -98,6 +154,31 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * String property definitions.
+     *
+     * <pre>{@code
+     * <strings>
+     *     <string>
+     *         <id>...</id>
+     *         <skip>true|false</skip>
+     *         <export>true|false</export>
+     *
+     *         <initialValue>...</initialValue>
+     *         <initialProperty...</initialProperty>
+     *         <format></format>
+     *         <values>
+     *             <value>...</value>
+     *         </values>
+     *         <transformers>...</transformers>
+     *         <blankIsValid>true|false</blankIsValid>
+     *         <onMissingValue>ignore|warn|fail</onMissingValue
+
+     *         <propertyFile></propertyFile>
+     *         <propertyNameInFile></propertyNameInFile>
+     *         <onMissingFile></onMissingFile>
+     *         <onMissingProperty></onMissingProperty>
+     *     </string>
+     * </strings>
+     * }</pre>
      */
     @Parameter
     public void setStrings(StringDefinition... stringDefinitions) {
@@ -108,6 +189,9 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * Date property definitions.
+     *
+     * <pre>{@code
+     * }</pre>
      */
     @Parameter
     public void setDates(DateDefinition... dateDefinitions) {
@@ -118,6 +202,8 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * Macro definitions.
+     * <pre>{@code
+     * }</pre>
      */
     @Parameter
     public void setMacros(MacroDefinition... macroDefinitions) {
@@ -128,6 +214,8 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     /**
      * Uuid definitions.
+     * <pre>{@code
+     * }</pre>
      */
     @Parameter
     public void setUuids(UuidDefinition... uuidDefinitions) {

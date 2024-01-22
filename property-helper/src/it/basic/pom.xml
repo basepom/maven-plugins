@@ -55,7 +55,6 @@
                                     <skip>false</skip>
                                     <initialValue>1.2.3</initialValue>
                                     <fieldNumber>0</fieldNumber>
-                                    <propertyName>my.version</propertyName>
                                     <export>true</export>
                                 </number>
                                 <number>
@@ -63,7 +62,6 @@
                                     <skip>false</skip>
                                     <initialValue>1.2.3</initialValue>
                                     <fieldNumber>1</fieldNumber>
-                                    <propertyName>my.version</propertyName>
                                     <export>true</export>
                                 </number>
                                 <number>
@@ -71,7 +69,6 @@
                                     <skip>false</skip>
                                     <initialValue>1.2.3</initialValue>
                                     <fieldNumber>2</fieldNumber>
-                                    <propertyName>my.version</propertyName>
                                     <export>true</export>
                                 </number>
                             </numbers>

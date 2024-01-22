@@ -78,7 +78,7 @@
                             <goal>get</goal>
                         </goals>
                         <configuration>
-                            <onDuplicateProperty>warn</onDuplicateProperty>
+                            <onDuplicateField>warn</onDuplicateField>
                             <strings>
                                 <string>
                                     <id>my.version</id>

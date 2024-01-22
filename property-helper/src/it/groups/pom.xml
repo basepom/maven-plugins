@@ -62,7 +62,7 @@
                                 <number>
                                     <id>mynumber</id>
                                     <propertyFile>group.properties</propertyFile>
-                                    <propertyName>test.version</propertyName>
+                                    <propertyNameInFile>test.version</propertyNameInFile>
                                     <export>true</export>
                                 </number>
                             </numbers>

@@ -54,7 +54,7 @@ public class TestUuidField {
 
         final Properties props = new Properties();
         props.setProperty("hello", uuid.toString());
-        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getPropertyName()));
+        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getId()));
         Assertions.assertEquals(uuid.toString(), uf1.getValue());
     }
 
@@ -70,7 +70,7 @@ public class TestUuidField {
 
         final Properties props = new Properties();
         props.setProperty("hello", uuid2.toString());
-        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getPropertyName()));
+        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getId()));
         Assertions.assertEquals(uuid2.toString(), uf1.getValue());
     }
 
@@ -86,7 +86,7 @@ public class TestUuidField {
 
         final Properties props = new Properties();
         props.setProperty("hello2", uuid2.toString());
-        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getPropertyName()));
+        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getId()));
         Assertions.assertEquals(uuid1.toString(), uf1.getValue());
     }
 

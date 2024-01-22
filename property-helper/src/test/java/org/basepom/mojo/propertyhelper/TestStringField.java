@@ -113,7 +113,7 @@ public class TestStringField {
 
         final Properties props = new Properties();
         props.setProperty("hello", "foo");
-        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getPropertyName()));
+        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getId()));
         assertEquals("foo", sf1.getValue());
     }
 
@@ -126,7 +126,7 @@ public class TestStringField {
 
         final Properties props = new Properties();
         props.setProperty("hello", "foo");
-        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getPropertyName()));
+        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getId()));
         assertEquals("foo", sf1.getValue());
     }
 
@@ -139,7 +139,7 @@ public class TestStringField {
 
         final Properties props = new Properties();
         props.setProperty("hello2", "foo");
-        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getPropertyName()));
+        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getId()));
         assertEquals("baz", sf1.getValue());
     }
 
@@ -153,7 +153,7 @@ public class TestStringField {
 
         final Properties props = new Properties();
         props.setProperty("hello", "");
-        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getPropertyName()));
+        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getId()));
         assertEquals("baz", sf1.getValue());
     }
 

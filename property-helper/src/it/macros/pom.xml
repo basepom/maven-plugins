@@ -64,7 +64,7 @@
                                             <value>property</value>
                                         </property>
                                     </properties>
-                                    <propertyName>demo.value</propertyName>
+                                    <propertyNameInFile>demo.value</propertyNameInFile>
                                     <propertyFile>macro.properties</propertyFile>
                                     <export>true</export>
                                 </macro>

@@ -37,7 +37,7 @@ public class TestNumberField {
 
         final Properties props = new Properties();
         props.setProperty("hello", "100");
-        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getPropertyName()));
+        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getId()));
         assertEquals(100L, nf1.getNumberValue().longValue());
     }
 
@@ -58,9 +58,9 @@ public class TestNumberField {
         final Properties props = new Properties();
         props.setProperty("hello", value);
 
-        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getPropertyName()));
-        final NumberField nf2 = new NumberField(f2, new PropertyProvider(props, f2.getPropertyName()));
-        final NumberField nf3 = new NumberField(f3, new PropertyProvider(props, f3.getPropertyName()));
+        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getId()));
+        final NumberField nf2 = new NumberField(f2, new PropertyProvider(props, f2.getId()));
+        final NumberField nf3 = new NumberField(f3, new PropertyProvider(props, f3.getId()));
         assertEquals(4L, nf1.getNumberValue().longValue());
         assertEquals(8L, nf2.getNumberValue().longValue());
         assertEquals(15L, nf3.getNumberValue().longValue());
@@ -90,10 +90,10 @@ public class TestNumberField {
         final Properties props = new Properties();
         props.setProperty("hello", value);
 
-        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getPropertyName()));
-        final NumberField nf2 = new NumberField(f2, new PropertyProvider(props, f2.getPropertyName()));
-        final NumberField nf3 = new NumberField(f3, new PropertyProvider(props, f3.getPropertyName()));
-        final NumberField nf4 = new NumberField(f4, new PropertyProvider(props, f4.getPropertyName()));
+        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getId()));
+        final NumberField nf2 = new NumberField(f2, new PropertyProvider(props, f2.getId()));
+        final NumberField nf3 = new NumberField(f3, new PropertyProvider(props, f3.getId()));
+        final NumberField nf4 = new NumberField(f4, new PropertyProvider(props, f4.getId()));
 
         assertEquals(3L, nf1.getNumberValue().longValue());
         assertEquals(2L, nf2.getNumberValue().longValue());
@@ -116,7 +116,7 @@ public class TestNumberField {
         final Properties props = new Properties();
         props.setProperty("hello", value);
 
-        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getPropertyName()));
+        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getId()));
 
         assertEquals(1L, nf1.getNumberValue().longValue());
         assertEquals(value, nf1.getValue());
@@ -141,8 +141,8 @@ public class TestNumberField {
         final Properties props = new Properties();
         props.setProperty("hello", value);
 
-        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getPropertyName()));
-        final NumberField nf2 = new NumberField(f2, new PropertyProvider(props, f2.getPropertyName()));
+        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getId()));
+        final NumberField nf2 = new NumberField(f2, new PropertyProvider(props, f2.getId()));
 
         assertEquals(4L, nf1.getNumberValue().longValue());
         assertEquals(8L, nf2.getNumberValue().longValue());
@@ -176,8 +176,8 @@ public class TestNumberField {
         final Properties props = new Properties();
         props.setProperty("hello", value);
 
-        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getPropertyName()));
-        final NumberField nf2 = new NumberField(f2, new PropertyProvider(props, f2.getPropertyName()));
+        final NumberField nf1 = new NumberField(f1, new PropertyProvider(props, f1.getId()));
+        final NumberField nf2 = new NumberField(f2, new PropertyProvider(props, f2.getId()));
 
         assertEquals(4L, nf1.getNumberValue().longValue());
         assertEquals(4L, nf2.getNumberValue().longValue());

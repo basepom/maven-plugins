@@ -64,25 +64,25 @@ public final class ValueCache {
     ValueProvider findCurrentValueProvider(final Map<String, String> values, final FieldDefinition definition) {
         checkNotNull(values, "values is null");
 
-        final String name = definition.getPropertyName();
-        final boolean hasValue = values.containsKey(name);
+        final String propertyNameInFile = definition.getPropertyNameInFile();
+        final boolean hasValue = values.containsKey(propertyNameInFile);
 
         final boolean createProperty = checkIgnoreWarnFailCreateState(hasValue, definition.getOnMissingProperty(),
-            () -> format("property '%s' has value '%s'", name, values.get(name)),
-            () -> format("property '%s' has no value defined", name));
+            () -> format("property '%s' has value '%s'", propertyNameInFile, values.get(propertyNameInFile)),
+            () -> format("property '%s' has no value defined", propertyNameInFile));
 
 
         if (hasValue) {
-            return new MapValueProvider(values, name);
+            return new MapValueProvider(values, propertyNameInFile);
         } else if (createProperty) {
             Optional<String> initialValue = definition.getInitialValue();
-            initialValue.ifPresent(value -> values.put(name, value));
+            initialValue.ifPresent(value -> values.put(propertyNameInFile, value));
 
             Optional<String> initialProperty = definition.getInitialProperty();
-            initialProperty.ifPresent(propertyName -> values.put(name,
-                context.getProperties().getProperty(name, initialValue.orElse(null))));
+            initialProperty.ifPresent(propertyName -> values.put(propertyNameInFile,
+                context.getProperties().getProperty(propertyNameInFile, initialValue.orElse(null))));
 
-            return new MapValueProvider(values, name);
+            return new MapValueProvider(values, propertyNameInFile);
         } else {
             return ValueProvider.NULL_PROVIDER;
         }
@@ -91,7 +91,7 @@ public final class ValueCache {
     public ValueProvider getValueProvider(final FieldDefinition definition) throws IOException {
         final Optional<Map<String, String>> values = getValues(definition);
         if (values.isEmpty()) {
-            final String name = definition.getPropertyName();
+            final String name = definition.getPropertyNameInFile();
             final Optional<String> initialValue = definition.getInitialValue();
             initialValue.ifPresent(s -> ephemeralValues.put(name, s));
 

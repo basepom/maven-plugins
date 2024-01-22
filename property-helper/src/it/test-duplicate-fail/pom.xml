@@ -43,7 +43,7 @@
                             <goal>get</goal>
                         </goals>
                         <configuration>
-                            <onDuplicateProperty>fail</onDuplicateProperty>
+                            <onDuplicateField>fail</onDuplicateField>
                             <numbers>
                                 <number>
                                     <id>my.version</id>

@@ -47,7 +47,7 @@
                                 <string>
                                     <id>value</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -55,7 +55,7 @@
                                 <string>
                                     <id>lowercase</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -64,7 +64,7 @@
                                 <string>
                                     <id>uppercase</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -73,7 +73,7 @@
                                 <string>
                                     <id>remove_whitespace</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -82,7 +82,7 @@
                                 <string>
                                     <id>underscore_for_whitespace</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -91,7 +91,7 @@
                                 <string>
                                     <id>dash_for_whitespace</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -100,7 +100,7 @@
                                 <string>
                                     <id>use_underscore</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -109,7 +109,7 @@
                                 <string>
                                     <id>use_dash</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -118,7 +118,7 @@
                                 <string>
                                     <id>trim</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -127,7 +127,7 @@
                                 <string>
                                     <id>combined</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -136,7 +136,7 @@
                                 <string>
                                     <id>trim_first</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
@@ -145,7 +145,7 @@
                                 <string>
                                     <id>trim_last</id>
                                     <propertyFile>strings.properties</propertyFile>
-                                    <propertyName>value</propertyName>
+                                    <propertyNameInFile>value</propertyNameInFile>
                                     <export>true</export>
                                     <onMissingProperty>FAIL</onMissingProperty>
                                     <onMissingFile>FAIL</onMissingFile>
