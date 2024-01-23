@@ -16,10 +16,7 @@ package org.basepom.mojo.propertyhelper.groups;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.basepom.mojo.propertyhelper.Field;
-
-public class PropertyField
-    implements Field {
+public class PropertyField {
 
     private final String propertyName;
     private final String propertyValue;
@@ -29,18 +26,11 @@ public class PropertyField
         this.propertyValue = checkNotNull(propertyValue, "propertyValue is null");
     }
 
-    @Override
     public String getFieldName() {
         return propertyName;
     }
 
-    @Override
     public String getValue() {
         return propertyValue;
-    }
-
-    @Override
-    public boolean isExposeAsProperty() {
-        return true;
     }
 }

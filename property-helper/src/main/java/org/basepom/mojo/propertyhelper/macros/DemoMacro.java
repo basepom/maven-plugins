@@ -16,7 +16,7 @@ package org.basepom.mojo.propertyhelper.macros;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 
@@ -32,7 +32,7 @@ public class DemoMacro
     @Override
     public Optional<String> getValue(final MacroDefinition macroDefinition,
         final ValueProvider valueProvider,
-        final PropertyElementContext context) {
+        final FieldContext context) {
         checkNotNull(valueProvider, "valueProvider is null");
         checkNotNull(context, "context is null");
 

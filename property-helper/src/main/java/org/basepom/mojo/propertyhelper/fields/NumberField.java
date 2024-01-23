@@ -17,30 +17,39 @@ package org.basepom.mojo.propertyhelper.fields;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.basepom.mojo.propertyhelper.Field;
+import org.basepom.mojo.propertyhelper.InterpolatorFactory;
+import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-public class NumberField
-    implements Field {
+public final class NumberField extends Field<String, NumberDefinition> {
 
     private static final Pattern MATCH_GROUPS = Pattern.compile("\\d+|\\D+");
 
-    private final NumberDefinition numberDefinition;
     private final ValueProvider valueProvider;
 
     private final List<String> elements = Lists.newArrayList();
     private final List<Integer> numberElements = Lists.newArrayList();
 
-    public NumberField(final NumberDefinition numberDefinition, final ValueProvider valueProvider) {
-        this.numberDefinition = numberDefinition;
+    @VisibleForTesting
+    public static NumberField forTesting(NumberDefinition numberDefinition, ValueProvider valueProvider) {
+        return new NumberField(numberDefinition, valueProvider, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+    }
+
+    public NumberField(final NumberDefinition fieldDefinition, final ValueProvider valueProvider,
+        final InterpolatorFactory interpolatorFactory, final TransformerRegistry transformerRegistry) {
+        super(fieldDefinition, interpolatorFactory, transformerRegistry);
+
         this.valueProvider = valueProvider;
     }
 
@@ -48,19 +57,19 @@ public class NumberField
     public String getFieldName() {
         // This is not the property name (because many definitions can map onto one prop)
         // but the actual id.
-        return numberDefinition.getId();
+        return fieldDefinition.getId();
     }
 
     @Override
     public String getValue() {
         parse();
         final String value = Joiner.on("").join(elements);
-        return numberDefinition.formatResult(value);
+        return formatResult(value);
     }
 
     @Override
     public boolean isExposeAsProperty() {
-        return numberDefinition.isExport();
+        return fieldDefinition.isExport();
     }
 
     private void parse() {
@@ -79,8 +88,8 @@ public class NumberField
                 }
             }
 
-            checkState(numberElements.size() > numberDefinition.getFieldNumber(), "Only %s fields in %s, field %s requested.",
-                numberElements.size(), value, numberDefinition.getFieldNumber());
+            checkState(numberElements.size() > fieldDefinition.getFieldNumber(), "Only %s fields in %s, field %s requested.",
+                numberElements.size(), value, fieldDefinition.getFieldNumber());
         }
     }
 
@@ -96,25 +105,30 @@ public class NumberField
     public void increment() {
         final Long value = getNumberValue();
         if (value != null) {
-            setNumberValue(value + numberDefinition.getIncrement());
+            setNumberValue(value + fieldDefinition.getIncrement());
         }
     }
 
     public Long getNumberValue() {
         parse();
-        return numberElements.isEmpty() ? null : Long.valueOf(elements.get(numberElements.get(numberDefinition.getFieldNumber())));
+        return numberElements.isEmpty() ? null : Long.valueOf(elements.get(numberElements.get(fieldDefinition.getFieldNumber())));
     }
 
     public void setNumberValue(final Long value) {
         parse();
         if (!numberElements.isEmpty()) {
-            elements.set(numberElements.get(numberDefinition.getFieldNumber()), value.toString());
+            elements.set(numberElements.get(fieldDefinition.getFieldNumber()), value.toString());
             valueProvider.setValue(Joiner.on("").join(elements));
         }
     }
 
     @Override
     public String toString() {
-        return getValue();
+        return new StringJoiner(", ", NumberField.class.getSimpleName() + "[", "]")
+            .add("numberDefinition=" + fieldDefinition)
+            .add("valueProvider=" + valueProvider)
+            .add("elements=" + elements)
+            .add("numberElements=" + numberElements)
+            .toString();
     }
 }

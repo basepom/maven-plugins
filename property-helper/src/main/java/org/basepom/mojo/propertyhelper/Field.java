@@ -15,7 +15,11 @@
 package org.basepom.mojo.propertyhelper;
 
 
-import java.io.IOException;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.basepom.mojo.propertyhelper.definitions.FieldDefinition;
+
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -23,20 +27,40 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * Describe all the fields.
  */
-public interface Field {
+public abstract class Field<T, U extends FieldDefinition<T>> {
+
+    protected final U fieldDefinition;
+    private final InterpolatorFactory interpolatorFactory;
+    private final TransformerRegistry transformerRegistry;
+
+
+    protected Field(U fieldDefinition, InterpolatorFactory interpolatorFactory, TransformerRegistry transformerRegistry) {
+        this.fieldDefinition = fieldDefinition;
+        this.interpolatorFactory = checkNotNull(interpolatorFactory, "interpolatorFactory is null");
+        this.transformerRegistry = checkNotNull(transformerRegistry, "transformerRegistry is null");
+    }
 
     /**
      * The name of the field.
      */
-    String getFieldName();
+    public abstract String getFieldName();
 
     /**
      * The value of the field. {@link Optional#empty()} can be returned if the value is not defined.
      */
-    String getValue() throws MojoExecutionException, IOException;
+    public abstract String getValue() throws MojoExecutionException;
+
+    protected String formatResult(T value) {
+
+        return Optional.ofNullable(value)
+            .map(fieldDefinition.formatResult())
+            .map(interpolatorFactory.interpolate(getFieldName(), IgnoreWarnFail.FAIL, Map.of()))
+            .map(transformerRegistry.applyTransformers(fieldDefinition.getTransformers()))
+            .orElse("");
+    }
 
     /**
      * True if the value of this element should be exposed as a maven property.
      */
-    boolean isExposeAsProperty();
+    public abstract boolean isExposeAsProperty();
 }

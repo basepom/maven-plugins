@@ -21,6 +21,7 @@ import static org.basepom.mojo.propertyhelper.IgnoreWarnFail.checkIgnoreWarnFail
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,8 +49,22 @@ public final class InterpolatorFactory {
         this.model = checkNotNull(model, "model is null");
     }
 
+    public static InterpolatorFactory forTesting() {
+        return new InterpolatorFactory(new Model());
+    }
+
+    public Function<String, String> interpolate(String name, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties) {
+        return value -> {
+            try {
+                return interpolate(name, value, onMissingProperty, properties);
+            } catch (Exception e) {
+                throw Sneaky.throwAnyway(e);
+            }
+        };
+    }
+
     public String interpolate(final String name, final String value, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties)
-            throws IOException, InterpolationException {
+        throws IOException, InterpolationException {
         checkNotNull(name, "name is null");
         checkNotNull(value, "value is null");
         checkNotNull(properties, "properties is null");
@@ -59,12 +74,12 @@ public final class InterpolatorFactory {
         interpolator.addValueSource(new PropertiesBasedValueSource(System.getProperties()));
 
         interpolator.addValueSource(new PrefixedValueSourceWrapper(new ObjectBasedValueSource(model),
-                SYNONYM_PREFIXES,
-                true));
+            SYNONYM_PREFIXES,
+            true));
 
         interpolator.addValueSource(new PrefixedValueSourceWrapper(new PropertiesBasedValueSource(model.getProperties()),
-                SYNONYM_PREFIXES,
-                true));
+            SYNONYM_PREFIXES,
+            true));
 
         interpolator.addValueSource(new MapBasedValueSource(properties));
 

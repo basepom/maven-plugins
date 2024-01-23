@@ -15,83 +15,79 @@
 package org.basepom.mojo.propertyhelper.fields;
 
 import org.basepom.mojo.propertyhelper.Field;
+import org.basepom.mojo.propertyhelper.InterpolatorFactory;
 import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.StringJoiner;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import com.google.common.annotations.VisibleForTesting;
 
-public class DateField implements Field {
 
-    private final DateDefinition dateDefinition;
+public final class DateField extends Field<ZonedDateTime, DateDefinition> {
+
     private final ValueProvider valueProvider;
+    private final ZoneId timezone;
 
-    public DateField(final DateDefinition dateDefinition, final ValueProvider valueProvider) {
-        this.dateDefinition = dateDefinition;
+    @VisibleForTesting
+    public static DateField forTesting(DateDefinition dateDefinition, ValueProvider valueProvider) {
+        return new DateField(dateDefinition, valueProvider, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+    }
+
+    public DateField(final DateDefinition dateDefinition, final ValueProvider valueProvider,
+        final InterpolatorFactory interpolatorFactory,  final TransformerRegistry transformerRegistry) {
+        super(dateDefinition, interpolatorFactory, transformerRegistry);
+
         this.valueProvider = valueProvider;
+        this.timezone = dateDefinition.getTimezone();
     }
 
     @Override
     public String getFieldName() {
-        return dateDefinition.getId();
+        return fieldDefinition.getId();
     }
 
     @Override
     public String getValue() {
+        ZonedDateTime date = valueProvider.getValue()
+            .map(value -> fieldDefinition.getParser().apply(value))
+            .orElseGet(() -> fieldDefinition.getValue()
+                .map(fieldDefinition.getLongParser())
+                .orElseGet(this::now));
 
-        final DateTimeZone timeZone = dateDefinition.getTimezone()
-            .map(DateTimeZone::forID)
-            .orElse(DateTimeZone.getDefault());
+        String result = formatResult(date);
 
-        final Optional<DateTimeFormatter> formatter = dateDefinition.getFormat()
-            .map(DateTimeFormat::forPattern);
-
-        DateTime date = valueProvider.getValue()
-            .map(value -> getDateTime(value, formatter, timeZone))
-            .orElseGet(() -> dateDefinition.getValue()
-                .map(definition -> new DateTime(definition, timeZone))
-                .orElse(new DateTime(timeZone)));
-
-        String result = formatter.map(f -> f.print(date))
-            .orElse(date.toString());
-
-        if (formatter.isPresent()) {
+        if (fieldDefinition.getFormatter().isPresent()) {
+            // format was set, store time in the chosen format
             valueProvider.setValue(result);
         } else {
-            valueProvider.setValue(Long.toString(date.getMillis()));
+            // not format was set. Store time as millis.
+            valueProvider.setValue(Long.toString(date.toInstant().toEpochMilli()));
         }
 
-        return Optional.ofNullable(TransformerRegistry.INSTANCE.applyTransformers(dateDefinition.getTransformers(), result))
+        return Optional.ofNullable(TransformerRegistry.INSTANCE.applyTransformers(fieldDefinition.getTransformers(), result))
             .orElse("");
     }
 
     @Override
     public boolean isExposeAsProperty() {
-        return dateDefinition.isExport();
+        return fieldDefinition.isExport();
     }
 
-    private DateTime getDateTime(String value, final Optional<DateTimeFormatter> formatter, final DateTimeZone timeZone) {
-        if (value == null) {
-            return null;
-        }
-
-        return formatter.map(f -> f.parseDateTime(value).withZone(timeZone))
-            .orElseGet(() -> {
-                try {
-                    return new DateTime(Long.parseLong(value), timeZone);
-                } catch (NumberFormatException nfe) {
-                    return new DateTime(value, timeZone);
-                }
-            });
+    private ZonedDateTime now() {
+        // code only saves in millisecond precision.
+        return ZonedDateTime.now(timezone).truncatedTo(ChronoUnit.MILLIS);
     }
 
     @Override
     public String toString() {
-        return getValue();
+        return new StringJoiner(", ", DateField.class.getSimpleName() + "[", "]")
+            .add("valueProvider=" + valueProvider)
+            .toString();
     }
 }

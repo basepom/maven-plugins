@@ -16,9 +16,8 @@ package org.basepom.mojo.propertyhelper.definitions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.basepom.mojo.propertyhelper.Field;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.fields.StringField;
@@ -34,7 +33,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Defines a string field. This is a config element that is populated by maven.
  */
-public class StringDefinition extends FieldDefinition {
+public class StringDefinition extends FieldDefinition<String> {
 
     private List<String> values = ImmutableList.of();
 
@@ -90,14 +89,14 @@ public class StringDefinition extends FieldDefinition {
     }
 
     @Override
-    public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+    public StringField createField(FieldContext context, ValueCache valueCache) throws IOException {
         checkNotNull(context, "context is null");
         checkNotNull(valueCache, "valueCache is null");
 
         check();
 
         final ValueProvider stringValue = valueCache.getValueProvider(this);
-        return new StringField(this, stringValue);
+        return StringField.forTesting(this, stringValue);
     }
 
     @Override

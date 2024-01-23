@@ -25,7 +25,11 @@
  * limitations under the License.
  */
 
-import org.joda.time.format.*
+
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 def properties = new Properties()
 def file = new File(basedir, "target/classes/date.properties")
@@ -40,14 +44,28 @@ def regularUtc = properties.getProperty("regular-utc", "")
 def epoch = properties.getProperty("epoch", "")
 def epochUtc = properties.getProperty("epoch-utc", "")
 
-def format = DateTimeFormat.forPattern("yyyyMMdd_HHmmss")
+// pattern must match the pattern in the pom
+def format = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").withZone(ZoneId.systemDefault())
+def formatUtc = format.withZone(ZoneOffset.UTC)
 
-def regularDate = format.parseDateTime(regular);
+def regularDate = ZonedDateTime.parse(regular, format)
 assert regularDate != null
 
-def epochDate = format.parseDateTime(epoch);
+def regularUtcDate = ZonedDateTime.parse(regularUtc, formatUtc)
+assert regularUtcDate != null
+
+def epochDate = ZonedDateTime.parse(epoch, format)
 assert epochDate != null
 
-def epochUtcDate = format.parseDateTime(epochUtc);
+def epochUtcDate = ZonedDateTime.parse(epochUtc, formatUtc)
 assert epochUtcDate != null
 
+assert epochUtcDate == ZonedDateTime.parse("1970-01-01T00:00:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+assert epochDate == ZonedDateTime.parse("1970-01-01T00:00:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault()))
+
+// equal in different time zones
+assert regularDate != regularUtcDate
+assert regularDate.toString() != regularUtcDate.toString()
+
+assert epochDate != regularDate
+assert epochUtcDate != regularUtcDate

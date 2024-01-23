@@ -17,7 +17,6 @@ package org.basepom.mojo.propertyhelper.groups;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.basepom.mojo.propertyhelper.InterpolatorFactory;
-import org.basepom.mojo.propertyhelper.groups.PropertyGroup;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,14 +29,14 @@ import org.junit.jupiter.api.Test;
 
 public class TestPropertyGroup {
 
-    private final InterpolatorFactory interpolatorFactory = new InterpolatorFactory(null);
+    private final InterpolatorFactory interpolatorFactory = InterpolatorFactory.forTesting();
 
     @Test
     public void testConstant() throws Exception {
         final Map<String, String> propertyValues = ImmutableMap.of("hello", "world");
 
         final PropertyGroup propertyGroup = new PropertyGroup("hello-group")
-                .setProperties(propertyValues);
+            .setProperties(propertyValues);
 
         final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
         Assertions.assertEquals(1, propertyNames.size());
@@ -52,7 +51,7 @@ public class TestPropertyGroup {
         final Map<String, String> propertyValues = ImmutableMap.of("hello", "#{world}");
 
         final PropertyGroup propertyGroup = new PropertyGroup("hello")
-                .setProperties(propertyValues);
+            .setProperties(propertyValues);
 
         final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
         Assertions.assertEquals(1, propertyNames.size());
@@ -68,7 +67,7 @@ public class TestPropertyGroup {
             final Map<String, String> propertyValues = ImmutableMap.of("hello", "#{world}");
 
             final PropertyGroup propertyGroup = new PropertyGroup("hello")
-                    .setProperties(propertyValues);
+                .setProperties(propertyValues);
 
             final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
             Assertions.assertEquals(1, propertyNames.size());
@@ -84,8 +83,8 @@ public class TestPropertyGroup {
         final Map<String, String> propertyValues = ImmutableMap.of("hello", "nice-#{world}-hat");
 
         final PropertyGroup propertyGroup = new PropertyGroup("hello")
-                .setProperties(propertyValues)
-                .setOnMissingProperty("ignore");
+            .setProperties(propertyValues)
+            .setOnMissingProperty("ignore");
 
         final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
         Assertions.assertEquals(1, propertyNames.size());
@@ -100,8 +99,8 @@ public class TestPropertyGroup {
         final Map<String, String> propertyValues = ImmutableMap.of("hello", "nice-#{first}-#{world}-hat");
 
         final PropertyGroup propertyGroup = new PropertyGroup("hello")
-                .setProperties(propertyValues)
-                .setOnMissingProperty("ignore");
+            .setProperties(propertyValues)
+            .setOnMissingProperty("ignore");
 
         final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
         Assertions.assertEquals(1, propertyNames.size());
@@ -116,15 +115,15 @@ public class TestPropertyGroup {
         final Map<String, String> propertyValues = ImmutableMap.of("hello", "nice-#{whatWorld}-#{world}-hat");
 
         final PropertyGroup propertyGroup = new PropertyGroup("hello")
-                .setProperties(propertyValues)
-                .setOnMissingProperty("ignore");
+            .setProperties(propertyValues)
+            .setOnMissingProperty("ignore");
 
         final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
         Assertions.assertEquals(1, propertyNames.size());
         Assertions.assertEquals("hello", propertyNames.get(0));
 
         final String propertyValue = propertyGroup.getPropertyValue(interpolatorFactory, "hello",
-                ImmutableMap.of("whatWorld", "#{first}", "first", "decadent", "world", "rome"));
+            ImmutableMap.of("whatWorld", "#{first}", "first", "decadent", "world", "rome"));
         Assertions.assertEquals("nice-decadent-rome-hat", propertyValue);
     }
 
@@ -134,8 +133,8 @@ public class TestPropertyGroup {
         final Map<String, String> propertyValues = ImmutableMap.of("hello", "nice-#{foo.bar.world}-hat");
 
         final PropertyGroup propertyGroup = new PropertyGroup("hello")
-                .setProperties(propertyValues)
-                .setOnMissingProperty("ignore");
+            .setProperties(propertyValues)
+            .setOnMissingProperty("ignore");
 
         final List<String> propertyNames = Lists.newArrayList(propertyGroup.getPropertyNames());
         Assertions.assertEquals(1, propertyNames.size());

@@ -24,8 +24,8 @@ import java.util.Properties;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
-public interface PropertyElementContext {
-    PropertyElementContext EMPTY_CONTEXT = new PropertyElementContext() {};
+public interface FieldContext {
+    FieldContext EMPTY_CONTEXT = new FieldContext() {};
 
     default Map<String, MacroType> getMacros() {
         return Collections.emptyMap();

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper;
+package org.basepom.mojo.propertyhelper.fields;
 
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setBlankIsValid;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingProperty;
@@ -20,10 +20,11 @@ import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOn
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setValues;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.stringDefinition;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
+import org.basepom.mojo.propertyhelper.ValueCache;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+import org.basepom.mojo.propertyhelper.ValueProvider.PropertyBackedValueAdapter;
 import org.basepom.mojo.propertyhelper.definitions.DefinitionHelper;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
 import org.basepom.mojo.propertyhelper.fields.StringField;
@@ -42,7 +43,7 @@ public class TestStringField {
 
         f1.check();
 
-        final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+        final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
         assertEquals("foo", sf1.getValue());
     }
 
@@ -53,7 +54,7 @@ public class TestStringField {
 
         f1.check();
 
-        final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+        final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
         assertEquals("foo", sf1.getValue());
     }
 
@@ -65,7 +66,7 @@ public class TestStringField {
 
         f1.check();
 
-        final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+        final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
         assertEquals("baz", sf1.getValue());
     }
 
@@ -77,7 +78,7 @@ public class TestStringField {
 
         f1.check();
 
-        final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+        final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
         assertEquals("      ", sf1.getValue());
     }
 
@@ -89,7 +90,7 @@ public class TestStringField {
 
         f1.check();
 
-        final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+        final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
         assertEquals("", sf1.getValue());
     }
 
@@ -101,7 +102,7 @@ public class TestStringField {
 
         f1.check();
 
-        final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+        final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
         assertEquals("", sf1.getValue());
     }
 
@@ -113,7 +114,7 @@ public class TestStringField {
 
         final Properties props = new Properties();
         props.setProperty("hello", "foo");
-        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getId()));
+        final StringField sf1 = StringField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
         assertEquals("foo", sf1.getValue());
     }
 
@@ -126,7 +127,7 @@ public class TestStringField {
 
         final Properties props = new Properties();
         props.setProperty("hello", "foo");
-        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getId()));
+        final StringField sf1 = StringField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
         assertEquals("foo", sf1.getValue());
     }
 
@@ -139,7 +140,7 @@ public class TestStringField {
 
         final Properties props = new Properties();
         props.setProperty("hello2", "foo");
-        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getId()));
+        final StringField sf1 = StringField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
         assertEquals("baz", sf1.getValue());
     }
 
@@ -153,7 +154,7 @@ public class TestStringField {
 
         final Properties props = new Properties();
         props.setProperty("hello", "");
-        final StringField sf1 = new StringField(f1, new PropertyProvider(props, f1.getId()));
+        final StringField sf1 = StringField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
         assertEquals("baz", sf1.getValue());
     }
 
@@ -166,7 +167,7 @@ public class TestStringField {
             setBlankIsValid(f1, true);
             f1.check();
 
-            final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+            final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
             assertEquals("baz", sf1.getValue());
         });
     }
@@ -179,13 +180,13 @@ public class TestStringField {
 
         f1.check();
 
-        final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+        final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
         assertEquals("", sf1.getValue());
     }
 
     @Test
     public void testMissingProperty() {
-        ValueCache valueCache = ValueCache.forTesting();
+        ValueCache valueCache = new ValueCache();
 
         assertThrows(IllegalStateException.class, () -> {
             final StringDefinition f1 = stringDefinition("hello");
@@ -197,14 +198,14 @@ public class TestStringField {
 
             final ValueProvider provider = valueCache.findCurrentValueProvider(ImmutableMap.<String, String>of(), f1);
 
-            final StringField sf1 = new StringField(f1, provider);
+            final StringField sf1 = StringField.forTesting(f1, provider);
             assertEquals("", sf1.getValue());
         });
     }
 
     @Test
     public void testBlankPropertyValue() {
-        ValueCache valueCache = ValueCache.forTesting();
+        ValueCache valueCache = new ValueCache();
 
         final StringDefinition f1 = DefinitionHelper.stringDefinition("hello");
         setBlankIsValid(f1, true);
@@ -214,7 +215,7 @@ public class TestStringField {
         final ImmutableMap<String, String> props = ImmutableMap.of("hello", "");
         final ValueProvider provider = valueCache.findCurrentValueProvider(props, f1);
 
-        final StringField sf1 = new StringField(f1, provider);
+        final StringField sf1 = StringField.forTesting(f1, provider);
         assertEquals("", sf1.getValue());
     }
 
@@ -226,7 +227,7 @@ public class TestStringField {
 
         f1.check();
 
-        final StringField sf1 = new StringField(f1, ValueProvider.NULL_PROVIDER);
+        final StringField sf1 = StringField.forTesting(f1, ValueProvider.NULL_PROVIDER);
         assertEquals("", sf1.getValue());
     }
 }

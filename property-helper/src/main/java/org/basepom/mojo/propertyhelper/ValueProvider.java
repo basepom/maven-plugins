@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.StringJoiner;
 
 public interface ValueProvider {
 
@@ -29,12 +30,9 @@ public interface ValueProvider {
     default void setValue(String value) {
     }
 
-    class StaticValueProvider implements ValueProvider {
+    class SingleValueProvider implements ValueProvider {
 
         private String value;
-
-        StaticValueProvider() {
-        }
 
         @Override
         public Optional<String> getValue() {
@@ -45,14 +43,21 @@ public interface ValueProvider {
         public void setValue(final String value) {
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", SingleValueProvider.class.getSimpleName() + "[", "]")
+                .add("value='" + value + "'")
+                .toString();
+        }
     }
 
-    class MapValueProvider implements ValueProvider {
+    class MapBackedValueAdapter implements ValueProvider {
 
         private final Map<String, String> values;
         private final String valueName;
 
-        MapValueProvider(final Map<String, String> values, final String valueName) {
+        MapBackedValueAdapter(final Map<String, String> values, final String valueName) {
             this.valueName = checkNotNull(valueName, "valueName is null");
             this.values = values;
         }
@@ -67,14 +72,22 @@ public interface ValueProvider {
             checkNotNull(value, "value is null");
             values.put(valueName, value);
         }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", MapBackedValueAdapter.class.getSimpleName() + "[", "]")
+                .add("values=" + values)
+                .add("valueName='" + valueName + "'")
+                .toString();
+        }
     }
 
-    class PropertyProvider implements ValueProvider {
+    class PropertyBackedValueAdapter implements ValueProvider {
 
         private final Properties props;
         private final String propertyName;
 
-        PropertyProvider(final Properties props, final String propertyName) {
+        public PropertyBackedValueAdapter(final Properties props, final String propertyName) {
             this.props = props;
             this.propertyName = checkNotNull(propertyName, "propertyName is null");
         }
@@ -88,6 +101,14 @@ public interface ValueProvider {
         public void setValue(final String value) {
             checkNotNull(value, "value is null");
             props.setProperty(propertyName, value);
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", PropertyBackedValueAdapter.class.getSimpleName() + "[", "]")
+                .add("props=" + props)
+                .add("propertyName='" + propertyName + "'")
+                .toString();
         }
     }
 }

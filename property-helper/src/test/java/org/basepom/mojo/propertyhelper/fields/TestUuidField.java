@@ -12,15 +12,17 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper;
+package org.basepom.mojo.propertyhelper.fields;
 
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingProperty;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setValue;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.uuidDefinition;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
-import org.basepom.mojo.propertyhelper.ValueProvider.StaticValueProvider;
+import org.basepom.mojo.propertyhelper.ValueCache;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+import org.basepom.mojo.propertyhelper.ValueProvider.PropertyBackedValueAdapter;
+import org.basepom.mojo.propertyhelper.ValueProvider.SingleValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
 import org.basepom.mojo.propertyhelper.fields.UuidField;
 
@@ -41,7 +43,7 @@ public class TestUuidField {
 
         uuidFieldDefinition.check();
 
-        final UuidField uf1 = new UuidField(uuidFieldDefinition, ValueProvider.NULL_PROVIDER);
+        final UuidField uf1 = UuidField.forTesting(uuidFieldDefinition, ValueProvider.NULL_PROVIDER);
         Assertions.assertEquals(uuid.toString(), uf1.getValue());
     }
 
@@ -54,7 +56,7 @@ public class TestUuidField {
 
         final Properties props = new Properties();
         props.setProperty("hello", uuid.toString());
-        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getId()));
+        final UuidField uf1 = UuidField.forTesting(uuidDefinition, new PropertyBackedValueAdapter(props, uuidDefinition.getId()));
         Assertions.assertEquals(uuid.toString(), uf1.getValue());
     }
 
@@ -70,7 +72,7 @@ public class TestUuidField {
 
         final Properties props = new Properties();
         props.setProperty("hello", uuid2.toString());
-        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getId()));
+        final UuidField uf1 = UuidField.forTesting(uuidDefinition, new PropertyBackedValueAdapter(props, uuidDefinition.getId()));
         Assertions.assertEquals(uuid2.toString(), uf1.getValue());
     }
 
@@ -86,7 +88,7 @@ public class TestUuidField {
 
         final Properties props = new Properties();
         props.setProperty("hello2", uuid2.toString());
-        final UuidField uf1 = new UuidField(uuidDefinition, new PropertyProvider(props, uuidDefinition.getId()));
+        final UuidField uf1 = UuidField.forTesting(uuidDefinition, new PropertyBackedValueAdapter(props, uuidDefinition.getId()));
         Assertions.assertEquals(uuid1.toString(), uf1.getValue());
     }
 
@@ -98,15 +100,15 @@ public class TestUuidField {
 
         uuidDefinition.check();
 
-        final ValueProvider provider = new StaticValueProvider();
+        final ValueProvider provider = new SingleValueProvider();
         provider.setValue(uuid.toString());
-        final UuidField uf1 = new UuidField(uuidDefinition, provider);
+        final UuidField uf1 = UuidField.forTesting(uuidDefinition, provider);
         Assertions.assertEquals(uuid.toString(), uf1.getValue());
     }
 
     @Test
     public void testMissingProperty() {
-        ValueCache valueCache = ValueCache.forTesting();
+        ValueCache valueCache = new ValueCache();
 
         assertThrows(IllegalStateException.class, () -> {
             final UuidDefinition uuidDefinition = uuidDefinition("hello");
@@ -116,7 +118,7 @@ public class TestUuidField {
 
             final ValueProvider provider = valueCache.findCurrentValueProvider(ImmutableMap.of(), uuidDefinition);
 
-            final UuidField uf1 = new UuidField(uuidDefinition, provider);
+            final UuidField uf1 = UuidField.forTesting(uuidDefinition, provider);
             Assertions.assertEquals("", uf1.getValue());
         });
     }

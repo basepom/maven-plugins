@@ -27,7 +27,7 @@
 
 import java.util.Locale
 
-def prop_size = 5
+def prop_size = 6
 
 def loadProperties(String fileName) {
   def properties = new Properties()
@@ -43,21 +43,25 @@ def properties = loadProperties("target/classes/result.properties")
 assert properties.size() == prop_size
 
 def orig = properties.getProperty("os.name", "xxxx")
-assert !orig.equals("xxxx")
+assert orig != "xxxx"
 
 def transform = properties.getProperty("os_name", "xxxx")
-assert !transform.equals("xxxx")
+assert transform != "xxxx"
+
+def really_late_os_name = properties.getProperty("really_late_os_name", "xxxx")
+assert really_late_os_name != "xxxx"
 
 def group_transform = properties.getProperty("group.os_name", "xxxx")
-assert !group_transform.equals("xxxx")
+assert group_transform != "xxxx"
 
 def late_group_transform = properties.getProperty("late_group.os_name", "xxxx")
-assert !late_group_transform.equals("xxxx")
+assert late_group_transform != "xxxx"
 
 def really_late_group_transform = properties.getProperty("really_late_group.os_name", "xxxx")
-assert !really_late_group_transform.equals("xxxx")
+assert really_late_group_transform != "xxxx"
 
-assert transform.equals(orig.replace(" ", "").toLowerCase(Locale.ENGLISH))
-assert transform.equals(group_transform)
-assert transform.equals(late_group_transform)
-assert transform.equals(really_late_group_transform)
+assert transform == orig.replace(" ", "").toLowerCase(Locale.getDefault())
+assert really_late_os_name == transform
+assert transform == group_transform
+assert transform == late_group_transform
+assert transform == really_late_group_transform

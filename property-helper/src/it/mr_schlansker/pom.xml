@@ -79,6 +79,7 @@
                                 </string>
                                 <string>
                                     <id>really_late_os_name</id>
+                                    <export>true</export>
                                     <values>
                                         <value>#{os.name}</value>
                                     </values>

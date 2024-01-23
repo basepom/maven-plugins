@@ -19,7 +19,6 @@ import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.lang.String.format;
 
-import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.InterpolatorFactory;
 import org.basepom.mojo.propertyhelper.TransformerRegistry;
@@ -148,10 +147,11 @@ public class PropertyGroup {
                 propertyDefinition.getValue(), onMissingProperty, propElements));
     }
 
-    public List<Field> createFields(final Map<String, String> values, InterpolatorFactory interpolatorFactory) throws MojoExecutionException, IOException {
+    public List<PropertyField> createFields(final Map<String, String> values, InterpolatorFactory interpolatorFactory)
+        throws MojoExecutionException, IOException {
         checkNotNull(values, "values is null");
 
-        final ImmutableList.Builder<Field> result = ImmutableList.builder();
+        final ImmutableList.Builder<PropertyField> result = ImmutableList.builder();
         final Map<String, String> properties = getProperties();
 
         for (String name : properties.keySet()) {

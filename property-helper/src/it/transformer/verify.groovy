@@ -25,8 +25,6 @@
  * limitations under the License.
  */
 
-import org.joda.time.DateTime
-import java.util.Locale
 
 def prop_size = 12
 
@@ -46,53 +44,53 @@ assert properties.size() == prop_size
 def stringProperties = loadProperties("strings.properties")
 assert stringProperties.size() == 1
 def val = stringProperties.getProperty("value", "xxxx")
-assert !val.equals("xxxx")
+assert val != "xxxx"
 
 def value = properties.getProperty("value", "xxxx")
-assert !value.equals("xxxx")
-assert value.trim().equals(val.trim())
+assert value != "xxxx"
+assert value.trim() == val.trim()
 
 def lowercase = properties.getProperty("lowercase", "xxxx")
-assert !lowercase.equals("xxxx")
-assert lowercase.trim().equals(val.toLowerCase(Locale.ENGLISH).trim())
+assert lowercase != "xxxx"
+assert lowercase.trim() == val.toLowerCase(Locale.ENGLISH).trim()
 
 def uppercase = properties.getProperty("uppercase", "xxxx")
-assert !uppercase.equals("xxxx")
-assert uppercase.trim().equals(val.toUpperCase(Locale.ENGLISH).trim())
+assert uppercase != "xxxx"
+assert uppercase.trim() == val.toUpperCase(Locale.ENGLISH).trim()
 
 def remove_whitespace = properties.getProperty("remove_whitespace", "xxxx")
-assert !remove_whitespace.equals("xxxx")
-assert remove_whitespace.equals("Hello,World:This-is_A-Test!")
+assert remove_whitespace != "xxxx"
+assert remove_whitespace == "Hello,World:This-is_A-Test!"
 
 def underscore_for_whitespace = properties.getProperty("underscore_for_whitespace", "xxxx")
-assert !underscore_for_whitespace.equals("xxxx")
-assert underscore_for_whitespace.equals("_Hello,_World:_This-is_A-Test!_")
+assert underscore_for_whitespace != "xxxx"
+assert underscore_for_whitespace == "_Hello,_World:_This-is_A-Test!_"
 
 def dash_for_whitespace = properties.getProperty("dash_for_whitespace", "xxxx")
-assert !dash_for_whitespace.equals("xxxx")
-assert dash_for_whitespace.equals("-Hello,-World:-This-is_A-Test!-")
+assert dash_for_whitespace != "xxxx"
+assert dash_for_whitespace == "-Hello,-World:-This-is_A-Test!-"
 
 def use_underscore = properties.getProperty("use_underscore", "xxxx")
-assert !use_underscore.equals("xxxx")
-assert use_underscore.equals("_Hello,_World:_This_is_A_Test!_")
+assert use_underscore != "xxxx"
+assert use_underscore == "_Hello,_World:_This_is_A_Test!_"
 
 def use_dash = properties.getProperty("use_dash", "xxxx")
-assert !use_dash.equals("xxxx")
-assert use_dash.equals("-Hello,-World:-This-is-A-Test!-")
+assert use_dash != "xxxx"
+assert use_dash == "-Hello,-World:-This-is-A-Test!-"
 
 def trim = properties.getProperty("trim", "xxxx")
-assert !trim.equals("xxxx")
-assert trim.equals(val.trim())
+assert trim != "xxxx"
+assert trim == val.trim()
 
 def combined = properties.getProperty("combined", "xxxx")
-assert !combined.equals("xxxx")
-assert combined.trim().equals("-HELLO,-WORLD:-THIS-IS-A-TEST!-")
+assert combined != "xxxx"
+assert combined.trim() == "-HELLO,-WORLD:-THIS-IS-A-TEST!-"
 
 def trim_first = properties.getProperty("trim_first", "xxxx")
-assert !trim_first.equals("xxxx")
-assert trim_first.equals("Hello,_World:_This_is_A_Test!")
+assert trim_first != "xxxx"
+assert trim_first == "Hello,_World:_This_is_A_Test!"
 
 def trim_last = properties.getProperty("trim_last", "xxxx")
-assert !trim_last.equals("xxxx")
-assert trim_last.equals("_Hello,_World:_This_is_A_Test!_")
+assert trim_last != "xxxx"
+assert trim_last == "_Hello,_World:_This_is_A_Test!_"
 

@@ -17,7 +17,7 @@ package org.basepom.mojo.propertyhelper.definitions;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 
 import java.util.UUID;
@@ -62,13 +62,13 @@ public class TestElementDefinition {
         Assertions.assertFalse(fieldDefinition.isSkip());
     }
 
-    public static class BasicDefinition extends FieldDefinition {
+    public static class BasicDefinition extends FieldDefinition<String> {
 
         public BasicDefinition() {
         }
 
         @Override
-        public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) {
+        public Field<String, BasicDefinition> createField(FieldContext context, ValueCache valueCache) {
             throw new UnsupportedOperationException();
         }
     }

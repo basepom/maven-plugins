@@ -18,23 +18,32 @@ import static java.lang.String.format;
 import static org.basepom.mojo.propertyhelper.IgnoreWarnFail.checkIgnoreWarnFailState;
 
 import org.basepom.mojo.propertyhelper.Field;
+import org.basepom.mojo.propertyhelper.InterpolatorFactory;
+import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-public class StringField
-    implements Field {
+public final class StringField extends Field<String, StringDefinition> {
 
-    private final StringDefinition stringDefinition;
     private final ValueProvider valueProvider;
 
-    public StringField(final StringDefinition stringDefinition, final ValueProvider valueProvider) {
-        this.stringDefinition = stringDefinition;
+    @VisibleForTesting
+    public static StringField forTesting(StringDefinition stringDefinition, ValueProvider valueProvider) {
+        return new StringField(stringDefinition, valueProvider, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+    }
+
+    public StringField(final StringDefinition stringDefinition, final ValueProvider valueProvider,
+        final InterpolatorFactory interpolatorFactory, final TransformerRegistry transformerRegistry) {
+        super(stringDefinition, interpolatorFactory, transformerRegistry);
+
         this.valueProvider = valueProvider;
     }
 
@@ -42,7 +51,7 @@ public class StringField
     public String getFieldName() {
         // This is not the property name (because many definitions can map onto one prop)
         // but the actual id.
-        return stringDefinition.getId();
+        return fieldDefinition.getId();
     }
 
     @Override
@@ -50,7 +59,7 @@ public class StringField
         final List<String> values = Lists.newArrayList();
 
         final Optional<String> propValue = valueProvider.getValue();
-        final List<String> definedValues = stringDefinition.getValues();
+        final List<String> definedValues = fieldDefinition.getValues();
 
         // Only add the value from the provider if it is not null.
         propValue.ifPresent(values::add);
@@ -59,12 +68,12 @@ public class StringField
 
         for (String value : values) {
             var stringResult = Strings.nullToEmpty(value);
-            if (stringDefinition.isBlankIsValid() || !stringResult.isBlank()) {
-                return stringDefinition.formatResult(value);
+            if (fieldDefinition.isBlankIsValid() || !stringResult.isBlank()) {
+                return formatResult(value);
             }
         }
 
-        checkIgnoreWarnFailState(false, stringDefinition.getOnMissingValue(),
+        checkIgnoreWarnFailState(false, fieldDefinition.getOnMissingValue(),
             () -> "",
             () -> format("No value for string field %s found, using an empty value!", getFieldName()));
 
@@ -73,11 +82,14 @@ public class StringField
 
     @Override
     public boolean isExposeAsProperty() {
-        return stringDefinition.isExport();
+        return fieldDefinition.isExport();
     }
 
     @Override
     public String toString() {
-        return getValue();
+        return new StringJoiner(", ", StringField.class.getSimpleName() + "[", "]")
+            .add("stringDefinition=" + fieldDefinition)
+            .add("valueProvider=" + valueProvider)
+            .toString();
     }
 }

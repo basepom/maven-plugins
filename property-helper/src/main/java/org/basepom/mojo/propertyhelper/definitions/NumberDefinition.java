@@ -17,8 +17,7 @@ package org.basepom.mojo.propertyhelper.definitions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.fields.NumberField;
@@ -29,7 +28,7 @@ import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 
-public class NumberDefinition extends FieldDefinition {
+public class NumberDefinition extends FieldDefinition<String> {
 
     public static final String INITIAL_VALUE = "0";
 
@@ -70,14 +69,14 @@ public class NumberDefinition extends FieldDefinition {
     }
 
     @Override
-    public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+    public NumberField createField(FieldContext context, ValueCache valueCache) throws IOException {
         checkNotNull(context, "context is null");
         checkNotNull(valueCache, "valueCache is null");
 
         check();
 
         final ValueProvider numberValue = valueCache.getValueProvider(this);
-        return new NumberField(this, numberValue);
+        return NumberField.forTesting(this, numberValue);
     }
 
     @Override

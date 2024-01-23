@@ -97,11 +97,6 @@
         </dependency>
 
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.flogger</groupId>
             <artifactId>flogger</artifactId>
         </dependency>
@@ -126,6 +121,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
@@ -136,16 +137,12 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-invoker-plugin</artifactId>
-
-                <!-- dependency for date/verify.groovy script -->
-                <dependencies>
-                    <dependency>
-                        <groupId>joda-time</groupId>
-                        <artifactId>joda-time</artifactId>
-                        <version>${dep.joda-time.version}</version>
-                    </dependency>
-                </dependencies>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables combine.children="override">
+                        <user.timezone>Asia/Colombo</user.timezone>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>

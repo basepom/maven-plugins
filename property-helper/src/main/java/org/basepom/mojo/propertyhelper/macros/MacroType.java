@@ -14,7 +14,7 @@
 
 package org.basepom.mojo.propertyhelper.macros;
 
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 
@@ -26,5 +26,5 @@ public interface MacroType {
 
     Optional<String> getValue(MacroDefinition macroDefinition,
         ValueProvider valueProvider,
-        PropertyElementContext context);
+        FieldContext context);
 }

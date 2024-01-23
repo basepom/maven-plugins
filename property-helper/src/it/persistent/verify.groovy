@@ -1,3 +1,9 @@
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +30,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import org.joda.time.DateTime
 
 def prop_size = 3
 
@@ -60,25 +64,25 @@ def unformattedTime = properties.getProperty("unformatted.time", "xxxx")
 def testUnformattedTime = testProperties.getProperty("test.unformatted.time", "xxxx")
 def unformattedTimeProp = buildProperties.getProperty("unformatted.time", "xxxx")
 
-assert !buildId.equals("xxxx")
-assert !testBuildId.equals("xxxx")
-assert !buildIdProp.equals("xxxx")
+assert buildId != "xxxx"
+assert testBuildId != "xxxx"
+assert buildIdProp != "xxxx"
 
-assert buildId.equals(testBuildId)
-assert buildId.equals(buildIdProp)
+assert buildId == testBuildId
+assert buildId == buildIdProp
 
-assert !buildTime.equals("xxxx")
-assert !testBuildTime.equals("xxxx")
-assert !buildTimeProp.equals("xxxx")
+assert buildTime != "xxxx"
+assert testBuildTime != "xxxx"
+assert buildTimeProp != "xxxx"
 
-assert buildTime.equals(testBuildTime)
-assert buildTime.equals(buildTimeProp)
+assert buildTime == testBuildTime
+assert buildTime == buildTimeProp
 
-assert !unformattedTime.equals("xxxx")
-assert !testUnformattedTime.equals("xxxx")
-assert !unformattedTimeProp.equals("xxxx")
+assert unformattedTime != "xxxx"
+assert testUnformattedTime != "xxxx"
+assert unformattedTimeProp != "xxxx"
 
-def unformattedTimeValue = new DateTime(Long.parseLong(unformattedTimeProp))
+def unformattedTimeValue = ZonedDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(unformattedTimeProp)), ZoneId.systemDefault())
 
-assert unformattedTime.equals(testUnformattedTime)
-assert unformattedTime.equals(unformattedTimeValue.toString())
+assert unformattedTime == testUnformattedTime
+assert unformattedTime == DateTimeFormatter.ISO_DATE_TIME.format(unformattedTimeValue.truncatedTo(ChronoUnit.MILLIS))

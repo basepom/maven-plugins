@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 import static org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate.checkIgnoreWarnFailCreateState;
 
-import org.basepom.mojo.propertyhelper.ValueProvider.MapValueProvider;
+import org.basepom.mojo.propertyhelper.ValueProvider.MapBackedValueAdapter;
 import org.basepom.mojo.propertyhelper.definitions.FieldDefinition;
 
 import java.io.File;
@@ -42,26 +42,16 @@ import com.google.common.flogger.FluentLogger;
 public final class ValueCache {
 
     private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
-    private final Map<String, String> ephemeralValues = Maps.newHashMap();
 
+    private final Map<String, String> ephemeralValues = Maps.newHashMap();
 
     /**
      * Cache for values files loaded from disk
      */
     private final Map<File, ValueCacheEntry> valueFiles = Maps.newHashMap();
 
-    private final PropertyElementContext context;
-
-    ValueCache(PropertyElementContext context) {
-        this.context = context;
-    }
-
-    static ValueCache forTesting() {
-        return new ValueCache(PropertyElementContext.EMPTY_CONTEXT);
-    }
-
     @VisibleForTesting
-    ValueProvider findCurrentValueProvider(final Map<String, String> values, final FieldDefinition definition) {
+    public ValueProvider findCurrentValueProvider(final Map<String, String> values, final FieldDefinition<?> definition) {
         checkNotNull(values, "values is null");
 
         final String propertyNameInFile = definition.getPropertyNameInFile();
@@ -72,32 +62,32 @@ public final class ValueCache {
             () -> format("property '%s' has no value defined", propertyNameInFile));
 
         if (hasValue) {
-            return new MapValueProvider(values, propertyNameInFile);
+            return new MapBackedValueAdapter(values, propertyNameInFile);
         } else if (createProperty) {
             Optional<String> initialValue = definition.getInitialValue();
             initialValue.ifPresent(value -> values.put(propertyNameInFile, value));
 
-            return new MapValueProvider(values, propertyNameInFile);
+            return new MapBackedValueAdapter(values, propertyNameInFile);
         } else {
             return ValueProvider.NULL_PROVIDER;
         }
     }
 
-    public ValueProvider getValueProvider(final FieldDefinition definition) throws IOException {
+    public ValueProvider getValueProvider(final FieldDefinition<?> definition) throws IOException {
         final Optional<Map<String, String>> values = getValues(definition);
         if (values.isEmpty()) {
-            final String name = definition.getPropertyNameInFile();
+            final String name = definition.getId();
             final Optional<String> initialValue = definition.getInitialValue();
             initialValue.ifPresent(s -> ephemeralValues.put(name, s));
 
-            return new MapValueProvider(ephemeralValues, name);
+            return new MapBackedValueAdapter(ephemeralValues, name);
         } else {
             return findCurrentValueProvider(values.get(), definition);
         }
     }
 
     @VisibleForTesting
-    Optional<Map<String, String>> getValues(final FieldDefinition definition) throws IOException {
+    Optional<Map<String, String>> getValues(final FieldDefinition<?> definition) throws IOException {
         final Optional<File> definitionFile = definition.getPropertyFile();
 
         // Ephemeral, so return null.

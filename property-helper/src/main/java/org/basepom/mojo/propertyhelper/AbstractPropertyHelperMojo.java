@@ -25,6 +25,7 @@ import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
 import org.basepom.mojo.propertyhelper.fields.NumberField;
+import org.basepom.mojo.propertyhelper.groups.PropertyField;
 import org.basepom.mojo.propertyhelper.groups.PropertyGroup;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
 
@@ -50,13 +51,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
-import org.codehaus.plexus.interpolation.InterpolationException;
 
-public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements PropertyElementContext {
+public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements FieldContext {
 
     private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
-    protected final ValueCache valueCache = new ValueCache(this);
+    protected final ValueCache valueCache = new ValueCache();
     private IgnoreWarnFail onDuplicateField = IgnoreWarnFail.FAIL;
 
     /**
@@ -313,7 +313,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     private boolean isSnapshot;
     private InterpolatorFactory interpolatorFactory;
 
-    private Map<String, FieldDefinition> fieldDefinitions = Map.of();
+    private Map<String, FieldDefinition<?>> fieldDefinitions = Map.of();
     private List<NumberField> numberFields = List.of();
     private Map<String, String> values = Map.of();
 
@@ -370,10 +370,10 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      */
     protected abstract void doExecute() throws IOException, MojoExecutionException;
 
-    private void addDefinitions(ImmutableMap.Builder<String, FieldDefinition> builder, List<? extends FieldDefinition> newDefinitions) {
-        Map<String, FieldDefinition> existingDefinitions = builder.build();
+    private void addDefinitions(ImmutableMap.Builder<String, FieldDefinition<?>> builder, List<? extends FieldDefinition<?>> newDefinitions) {
+        Map<String, FieldDefinition<?>> existingDefinitions = builder.build();
 
-        for (FieldDefinition definition : newDefinitions) {
+        for (FieldDefinition<?> definition : newDefinitions) {
             final String propertyName = definition.getId();
 
             if (checkIgnoreWarnFailState(!existingDefinitions.containsKey(propertyName), onDuplicateField,
@@ -386,7 +386,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     protected void createFieldDefinitions() {
 
-        final ImmutableMap.Builder<String, FieldDefinition> builder = ImmutableMap.builder();
+        final ImmutableMap.Builder<String, FieldDefinition<?>> builder = ImmutableMap.builder();
         addDefinitions(builder, numberDefinitions);
         addDefinitions(builder, stringDefinitions);
         addDefinitions(builder, macroDefinitions);
@@ -401,27 +401,22 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
         var builder = ImmutableMap.<String, String>builder();
 
-        for (FieldDefinition definition : fieldDefinitions.values()) {
-            Field field = definition.createPropertyElement(this, valueCache);
+        for (FieldDefinition<?> definition : fieldDefinitions.values()) {
+            Field<?, ?> field = definition.createField(this, valueCache);
 
             if (field instanceof NumberField) {
                 numberFields.add((NumberField) field);
             }
 
-            try {
-                var fieldValue = interpolatorFactory.interpolate(field.getFieldName(), field.getValue(), IgnoreWarnFail.FAIL, Map.of());
-                builder.put(field.getFieldName(), fieldValue);
+            var fieldValue = interpolatorFactory.interpolate(field.getFieldName(), IgnoreWarnFail.FAIL, Map.of()).apply(field.getValue());
+            builder.put(field.getFieldName(), fieldValue);
 
-                if (field.isExposeAsProperty()) {
-                    project.getProperties().setProperty(field.getFieldName(), fieldValue);
-                    LOG.atFine().log("Exporting Property name: %s, value: %s", field.getFieldName(), fieldValue);
-                } else {
-                    LOG.atFine().log("Property name: %s, value: %s", field.getFieldName(), fieldValue);
-                }
-            } catch (InterpolationException e) {
-                throw new MojoExecutionException(format("Could not interpolate '%s' - %s", field.getFieldName(), field.getValue()));
+            if (field.isExposeAsProperty()) {
+                project.getProperties().setProperty(field.getFieldName(), fieldValue);
+                LOG.atFine().log("Exporting Property name: %s, value: %s", field.getFieldName(), fieldValue);
+            } else {
+                LOG.atFine().log("Property name: %s, value: %s", field.getFieldName(), fieldValue);
             }
-
         }
 
         this.numberFields = numberFields.build();
@@ -431,7 +426,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     // generates the property groups.
     @SuppressFBWarnings(value = "WMI_WRONG_MAP_ITERATOR")
     public void createGroups() throws MojoExecutionException, IOException {
-        final ImmutableMap.Builder<String, Entry<PropertyGroup, List<Field>>> propertyGroupBuilder = ImmutableMap.builder();
+        final ImmutableMap.Builder<String, Entry<PropertyGroup, List<PropertyField>>> propertyGroupBuilder = ImmutableMap.builder();
 
         Set<String> exportedFields = fieldDefinitions.values().stream()
             .filter(FieldDefinition::isExport)
@@ -440,11 +435,11 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
         final Set<String> propertyNames = new LinkedHashSet<>(exportedFields);
 
         for (final PropertyGroup propertyGroup : propertyGroups) {
-            final List<Field> propertyFields = propertyGroup.createFields(values, interpolatorFactory);
+            final List<PropertyField> propertyFields = propertyGroup.createFields(values, interpolatorFactory);
             propertyGroupBuilder.put(propertyGroup.getId(), new SimpleImmutableEntry<>(propertyGroup, propertyFields));
         }
 
-        final Map<String, Entry<PropertyGroup, List<Field>>> propertyPairs = propertyGroupBuilder.build();
+        final Map<String, Entry<PropertyGroup, List<PropertyField>>> propertyPairs = propertyGroupBuilder.build();
 
         var groupsToAdd = !this.activeGroups.isEmpty() ? this.activeGroups : propertyPairs.keySet();
 
@@ -455,14 +450,14 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
             final PropertyGroup propertyGroup = activeGroup.getKey();
 
             if ((propertyGroup.isActiveOnRelease() && !isSnapshot) || (propertyGroup.isActiveOnSnapshot() && isSnapshot)) {
-                for (final Field field : activeGroup.getValue()) {
-                    final String fieldName = field.getFieldName();
+                for (final PropertyField propertyField : activeGroup.getValue()) {
+                    final String fieldName = propertyField.getFieldName();
 
                     if (checkIgnoreWarnFailState(!propertyNames.contains(fieldName), propertyGroup.getOnDuplicateProperty(),
                         () -> format("property '%s' is not exposed", fieldName),
                         () -> format("property '%s' is already exposed!", fieldName))) {
 
-                        project.getProperties().setProperty(fieldName, field.getValue());
+                        project.getProperties().setProperty(fieldName, propertyField.getValue());
                     }
                 }
             } else {

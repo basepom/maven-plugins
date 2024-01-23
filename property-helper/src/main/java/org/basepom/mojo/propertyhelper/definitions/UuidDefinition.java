@@ -16,8 +16,7 @@ package org.basepom.mojo.propertyhelper.definitions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.fields.UuidField;
@@ -30,7 +29,7 @@ import java.util.UUID;
 
 import com.google.common.annotations.VisibleForTesting;
 
-public class UuidDefinition extends FieldDefinition {
+public class UuidDefinition extends FieldDefinition<String> {
 
     public UuidDefinition() {}
 
@@ -49,14 +48,14 @@ public class UuidDefinition extends FieldDefinition {
     }
 
     @Override
-    public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+    public UuidField createField(FieldContext context, ValueCache valueCache) throws IOException {
         checkNotNull(context, "context is null");
         checkNotNull(valueCache, "valueCache is null");
 
         check();
 
         final ValueProvider uuidValue = valueCache.getValueProvider(this);
-        return new UuidField(this, uuidValue);
+        return UuidField.forTesting(this, uuidValue);
     }
 
     @Override

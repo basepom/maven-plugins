@@ -17,26 +17,36 @@ package org.basepom.mojo.propertyhelper.fields;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.basepom.mojo.propertyhelper.Field;
+import org.basepom.mojo.propertyhelper.InterpolatorFactory;
+import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
 
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.UUID;
 
-public class UuidField
-    implements Field {
+import com.google.common.annotations.VisibleForTesting;
 
-    private final UuidDefinition uuidDefinition;
+public final class UuidField extends Field<String, UuidDefinition> {
+
     private final ValueProvider valueProvider;
 
-    public UuidField(final UuidDefinition uuidDefinition, final ValueProvider valueProvider) {
-        this.uuidDefinition = checkNotNull(uuidDefinition, "uuidDefinition is null");
+    @VisibleForTesting
+    public static UuidField forTesting(UuidDefinition uuidDefinition, ValueProvider valueProvider) {
+        return new UuidField(uuidDefinition, valueProvider, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+    }
+
+    public UuidField(final UuidDefinition uuidDefinition, final ValueProvider valueProvider,
+        final InterpolatorFactory interpolatorFactory, final TransformerRegistry transformerRegistry) {
+        super(uuidDefinition, interpolatorFactory, transformerRegistry);
+
         this.valueProvider = checkNotNull(valueProvider, "valueProvider is null");
     }
 
     @Override
     public String getFieldName() {
-        return uuidDefinition.getId();
+        return fieldDefinition.getId();
     }
 
     @Override
@@ -45,20 +55,23 @@ public class UuidField
 
         // Only add the value from the provider if it is not null.
         UUID result = propValue.map(UUID::fromString)
-            .orElse(uuidDefinition.getValue()
+            .orElse(fieldDefinition.getValue()
                 .orElse(UUID.randomUUID()));
 
         valueProvider.setValue(result.toString());
-        return uuidDefinition.formatResult(result.toString());
+        return formatResult(result.toString());
     }
 
     @Override
     public boolean isExposeAsProperty() {
-        return uuidDefinition.isExport();
+        return fieldDefinition.isExport();
     }
 
     @Override
     public String toString() {
-        return getValue();
+        return new StringJoiner(", ", UuidField.class.getSimpleName() + "[", "]")
+            .add("uuidDefinition=" + fieldDefinition)
+            .add("valueProvider=" + valueProvider)
+            .toString();
     }
 }

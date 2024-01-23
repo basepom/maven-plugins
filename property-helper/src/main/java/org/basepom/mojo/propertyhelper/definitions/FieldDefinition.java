@@ -15,12 +15,10 @@
 package org.basepom.mojo.propertyhelper.definitions;
 
 import static com.google.common.base.Preconditions.checkState;
-import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.Field;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate;
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
-import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueCache;
 
 import java.io.File;
@@ -29,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.function.Function;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
@@ -36,7 +35,7 @@ import com.google.common.base.Splitter;
 /**
  * Common properties for a field.
  */
-public abstract class FieldDefinition {
+public abstract class FieldDefinition<T> {
 
     protected FieldDefinition() {
     }
@@ -111,7 +110,7 @@ public abstract class FieldDefinition {
             .splitToList(transformers);
     }
 
-    public abstract Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException;
+    public abstract <U extends Field<?, ?>> U createField(FieldContext context, ValueCache valueCache) throws IOException;
 
     public String getId() {
         return id;
@@ -149,17 +148,12 @@ public abstract class FieldDefinition {
         return onMissingProperty;
     }
 
-    public String formatResult(final String value) {
-        final Optional<String> format = getFormat();
-        String res = format.map(f -> format(f, value)).orElse(value);
-
-        res = TransformerRegistry.INSTANCE.applyTransformers(transformers, res);
-
-        return Optional.ofNullable(res).orElse("");
+    public Function<T, String> formatResult() {
+        return value -> Optional.ofNullable(value).map(getFormat()).orElse("");
     }
 
-    public Optional<String> getFormat() {
-        return Optional.ofNullable(format);
+    public Function<T, String> getFormat() {
+        return format == null ? String::valueOf : v -> String.format(format, v);
     }
 
     public void check() {
@@ -194,7 +188,7 @@ public abstract class FieldDefinition {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        FieldDefinition that = (FieldDefinition) o;
+        FieldDefinition<?> that = (FieldDefinition<?>) o;
         return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyNameInFile, that.propertyNameInFile)
             && Objects.equals(propertyFile, that.propertyFile) && Objects.equals(onMissingFile, that.onMissingFile)
             && Objects.equals(onMissingProperty, that.onMissingProperty) && Objects.equals(initialValue, that.initialValue)

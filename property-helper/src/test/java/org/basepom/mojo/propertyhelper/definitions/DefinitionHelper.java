@@ -34,16 +34,21 @@ public final class DefinitionHelper {
         return new StringDefinition(id);
     }
 
-    public static void setOnMissingProperty(FieldDefinition baseDefinition, String value) {
-        baseDefinition.setOnMissingProperty(value);
+    public static void setOnMissingProperty(FieldDefinition<?> fieldDefinition, String value) {
+        fieldDefinition.setOnMissingProperty(value);
     }
 
-    public static void setOnMissingFile(FieldDefinition baseDefinition, String value) {
-        baseDefinition.setOnMissingFile(value);
+    public static void setOnMissingFile(FieldDefinition<?> fieldDefinition, String value) {
+        fieldDefinition.setOnMissingFile(value);
     }
 
-    public static void setPropertyFile(FieldDefinition baseDefinition, File value) {
-        baseDefinition.propertyFile = value;
+    public static void setPropertyFile(FieldDefinition<?> fieldDefinition, File value) {
+        fieldDefinition.propertyFile = value;
+    }
+
+
+    public static void setInitialValue(FieldDefinition<?> fieldDefinition, String initialValue) {
+        fieldDefinition.initialValue = initialValue;
     }
 
     // uuid helpers

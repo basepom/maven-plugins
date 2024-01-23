@@ -47,7 +47,7 @@ public class TestPropertyCache {
     public void setUp()
         throws IOException {
         assertNull(pc);
-        pc = ValueCache.forTesting();
+        pc = new ValueCache();
 
         assertNull(propFile);
         propFile = File.createTempFile("test", null);

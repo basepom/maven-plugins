@@ -59,11 +59,13 @@
                                     <id>epoch-utc</id>
                                     <timezone>UTC</timezone>
                                     <format>yyyyMMdd_HHmmss</format>
+                                    <initialValue>0</initialValue>
                                     <export>true</export>
                                 </date>
                                 <date>
                                     <id>epoch</id>
                                     <format>yyyyMMdd_HHmmss</format>
+                                    <initialValue>0</initialValue>
                                     <export>true</export>
                                 </date>
                             </dates>

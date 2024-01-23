@@ -18,38 +18,45 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.FieldContext;
+import org.basepom.mojo.propertyhelper.InterpolatorFactory;
+import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
 
 import java.util.Optional;
+import java.util.StringJoiner;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.maven.plugin.MojoExecutionException;
 
-public class MacroField
-    implements Field {
+public final class MacroField extends Field<String, MacroDefinition> {
 
-    private final MacroDefinition macroDefinition;
     private final ValueProvider valueProvider;
-    private final PropertyElementContext context;
+    private final FieldContext context;
 
-    public MacroField(final MacroDefinition macroDefinition,
-        final ValueProvider valueProvider,
-        final PropertyElementContext context) {
-        this.macroDefinition = macroDefinition;
+    @VisibleForTesting
+    public static MacroField forTesting(MacroDefinition dateDefinition, ValueProvider valueProvider, FieldContext fieldContext) {
+        return new MacroField(dateDefinition, valueProvider, fieldContext, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+    }
+
+    public MacroField(final MacroDefinition macroDefinition, final ValueProvider valueProvider, final FieldContext context,
+        final InterpolatorFactory interpolatorFactory, final TransformerRegistry transformerRegistry) {
+        super(macroDefinition, interpolatorFactory, transformerRegistry);
+
         this.valueProvider = valueProvider;
         this.context = context;
     }
 
     @Override
     public String getFieldName() {
-        return macroDefinition.getId();
+        return fieldDefinition.getId();
     }
 
     @Override
     public String getValue() throws MojoExecutionException {
-        final Optional<String> type = macroDefinition.getMacroType();
+        final Optional<String> type = fieldDefinition.getMacroType();
         final MacroType macroType;
 
         try {
@@ -57,32 +64,29 @@ public class MacroField
                 macroType = context.getMacros().get(type.get());
                 checkState(macroType != null, "Could not locate macro '%s'", type.get());
             } else {
-                final Optional<String> macroClassName = macroDefinition.getMacroClass();
-                checkState(macroClassName.isPresent(), "No definition for macro '%s' found!", macroDefinition.getId());
+                final Optional<String> macroClassName = fieldDefinition.getMacroClass();
+                checkState(macroClassName.isPresent(), "No definition for macro '%s' found!", fieldDefinition.getId());
                 final Class<? extends MacroType> macroClass = (Class<? extends MacroType>) Class.forName(macroClassName.get());
                 macroType = macroClass.getDeclaredConstructor().newInstance();
             }
 
-            return macroType.getValue(macroDefinition, valueProvider, context)
-                .map(macroDefinition::formatResult)
-                .orElse("");
+            return formatResult(macroType.getValue(fieldDefinition, valueProvider, context).orElse(null));
 
         } catch (ReflectiveOperationException e) {
-            throw new MojoExecutionException(format("Could not instantiate '%s'", macroDefinition), e);
+            throw new MojoExecutionException(format("Could not instantiate '%s'", fieldDefinition), e);
         }
     }
 
     @Override
     public boolean isExposeAsProperty() {
-        return macroDefinition.isExport();
+        return fieldDefinition.isExport();
     }
 
     @Override
     public String toString() {
-        try {
-            return getValue();
-        } catch (Exception e) {
-            return "<unset>";
-        }
+        return new StringJoiner(", ", MacroField.class.getSimpleName() + "[", "]")
+            .add("valueProvider=" + valueProvider)
+            .add("context=" + context)
+            .toString();
     }
 }

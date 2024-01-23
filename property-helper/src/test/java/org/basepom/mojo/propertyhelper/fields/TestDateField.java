@@ -12,9 +12,11 @@
  * limitations under the License.
  */
 
-package org.basepom.mojo.propertyhelper;
+package org.basepom.mojo.propertyhelper.fields;
 
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.dateDefinition;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setFormat;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setTimezone;
@@ -22,15 +24,19 @@ import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setVa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.basepom.mojo.propertyhelper.ValueProvider.PropertyProvider;
+import org.basepom.mojo.propertyhelper.ValueProvider;
+import org.basepom.mojo.propertyhelper.ValueProvider.PropertyBackedValueAdapter;
 import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
-import org.basepom.mojo.propertyhelper.fields.DateField;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.format.DateTimeFormat;
 import org.junit.jupiter.api.Test;
 
 
@@ -45,7 +51,7 @@ public class TestDateField {
 
         d1.check();
 
-        final DateField sd1 = new DateField(d1, ValueProvider.NULL_PROVIDER);
+        final DateField sd1 = DateField.forTesting(d1, ValueProvider.NULL_PROVIDER);
         assertEquals("19700101_000000", sd1.getValue());
     }
 
@@ -57,11 +63,11 @@ public class TestDateField {
 
         d1.check();
 
-        final long now = System.currentTimeMillis();
+        final var now = LocalDateTime.now();
         final Properties props = new Properties();
-        final String value = DateTimeFormat.forPattern(format).print(now);
+        final String value = DateTimeFormatter.ofPattern(format).format(now);
         props.setProperty("hello", value);
-        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getId()));
+        final DateField sd1 = DateField.forTesting(d1, new PropertyBackedValueAdapter(props, d1.getId()));
 
         assertEquals(value, sd1.getValue());
     }
@@ -72,12 +78,14 @@ public class TestDateField {
 
         d1.check();
 
-        final long now = System.currentTimeMillis();
+        final var now = Instant.now();
         final Properties props = new Properties();
-        props.setProperty("hello", Long.toString(now));
-        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getId()));
+        props.setProperty("hello", Long.toString(now.toEpochMilli()));
+        final DateField sd1 = DateField.forTesting(d1, new PropertyBackedValueAdapter(props, d1.getId()));
 
-        assertEquals(new DateTime(now).toString(), sd1.getValue());
+        ZonedDateTime result = ZonedDateTime.parse(sd1.getValue(), DateTimeFormatter.ISO_DATE_TIME);
+
+        assertThat(result).isCloseTo(ZonedDateTime.ofInstant(now, ZoneId.systemDefault()), within(1, ChronoUnit.MILLIS));
     }
 
     @Test
@@ -86,11 +94,11 @@ public class TestDateField {
 
         d1.check();
 
-        final String value = DateTime.now().toString();
+        final String value = DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.now());
 
         final Properties props = new Properties();
         props.setProperty("hello", value);
-        final DateField sd1 = new DateField(d1, new PropertyProvider(props, d1.getId()));
+        final DateField sd1 = DateField.forTesting(d1, new PropertyBackedValueAdapter(props, d1.getId()));
 
         assertEquals(value, sd1.getValue());
     }
@@ -103,14 +111,14 @@ public class TestDateField {
 
         d1.check();
 
-        final DateField sd1 = new DateField(d1, ValueProvider.NULL_PROVIDER);
+        final DateField sd1 = DateField.forTesting(d1, ValueProvider.NULL_PROVIDER);
 
         final var value = sd1.getValue();
 
-        final DateTime now = new DateTime().withMillisOfSecond(0);
+        var now = ZonedDateTime.now().withNano(0);
 
-        final DateTime propTime = DateTimeFormat.forPattern(format).parseDateTime(value);
-        final Duration d = new Duration(propTime, now);
-        assertTrue(d.getStandardSeconds() <= 1, format("propTime: %s,  now: %s, diff is %s", propTime, now, d));
+        var propTime = LocalDateTime.parse(value, DateTimeFormatter.ofPattern(format));
+        final Duration d = Duration.between(propTime, now);
+        assertTrue(d.getSeconds() <= 1, format("propTime: %s,  now: %s, diff is %s", propTime, now, d));
     }
 }

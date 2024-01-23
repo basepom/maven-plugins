@@ -84,7 +84,8 @@
         <dep.slf4j.version>1.7.36</dep.slf4j.version>
         <dep.guava.version>32.0.1-jre</dep.guava.version>
         <dep.junit5.version>5.9.3</dep.junit5.version>
-        <dep.joda-time.version>2.12.5</dep.joda-time.version>
+        <dep.flogger.version>0.8</dep.flogger.version>
+        <dep.assertj.version>3.24.2</dep.assertj.version>
 
         <!-- Maven API version. Keep on 3.8.x for now -->
         <dep.maven-api.version>3.8.8</dep.maven-api.version>
@@ -99,7 +100,6 @@
         <dep.maven-dependency-tree.version>3.2.1</dep.maven-dependency-tree.version>
         <dep.maven-artifact-filter.version>3.3.2</dep.maven-artifact-filter.version>
         <dep.sisu.version>0.3.5</dep.sisu.version>
-        <dep.flogger.version>0.8</dep.flogger.version>
 
         <!-- plugin tooling -->
         <dep.plugin.plugin.version>3.9.0</dep.plugin.plugin.version>
@@ -130,12 +130,6 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${dep.guava.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${dep.joda-time.version}</version>
             </dependency>
 
             <dependency>
@@ -257,6 +251,12 @@
                 <groupId>com.google.flogger</groupId>
                 <artifactId>flogger-slf4j-backend</artifactId>
                 <version>${dep.flogger.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${dep.assertj.version}</version>
             </dependency>
 
             <!-- dependency convergence help -->
@@ -424,7 +424,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration combine.children="append">
+                <configuration>
                     <author>false</author>
                     <detectJavaApiLink>true</detectJavaApiLink>
                     <linksource>true</linksource>

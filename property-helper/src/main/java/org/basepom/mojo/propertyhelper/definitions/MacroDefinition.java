@@ -17,8 +17,7 @@ package org.basepom.mojo.propertyhelper.definitions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.PropertyElementContext;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.fields.MacroField;
@@ -34,7 +33,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-public class MacroDefinition extends FieldDefinition {
+public class MacroDefinition extends FieldDefinition<String> {
 
     /**
      * Macro type. Field injected by Maven.
@@ -79,14 +78,14 @@ public class MacroDefinition extends FieldDefinition {
     }
 
     @Override
-    public Field createPropertyElement(PropertyElementContext context, ValueCache valueCache) throws IOException {
+    public MacroField createField(FieldContext context, ValueCache valueCache) throws IOException {
         checkNotNull(context, "context is null");
         checkNotNull(valueCache, "valueCache is null");
 
         check();
 
         final ValueProvider macroValue = valueCache.getValueProvider(this);
-        return new MacroField(this, macroValue, context);
+        return MacroField.forTesting(this, macroValue, context);
     }
 
     @Override

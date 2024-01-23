@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public final class TransformerRegistry {
@@ -46,11 +46,18 @@ public final class TransformerRegistry {
         this.registry = registry.build();
     }
 
-    public String applyTransformers(final List<String> transformers, final String value) {
+    public Function<String, String> applyTransformers(List<String> transformerNames) {
+        return value -> applyTransformers(transformerNames, value);
+    }
+
+    public String applyTransformers(final List<String> transformerNames, final String value) {
         String res = value;
 
-        for (Function<String, String> transformer : transformers.stream()
-            .map(this::forName).collect(Collectors.toList())) {
+        var transformers = transformerNames.stream()
+            .map(this::forName)
+            .collect(ImmutableList.toImmutableList());
+
+        for (var transformer : transformers) {
             if (res != null) {
                 res = transformer.apply(res);
             }
