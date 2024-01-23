@@ -63,7 +63,7 @@ public final class InterpolatorFactory {
         };
     }
 
-    public String interpolate(final String name, final String value, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties)
+    private String interpolate(final String name, final String value, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties)
         throws IOException, InterpolationException {
         checkNotNull(name, "name is null");
         checkNotNull(value, "value is null");

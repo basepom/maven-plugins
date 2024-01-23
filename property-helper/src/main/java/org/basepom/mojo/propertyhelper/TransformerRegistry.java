@@ -50,7 +50,7 @@ public final class TransformerRegistry {
         return value -> applyTransformers(transformerNames, value);
     }
 
-    public String applyTransformers(final List<String> transformerNames, final String value) {
+    private String applyTransformers(final List<String> transformerNames, final String value) {
         String res = value;
 
         var transformers = transformerNames.stream()

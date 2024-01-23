@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -141,10 +142,12 @@ public class PropertyGroup {
 
         ImmutableMap<String, PropertyDefinition> definitionMap = Maps.uniqueIndex(propertyDefinitions, PropertyDefinition::getName);
         final PropertyDefinition propertyDefinition = definitionMap.get(propertyName);
+        checkNotNull(propertyDefinition, "property definition '%s' does not exist!", propertyName);
 
-        return TransformerRegistry.INSTANCE.applyTransformers(propertyDefinition.getTransformers(),
-            interpolatorFactory.interpolate(propertyDefinition.getName(),
-                propertyDefinition.getValue(), onMissingProperty, propElements));
+        return Optional.ofNullable(propertyDefinition.getValue())
+            .map(interpolatorFactory.interpolate(propertyDefinition.getName(), onMissingProperty, propElements))
+            .map(TransformerRegistry.INSTANCE.applyTransformers(propertyDefinition.getTransformers()))
+            .orElse("");
     }
 
     public List<PropertyField> createFields(final Map<String, String> values, InterpolatorFactory interpolatorFactory)

@@ -23,7 +23,6 @@ import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -70,8 +69,7 @@ public final class DateField extends Field<ZonedDateTime, DateDefinition> {
             valueProvider.setValue(Long.toString(date.toInstant().toEpochMilli()));
         }
 
-        return Optional.ofNullable(TransformerRegistry.INSTANCE.applyTransformers(fieldDefinition.getTransformers(), result))
-            .orElse("");
+        return result;
     }
 
     @Override
