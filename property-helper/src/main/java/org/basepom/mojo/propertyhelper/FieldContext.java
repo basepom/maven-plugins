@@ -25,25 +25,58 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
 public interface FieldContext {
-    FieldContext EMPTY_CONTEXT = new FieldContext() {};
 
-    default Map<String, MacroType> getMacros() {
-        return Collections.emptyMap();
+    static FieldContext forTesting() {
+        return new FieldContext() {
+
+            @Override
+            public Map<String, MacroType> getMacros() {
+                return Collections.emptyMap();
+            }
+
+            @Override
+            public Properties getProperties() {
+                return new Properties();
+            }
+
+            @Override
+            public MavenProject getProject() {
+                return new MavenProject();
+            }
+
+            @Override
+            public Settings getSettings() {
+                return new Settings();
+            }
+
+            @Override
+            public File getBasedir() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public InterpolatorFactory getInterpolatorFactory() {
+                return InterpolatorFactory.forTesting();
+            }
+
+            @Override
+            public TransformerRegistry getTransformerRegistry() {
+                return TransformerRegistry.INSTANCE;
+            }
+        };
     }
 
-    default Properties getProperties() {
-        return new Properties();
-    }
+    Map<String, MacroType> getMacros();
 
-    default MavenProject getProject() {
-        throw new UnsupportedOperationException();
-    }
+    Properties getProperties();
 
-    default Settings getSettings() {
-        throw new UnsupportedOperationException();
-    }
+    MavenProject getProject();
 
-    default File getBasedir() {
-        throw new UnsupportedOperationException();
-    }
+    Settings getSettings();
+
+    File getBasedir();
+
+    InterpolatorFactory getInterpolatorFactory();
+
+    TransformerRegistry getTransformerRegistry();
 }

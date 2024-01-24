@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 
 public class PropertyDefinition {
@@ -47,12 +48,13 @@ public class PropertyDefinition {
             .splitToList(transformers);
     }
 
-    public PropertyDefinition() {
-    }
-
-    public PropertyDefinition(final String name, final String value) {
+    @VisibleForTesting
+    PropertyDefinition(final String name, final String value) {
         this.name = checkNotNull(name, "name is null");
         this.value = checkNotNull(value, "value is null");
+    }
+
+    public PropertyDefinition() {
     }
 
     public void check() {

@@ -71,7 +71,7 @@ public class DateDefinition extends FieldDefinition<ZonedDateTime> {
         check();
 
         final ValueProvider dateValue = valueCache.getValueProvider(this);
-        return DateField.forTesting(this, dateValue);
+        return new DateField(this, dateValue, context);
     }
 
     @Override

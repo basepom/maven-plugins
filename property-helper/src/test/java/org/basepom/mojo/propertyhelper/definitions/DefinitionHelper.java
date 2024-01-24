@@ -34,6 +34,14 @@ public final class DefinitionHelper {
         return new StringDefinition(id);
     }
 
+    public static PropertyGroupDefinition propertyGroupDefinition(String id) {
+        return new PropertyGroupDefinition(id);
+    }
+
+    public static PropertyDefinition propertyDefinition(String name, String value) {
+        return new PropertyDefinition(name, value);
+    }
+
     public static void setOnMissingProperty(FieldDefinition<?> fieldDefinition, String value) {
         fieldDefinition.setOnMissingProperty(value);
     }
@@ -86,5 +94,14 @@ public final class DefinitionHelper {
 
     public static void setOnMissingValue(StringDefinition stringDefinition, String onMissingValue) {
         stringDefinition.setOnMissingValue(onMissingValue);
+    }
+
+    // property group helpers
+    public static void setProperties(PropertyGroupDefinition propertyGroupDefinition, PropertyDefinition ... propertyDefinitions) {
+        propertyGroupDefinition.setProperties(propertyDefinitions);
+    }
+
+    public static void setOnMissingProperty(PropertyGroupDefinition propertyGroupDefinition, String value) {
+        propertyGroupDefinition.setOnMissingProperty(value);
     }
 }

@@ -16,21 +16,21 @@ package org.basepom.mojo.propertyhelper.groups;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class PropertyField {
+public class PropertyResult {
 
     private final String propertyName;
     private final String propertyValue;
 
-    PropertyField(final String propertyName, final String propertyValue) {
+    PropertyResult(final String propertyName, final String propertyValue) {
         this.propertyName = checkNotNull(propertyName, "propertyName is null");
         this.propertyValue = checkNotNull(propertyValue, "propertyValue is null");
     }
 
-    public String getFieldName() {
+    public String getPropertyName() {
         return propertyName;
     }
 
-    public String getValue() {
+    public String getPropertyValue() {
         return propertyValue;
     }
 }

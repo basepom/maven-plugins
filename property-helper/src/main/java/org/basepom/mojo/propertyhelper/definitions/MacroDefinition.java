@@ -85,7 +85,7 @@ public class MacroDefinition extends FieldDefinition<String> {
         check();
 
         final ValueProvider macroValue = valueCache.getValueProvider(this);
-        return MacroField.forTesting(this, macroValue, context);
+        return new MacroField(this, macroValue, context);
     }
 
     @Override

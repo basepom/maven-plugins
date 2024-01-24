@@ -16,7 +16,6 @@ package org.basepom.mojo.propertyhelper.fields;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.dateDefinition;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setInitialValue;
-import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setValue;
 
 import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueCache;
@@ -39,7 +38,7 @@ class TestDateFieldOverrides {
 
         ZonedDateTime localEpochTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0), ZoneId.systemDefault());
 
-        var context = FieldContext.EMPTY_CONTEXT;
+        var context = FieldContext.forTesting();
         ValueCache valueCache = new ValueCache();
         var dateField = dateDefinition.createField(context, valueCache);
         var value = dateField.getValue();

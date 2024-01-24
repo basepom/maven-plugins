@@ -15,8 +15,6 @@
 package org.basepom.mojo.propertyhelper;
 
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import org.basepom.mojo.propertyhelper.definitions.FieldDefinition;
 
 import java.util.Map;
@@ -34,10 +32,10 @@ public abstract class Field<T, U extends FieldDefinition<T>> {
     private final TransformerRegistry transformerRegistry;
 
 
-    protected Field(U fieldDefinition, InterpolatorFactory interpolatorFactory, TransformerRegistry transformerRegistry) {
+    protected Field(U fieldDefinition, FieldContext context) {
         this.fieldDefinition = fieldDefinition;
-        this.interpolatorFactory = checkNotNull(interpolatorFactory, "interpolatorFactory is null");
-        this.transformerRegistry = checkNotNull(transformerRegistry, "transformerRegistry is null");
+        this.interpolatorFactory = context.getInterpolatorFactory();
+        this.transformerRegistry = context.getTransformerRegistry();
     }
 
     /**
@@ -62,5 +60,7 @@ public abstract class Field<T, U extends FieldDefinition<T>> {
     /**
      * True if the value of this element should be exposed as a maven property.
      */
-    public abstract boolean isExposeAsProperty();
+    public boolean isExposeAsProperty() {
+        return fieldDefinition.isExport();
+    }
 }

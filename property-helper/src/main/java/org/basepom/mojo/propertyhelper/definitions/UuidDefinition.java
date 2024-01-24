@@ -55,7 +55,7 @@ public class UuidDefinition extends FieldDefinition<String> {
         check();
 
         final ValueProvider uuidValue = valueCache.getValueProvider(this);
-        return UuidField.forTesting(this, uuidValue);
+        return new UuidField(this, uuidValue, context);
     }
 
     @Override

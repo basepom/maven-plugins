@@ -76,7 +76,7 @@ public class NumberDefinition extends FieldDefinition<String> {
         check();
 
         final ValueProvider numberValue = valueCache.getValueProvider(this);
-        return NumberField.forTesting(this, numberValue);
+        return new NumberField(this, numberValue, context);
     }
 
     @Override

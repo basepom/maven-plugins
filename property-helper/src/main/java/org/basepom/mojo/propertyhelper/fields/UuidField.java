@@ -17,8 +17,7 @@ package org.basepom.mojo.propertyhelper.fields;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.InterpolatorFactory;
-import org.basepom.mojo.propertyhelper.TransformerRegistry;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
 
@@ -34,12 +33,12 @@ public final class UuidField extends Field<String, UuidDefinition> {
 
     @VisibleForTesting
     public static UuidField forTesting(UuidDefinition uuidDefinition, ValueProvider valueProvider) {
-        return new UuidField(uuidDefinition, valueProvider, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+        return new UuidField(uuidDefinition, valueProvider, FieldContext.forTesting());
     }
 
     public UuidField(final UuidDefinition uuidDefinition, final ValueProvider valueProvider,
-        final InterpolatorFactory interpolatorFactory, final TransformerRegistry transformerRegistry) {
-        super(uuidDefinition, interpolatorFactory, transformerRegistry);
+        FieldContext fieldContext) {
+        super(uuidDefinition, fieldContext);
 
         this.valueProvider = checkNotNull(valueProvider, "valueProvider is null");
     }
@@ -60,11 +59,6 @@ public final class UuidField extends Field<String, UuidDefinition> {
 
         valueProvider.setValue(result.toString());
         return formatResult(result.toString());
-    }
-
-    @Override
-    public boolean isExposeAsProperty() {
-        return fieldDefinition.isExport();
     }
 
     @Override

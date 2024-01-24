@@ -15,8 +15,7 @@
 package org.basepom.mojo.propertyhelper.fields;
 
 import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.InterpolatorFactory;
-import org.basepom.mojo.propertyhelper.TransformerRegistry;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.DateDefinition;
 
@@ -35,12 +34,11 @@ public final class DateField extends Field<ZonedDateTime, DateDefinition> {
 
     @VisibleForTesting
     public static DateField forTesting(DateDefinition dateDefinition, ValueProvider valueProvider) {
-        return new DateField(dateDefinition, valueProvider, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+        return new DateField(dateDefinition, valueProvider, FieldContext.forTesting());
     }
 
-    public DateField(final DateDefinition dateDefinition, final ValueProvider valueProvider,
-        final InterpolatorFactory interpolatorFactory,  final TransformerRegistry transformerRegistry) {
-        super(dateDefinition, interpolatorFactory, transformerRegistry);
+    public DateField(final DateDefinition dateDefinition, final ValueProvider valueProvider, FieldContext fieldContext) {
+        super(dateDefinition, fieldContext);
 
         this.valueProvider = valueProvider;
         this.timezone = dateDefinition.getTimezone();

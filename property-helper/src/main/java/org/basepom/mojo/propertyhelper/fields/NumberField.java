@@ -17,8 +17,7 @@ package org.basepom.mojo.propertyhelper.fields;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.InterpolatorFactory;
-import org.basepom.mojo.propertyhelper.TransformerRegistry;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 
@@ -43,12 +42,12 @@ public final class NumberField extends Field<String, NumberDefinition> {
 
     @VisibleForTesting
     public static NumberField forTesting(NumberDefinition numberDefinition, ValueProvider valueProvider) {
-        return new NumberField(numberDefinition, valueProvider, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+        return new NumberField(numberDefinition, valueProvider, FieldContext.forTesting());
     }
 
     public NumberField(final NumberDefinition fieldDefinition, final ValueProvider valueProvider,
-        final InterpolatorFactory interpolatorFactory, final TransformerRegistry transformerRegistry) {
-        super(fieldDefinition, interpolatorFactory, transformerRegistry);
+        FieldContext fieldContext) {
+        super(fieldDefinition, fieldContext);
 
         this.valueProvider = valueProvider;
     }
@@ -65,11 +64,6 @@ public final class NumberField extends Field<String, NumberDefinition> {
         parse();
         final String value = Joiner.on("").join(elements);
         return formatResult(value);
-    }
-
-    @Override
-    public boolean isExposeAsProperty() {
-        return fieldDefinition.isExport();
     }
 
     private void parse() {

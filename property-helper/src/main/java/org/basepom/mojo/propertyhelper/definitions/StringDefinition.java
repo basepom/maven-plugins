@@ -96,7 +96,7 @@ public class StringDefinition extends FieldDefinition<String> {
         check();
 
         final ValueProvider stringValue = valueCache.getValueProvider(this);
-        return StringField.forTesting(this, stringValue);
+        return new StringField(this, stringValue, context);
     }
 
     @Override

@@ -18,8 +18,7 @@ import static java.lang.String.format;
 import static org.basepom.mojo.propertyhelper.IgnoreWarnFail.checkIgnoreWarnFailState;
 
 import org.basepom.mojo.propertyhelper.Field;
-import org.basepom.mojo.propertyhelper.InterpolatorFactory;
-import org.basepom.mojo.propertyhelper.TransformerRegistry;
+import org.basepom.mojo.propertyhelper.FieldContext;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
 
@@ -37,12 +36,12 @@ public final class StringField extends Field<String, StringDefinition> {
 
     @VisibleForTesting
     public static StringField forTesting(StringDefinition stringDefinition, ValueProvider valueProvider) {
-        return new StringField(stringDefinition, valueProvider, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+        return new StringField(stringDefinition, valueProvider, FieldContext.forTesting());
     }
 
     public StringField(final StringDefinition stringDefinition, final ValueProvider valueProvider,
-        final InterpolatorFactory interpolatorFactory, final TransformerRegistry transformerRegistry) {
-        super(stringDefinition, interpolatorFactory, transformerRegistry);
+        FieldContext fieldContext) {
+        super(stringDefinition, fieldContext);
 
         this.valueProvider = valueProvider;
     }
@@ -78,11 +77,6 @@ public final class StringField extends Field<String, StringDefinition> {
             () -> format("No value for string field %s found, using an empty value!", getFieldName()));
 
         return "";
-    }
-
-    @Override
-    public boolean isExposeAsProperty() {
-        return fieldDefinition.isExport();
     }
 
     @Override

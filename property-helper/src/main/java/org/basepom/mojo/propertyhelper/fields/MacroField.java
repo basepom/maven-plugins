@@ -19,8 +19,6 @@ import static java.lang.String.format;
 
 import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.FieldContext;
-import org.basepom.mojo.propertyhelper.InterpolatorFactory;
-import org.basepom.mojo.propertyhelper.TransformerRegistry;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
@@ -38,12 +36,11 @@ public final class MacroField extends Field<String, MacroDefinition> {
 
     @VisibleForTesting
     public static MacroField forTesting(MacroDefinition dateDefinition, ValueProvider valueProvider, FieldContext fieldContext) {
-        return new MacroField(dateDefinition, valueProvider, fieldContext, InterpolatorFactory.forTesting(), TransformerRegistry.INSTANCE);
+        return new MacroField(dateDefinition, valueProvider, fieldContext);
     }
 
-    public MacroField(final MacroDefinition macroDefinition, final ValueProvider valueProvider, final FieldContext context,
-        final InterpolatorFactory interpolatorFactory, final TransformerRegistry transformerRegistry) {
-        super(macroDefinition, interpolatorFactory, transformerRegistry);
+    public MacroField(final MacroDefinition macroDefinition, final ValueProvider valueProvider, final FieldContext context) {
+        super(macroDefinition, context);
 
         this.valueProvider = valueProvider;
         this.context = context;
@@ -75,11 +72,6 @@ public final class MacroField extends Field<String, MacroDefinition> {
         } catch (ReflectiveOperationException e) {
             throw new MojoExecutionException(format("Could not instantiate '%s'", fieldDefinition), e);
         }
-    }
-
-    @Override
-    public boolean isExposeAsProperty() {
-        return fieldDefinition.isExport();
     }
 
     @Override
