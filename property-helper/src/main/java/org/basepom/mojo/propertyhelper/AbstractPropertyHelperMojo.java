@@ -390,6 +390,10 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
         Map<String, FieldDefinition<?>> existingDefinitions = builder.build();
 
         for (FieldDefinition<?> definition : newDefinitions) {
+            if (definition.isSkip()) {
+                continue;
+            }
+
             String propertyName = definition.getId();
 
             if (checkIgnoreWarnFailState(!existingDefinitions.containsKey(propertyName), onDuplicateField,

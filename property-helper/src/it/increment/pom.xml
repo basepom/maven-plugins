@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test-group</groupId>
+    <artifactId>test-increment</artifactId>
+    <version>1.0</version>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>property-helper-maven-plugin</artifactId>
+                <version>@project.version@</version>
+                <configuration>
+                    <strings>
+                        <string>
+                            <id>build.number</id>
+                            <onMissingFile>create</onMissingFile>
+                            <onMissingFileProperty>create</onMissingFileProperty>
+                            <propertyNameInFile>build.number</propertyNameInFile>
+                            <propertyFile>${project.basedir}/build.properties</propertyFile>
+                            <export>true</export>
+                        </string>
+                    </strings>
+                    <numbers>
+                        <number>
+                            <id>build.number.major</id>
+                            <fieldNumber>0</fieldNumber>
+                            <propertyNameInFile>build.number</propertyNameInFile>
+                            <propertyFile>${project.basedir}/build.properties</propertyFile>
+                            <export>true</export>
+                        </number>
+                        <number>
+                            <id>build.number.minor</id>
+                            <fieldNumber>1</fieldNumber>
+                            <propertyNameInFile>build.number</propertyNameInFile>
+                            <propertyFile>${project.basedir}/build.properties</propertyFile>
+                            <export>true</export>
+                        </number>
+                        <number>
+                            <id>build.number.patch</id>
+                            <fieldNumber>2</fieldNumber>
+                            <propertyNameInFile>build.number</propertyNameInFile>
+                            <propertyFile>${project.basedir}/build.properties</propertyFile>
+                            <export>true</export>
+                        </number>
+                    </numbers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>get-initialize</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>inc-generate-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>inc</goal>
+                        </goals>
+                        <configuration>
+                            <persist>true</persist>
+                            <numbers>
+                                <number combine.children="append">
+                                    <id>build.number.major</id>
+                                    <skip>true</skip>
+                                </number>
+                                <number combine.children="append">
+                                    <id>build.number.minor</id>
+                                    <skip>true</skip>
+                                </number>
+                                <number combine.children="append">
+                                    <id>build.number.patch</id>
+                                    <increment>1</increment>
+                                </number>
+                            </numbers>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>get-generate-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>get</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

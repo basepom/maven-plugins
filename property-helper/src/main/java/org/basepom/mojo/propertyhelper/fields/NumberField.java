@@ -24,21 +24,18 @@ import org.basepom.mojo.propertyhelper.definitions.NumberDefinition;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 public final class NumberField extends Field<String, NumberDefinition> {
 
-    private static final Pattern MATCH_GROUPS = Pattern.compile("\\d+|\\D+");
-
     private final ValueProvider valueProvider;
 
-    private final List<String> elements = Lists.newArrayList();
-    private final List<Integer> numberElements = Lists.newArrayList();
+    // internal state
+    private List<NumberElement> numberElements;
+    private List<NumberElement> numberIndex;
 
     @VisibleForTesting
     public static NumberField forTesting(NumberDefinition numberDefinition, ValueProvider valueProvider) {
@@ -62,67 +59,135 @@ public final class NumberField extends Field<String, NumberDefinition> {
     @Override
     public String getValue() {
         parse();
-        final String value = Joiner.on("").join(elements);
-        return formatResult(value);
+
+        return formatResult(value().map(v -> Long.toString(v))
+            .orElse(valueProvider.getValue().orElse("")));
     }
 
     private void parse() {
         final Optional<String> value = valueProvider.getValue();
 
-        if (value.isPresent()) {
-            final Matcher m = MATCH_GROUPS.matcher(value.get());
-            elements.clear();
-            numberElements.clear();
+        ImmutableList.Builder<NumberElement> numberELementBuilder = ImmutableList.builder();
+        ImmutableList.Builder<NumberElement> numberIndexBuilder = ImmutableList.builder();
 
-            while (m.find()) {
-                final String matchValue = m.group();
-                elements.add(matchValue);
-                if (isNumber(matchValue)) {
-                    numberElements.add(elements.size() - 1);
+        if (value.isPresent()) {
+            String numberValue = value.get();
+            if (!numberValue.isBlank()) {
+                StringBuilder sb = new StringBuilder();
+                int charIndex = 0;
+                boolean number = Character.isDigit(numberValue.charAt(charIndex));
+
+                while (charIndex < numberValue.length()) {
+                    char currentChar = numberValue.charAt(charIndex);
+                    if (number != Character.isDigit(currentChar)) {
+                        var numberElement = new NumberElement(number, sb.toString());
+
+                        numberELementBuilder.add(numberElement);
+                        if (number) {
+                            numberIndexBuilder.add(numberElement);
+                        }
+
+                        number = !number;
+                        sb.setLength(0);
+                    }
+                    sb.append(currentChar);
+                    charIndex++;
+                }
+                if (sb.length() > 0) {
+                    var numberElement = new NumberElement(number, sb.toString());
+
+                    numberELementBuilder.add(numberElement);
+                    if (number) {
+                        numberIndexBuilder.add(numberElement);
+                    }
                 }
             }
-
-            checkState(numberElements.size() > fieldDefinition.getFieldNumber(), "Only %s fields in %s, field %s requested.",
-                numberElements.size(), value, fieldDefinition.getFieldNumber());
         }
+
+        this.numberElements = numberELementBuilder.build();
+        this.numberIndex = numberIndexBuilder.build();
     }
 
-    private boolean isNumber(final CharSequence c) {
-        for (int i = 0; i < c.length(); i++) {
-            if (!Character.isDigit(c.charAt(i))) {
-                return false;
-            }
+    private String print() {
+        return Joiner.on("").join(numberElements.stream().map(NumberElement::getFieldValue).iterator());
+    }
+
+    private Optional<Long> value() {
+        return fieldDefinition.getFieldNumber()
+            .map(fieldNumber -> numberIndex.get(fieldNumber))
+            .flatMap(NumberElement::getLongValue);
+    }
+
+    private void set(long value) {
+        Optional<NumberElement> numberElement = fieldDefinition.getFieldNumber()
+            .map(fieldNumber -> numberIndex.get(fieldNumber));
+
+        if (numberElement.isPresent()) {
+            numberElement.get().setLongValue(value);
+            valueProvider.setValue(print());
+        } else {
+            valueProvider.setValue(Long.toString(value));
         }
-        return true;
     }
 
     public void increment() {
-        final Long value = getNumberValue();
-        if (value != null) {
-            setNumberValue(value + fieldDefinition.getIncrement());
-        }
+        parse();
+
+        fieldDefinition.getFieldNumber().ifPresent(fieldNumber -> checkState(numberIndex.size() > fieldNumber,
+            "Only %s fields in %s, field %s requested.", numberElements.size(), print(), fieldNumber));
+
+        value().ifPresent(value -> {
+            set(value + fieldDefinition.getIncrement());
+        });
     }
 
-    public Long getNumberValue() {
+    public Optional<Long> getNumberValue() {
         parse();
-        return numberElements.isEmpty() ? null : Long.valueOf(elements.get(numberElements.get(fieldDefinition.getFieldNumber())));
-    }
 
-    public void setNumberValue(final Long value) {
-        parse();
-        if (!numberElements.isEmpty()) {
-            elements.set(numberElements.get(fieldDefinition.getFieldNumber()), value.toString());
-            valueProvider.setValue(Joiner.on("").join(elements));
-        }
+        fieldDefinition.getFieldNumber().ifPresent(fieldNumber -> checkState(numberIndex.size() > fieldNumber,
+            "Only %s fields in %s, field %s requested.", numberElements.size(), print(), fieldNumber));
+
+        return value();
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", NumberField.class.getSimpleName() + "[", "]")
-            .add("numberDefinition=" + fieldDefinition)
             .add("valueProvider=" + valueProvider)
-            .add("elements=" + elements)
             .add("numberElements=" + numberElements)
+            .add("numberIndex=" + numberIndex)
+            .add("fieldDefinition=" + fieldDefinition)
             .toString();
+    }
+
+    private static final class NumberElement {
+
+        private final boolean number;
+        private String value;
+
+        private NumberElement(boolean number, String value) {
+            this.number = number;
+            this.value = value;
+        }
+
+        String getFieldValue() {
+            return value;
+        }
+
+        void setLongValue(long value) {
+            this.value = Long.toString(value);
+        }
+
+        Optional<Long> getLongValue() {
+            return number ? Optional.of(Long.parseLong(value)) : Optional.empty();
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", NumberElement.class.getSimpleName() + "[", "]")
+                .add("number=" + number)
+                .add("value='" + value + "'")
+                .toString();
+        }
     }
 }

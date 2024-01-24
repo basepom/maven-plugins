@@ -14,6 +14,7 @@
 
 package org.basepom.mojo.propertyhelper.fields;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.numberDefinition;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setFieldNumber;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +39,10 @@ public class TestNumberField {
         final Properties props = new Properties();
         props.setProperty("hello", "100");
         final NumberField nf1 = NumberField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
-        assertEquals(100L, nf1.getNumberValue().longValue());
+        assertThat(nf1.getNumberValue()).isPresent().contains(100L);
+
+        assertThat(nf1.getValue()).isEqualTo("100");
+        assertThat(props).extracting("hello").isEqualTo("100");
     }
 
     @Test
@@ -61,13 +65,14 @@ public class TestNumberField {
         final NumberField nf1 = NumberField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
         final NumberField nf2 = NumberField.forTesting(f2, new PropertyBackedValueAdapter(props, f2.getId()));
         final NumberField nf3 = NumberField.forTesting(f3, new PropertyBackedValueAdapter(props, f3.getId()));
-        assertEquals(4L, nf1.getNumberValue().longValue());
-        assertEquals(8L, nf2.getNumberValue().longValue());
-        assertEquals(15L, nf3.getNumberValue().longValue());
+        assertThat(nf1.getNumberValue()).isPresent().contains(4L);
+        assertThat(nf2.getNumberValue()).isPresent().contains(8L);
+        assertThat(nf3.getNumberValue()).isPresent().contains(15L);
 
-        assertEquals(value, nf1.getValue());
-        assertEquals(value, nf2.getValue());
-        assertEquals(value, nf3.getValue());
+        assertEquals("4", nf1.getValue());
+        assertEquals("8", nf2.getValue());
+        assertEquals("15", nf3.getValue());
+        assertThat(props).extracting("hello").isEqualTo("4.8.15");
     }
 
     @Test
@@ -94,16 +99,17 @@ public class TestNumberField {
         final NumberField nf2 = NumberField.forTesting(f2, new PropertyBackedValueAdapter(props, f2.getId()));
         final NumberField nf3 = NumberField.forTesting(f3, new PropertyBackedValueAdapter(props, f3.getId()));
         final NumberField nf4 = NumberField.forTesting(f4, new PropertyBackedValueAdapter(props, f4.getId()));
+        assertThat(nf1.getNumberValue()).isPresent().contains(3L);
+        assertThat(nf2.getNumberValue()).isPresent().contains(2L);
+        assertThat(nf3.getNumberValue()).isPresent().contains(1L);
+        assertThat(nf4.getNumberValue()).isPresent().contains(4L);
 
-        assertEquals(3L, nf1.getNumberValue().longValue());
-        assertEquals(2L, nf2.getNumberValue().longValue());
-        assertEquals(1L, nf3.getNumberValue().longValue());
-        assertEquals(4L, nf4.getNumberValue().longValue());
+        assertEquals("3", nf1.getValue());
+        assertEquals("2", nf2.getValue());
+        assertEquals("1", nf3.getValue());
+        assertEquals("4", nf4.getValue());
 
-        assertEquals(value, nf1.getValue());
-        assertEquals(value, nf2.getValue());
-        assertEquals(value, nf3.getValue());
-        assertEquals(value, nf4.getValue());
+        assertThat(props).extracting("hello").isEqualTo(value);
     }
 
     @Test
@@ -118,13 +124,17 @@ public class TestNumberField {
 
         final NumberField nf1 = NumberField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
 
-        assertEquals(1L, nf1.getNumberValue().longValue());
-        assertEquals(value, nf1.getValue());
+        assertThat(nf1.getNumberValue()).isPresent().contains(1L);
+        assertEquals("1", nf1.getValue());
+
+        assertThat(props).extracting("hello").isEqualTo(value);
 
         nf1.increment();
 
-        assertEquals(2L, nf1.getNumberValue().longValue());
-        assertEquals("foobar-2.2-barfoo-3", nf1.getValue());
+        assertThat(nf1.getNumberValue()).isPresent().contains(2L);
+        assertEquals("2", nf1.getValue());
+
+        assertThat(props).extracting("hello").isEqualTo("foobar-2.2-barfoo-3");
     }
 
     @Test
@@ -144,22 +154,31 @@ public class TestNumberField {
         final NumberField nf1 = NumberField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
         final NumberField nf2 = NumberField.forTesting(f2, new PropertyBackedValueAdapter(props, f2.getId()));
 
-        assertEquals(4L, nf1.getNumberValue().longValue());
-        assertEquals(8L, nf2.getNumberValue().longValue());
-        assertEquals(value, nf1.getValue());
-        assertEquals(value, nf2.getValue());
+        assertThat(nf1.getNumberValue()).isPresent().contains(4L);
+        assertThat(nf2.getNumberValue()).isPresent().contains(8L);
+
+        assertEquals("4", nf1.getValue());
+        assertEquals("8", nf2.getValue());
+
+        assertThat(props).extracting("hello").isEqualTo(value);
 
         nf1.increment();
-        assertEquals(5L, nf1.getNumberValue().longValue());
-        assertEquals(8L, nf2.getNumberValue().longValue());
-        assertEquals("5.8", nf1.getValue());
-        assertEquals("5.8", nf2.getValue());
+
+        assertThat(nf1.getNumberValue()).isPresent().contains(5L);
+        assertThat(nf2.getNumberValue()).isPresent().contains(8L);
+        assertEquals("5", nf1.getValue());
+        assertEquals("8", nf2.getValue());
+
+        assertThat(props).extracting("hello").isEqualTo("5.8");
 
         nf2.increment();
-        assertEquals(5L, nf1.getNumberValue().longValue());
-        assertEquals(9L, nf2.getNumberValue().longValue());
-        assertEquals("5.9", nf1.getValue());
-        assertEquals("5.9", nf2.getValue());
+
+        assertThat(nf1.getNumberValue()).isPresent().contains(5L);
+        assertThat(nf2.getNumberValue()).isPresent().contains(9L);
+        assertEquals("5", nf1.getValue());
+        assertEquals("9", nf2.getValue());
+
+        assertThat(props).extracting("hello").isEqualTo("5.9");
     }
 
     @Test
@@ -178,23 +197,32 @@ public class TestNumberField {
 
         final NumberField nf1 = NumberField.forTesting(f1, new PropertyBackedValueAdapter(props, f1.getId()));
         final NumberField nf2 = NumberField.forTesting(f2, new PropertyBackedValueAdapter(props, f2.getId()));
+        assertThat(nf1.getNumberValue()).isPresent().contains(4L);
+        assertThat(nf2.getNumberValue()).isPresent().contains(4L);
 
-        assertEquals(4L, nf1.getNumberValue().longValue());
-        assertEquals(4L, nf2.getNumberValue().longValue());
-        assertEquals(value, nf1.getValue());
-        assertEquals(value, nf2.getValue());
+        assertEquals("4", nf1.getValue());
+        assertEquals("4", nf2.getValue());
+
+        assertThat(props).extracting("hello").isEqualTo(value);
 
         nf1.increment();
-        assertEquals(5L, nf1.getNumberValue().longValue());
-        assertEquals(5L, nf2.getNumberValue().longValue());
-        assertEquals("5.8", nf1.getValue());
-        assertEquals("5.8", nf2.getValue());
+
+        assertThat(nf1.getNumberValue()).isPresent().contains(5L);
+        assertThat(nf2.getNumberValue()).isPresent().contains(5L);
+        assertEquals("5", nf1.getValue());
+        assertEquals("5", nf2.getValue());
+
+        assertThat(props).extracting("hello").isEqualTo("5.8");
 
         nf2.increment();
-        assertEquals(6L, nf1.getNumberValue().longValue());
-        assertEquals(6L, nf2.getNumberValue().longValue());
-        assertEquals("6.8", nf1.getValue());
-        assertEquals("6.8", nf2.getValue());
+
+        assertThat(nf1.getNumberValue()).isPresent().contains(6L);
+        assertThat(nf2.getNumberValue()).isPresent().contains(6L);
+
+        assertEquals("6", nf1.getValue());
+        assertEquals("6", nf2.getValue());
+
+        assertThat(props).extracting("hello").isEqualTo("6.8");
     }
 }
 

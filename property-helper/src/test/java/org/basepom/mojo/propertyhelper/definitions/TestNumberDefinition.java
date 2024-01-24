@@ -14,6 +14,7 @@
 
 package org.basepom.mojo.propertyhelper.definitions;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.numberDefinition;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -53,7 +54,9 @@ public class TestNumberDefinition {
         nd.check();
         assertEquals(id, nd.getId());
         assertEquals("0", nd.getInitialValue().get());
-        assertEquals(0, nd.getFieldNumber());
+
+        assertThat(nd.getFieldNumber()).isEmpty();
+
         assertEquals(1, nd.getIncrement());
         assertEquals(id, nd.getId());
         assertFalse(nd.getPropertyFile().isPresent());

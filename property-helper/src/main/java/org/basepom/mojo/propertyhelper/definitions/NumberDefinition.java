@@ -24,6 +24,7 @@ import org.basepom.mojo.propertyhelper.fields.NumberField;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -35,7 +36,7 @@ public class NumberDefinition extends FieldDefinition<String> {
     /**
      * If a multi-number, which field to increment. Field injected by Maven.
      */
-    int fieldNumber = 0;
+    Integer fieldNumber;
 
     /**
      * Increment of the property when changing it. Field injected by Maven.
@@ -53,8 +54,8 @@ public class NumberDefinition extends FieldDefinition<String> {
     }
 
 
-    public int getFieldNumber() {
-        return fieldNumber;
+    public Optional<Integer> getFieldNumber() {
+        return Optional.ofNullable(fieldNumber);
     }
 
     public int getIncrement() {
@@ -65,7 +66,7 @@ public class NumberDefinition extends FieldDefinition<String> {
     public void check() {
         super.check();
         checkState(getInitialValue().isPresent(), "initial value must be defined");
-        checkState(fieldNumber >= 0, "the field number must be >= 0");
+        getFieldNumber().ifPresent(fieldNumber -> checkState(fieldNumber >= 0, "the field number must be >= 0"));
     }
 
     @Override
@@ -100,7 +101,7 @@ public class NumberDefinition extends FieldDefinition<String> {
             return false;
         }
         NumberDefinition that = (NumberDefinition) o;
-        return fieldNumber == that.fieldNumber && increment == that.increment;
+        return increment == that.increment && Objects.equals(fieldNumber, that.fieldNumber);
     }
 
     @Override
