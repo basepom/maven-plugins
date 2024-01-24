@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate;
 
 import java.util.UUID;
@@ -57,7 +58,8 @@ public class TestNumberDefinition {
         assertEquals(id, nd.getId());
         assertFalse(nd.getPropertyFile().isPresent());
         assertEquals(IgnoreWarnFailCreate.FAIL, nd.getOnMissingFile());
-        assertEquals(IgnoreWarnFailCreate.FAIL, nd.getOnMissingProperty());
+        assertEquals(IgnoreWarnFailCreate.FAIL, nd.getOnMissingFileProperty());
+        assertEquals(IgnoreWarnFail.FAIL, nd.getOnMissingProperty());
         assertFalse(nd.isExport());
     }
 

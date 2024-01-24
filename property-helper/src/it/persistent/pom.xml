@@ -50,7 +50,7 @@
                             <propertyFile>target/build.properties</propertyFile>
                             <propertyNameInFile>build.id</propertyNameInFile>
                             <onMissingFile>create</onMissingFile>
-                            <onMissingProperty>create</onMissingProperty>
+                            <onMissingFileProperty>create</onMissingFileProperty>
                         </uuid>
                     </uuids>
                     <dates>
@@ -61,14 +61,14 @@
                             <timezone>UTC</timezone>
                             <format>yyyyMMdd'T'HHmmssZ</format>
                             <onMissingFile>create</onMissingFile>
-                            <onMissingProperty>create</onMissingProperty>
+                            <onMissingFileProperty>create</onMissingFileProperty>
                         </date>
                         <date>
                             <id>unformatted.time</id>
                             <export>true</export>
                             <propertyFile>target/build.properties</propertyFile>
                             <onMissingFile>create</onMissingFile>
-                            <onMissingProperty>create</onMissingProperty>
+                            <onMissingFileProperty>create</onMissingFileProperty>
                         </date>
                     </dates>
                 </configuration>

@@ -16,7 +16,7 @@ package org.basepom.mojo.propertyhelper;
 
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.numberDefinition;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingFile;
-import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingProperty;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingFileProperty;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setPropertyFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -81,7 +81,7 @@ public class TestPropertyCache {
         assertThrows(IllegalStateException.class, () -> {
             final NumberDefinition fileBacked = numberDefinition("hello");
             setOnMissingFile(fileBacked, "FAIL");
-            setOnMissingProperty(fileBacked, "IGNORE");
+            setOnMissingFileProperty(fileBacked, "IGNORE");
             setPropertyFile(fileBacked, new File("/does/not/exist"));
 
             fileBacked.check();
@@ -98,7 +98,7 @@ public class TestPropertyCache {
 
         final NumberDefinition fileBacked = numberDefinition("hello");
         setOnMissingFile(fileBacked, "FAIL");
-        setOnMissingProperty(fileBacked, "CREATE");
+        setOnMissingFileProperty(fileBacked, "CREATE");
         setPropertyFile(fileBacked, propFile);
         fileBacked.check();
         final ValueProvider valueProvider = pc.getValueProvider(fileBacked);
@@ -114,7 +114,7 @@ public class TestPropertyCache {
 
         final NumberDefinition fileBacked = numberDefinition("hello");
         setOnMissingFile(fileBacked, "FAIL");
-        setOnMissingProperty(fileBacked, "IGNORE");
+        setOnMissingFileProperty(fileBacked, "IGNORE");
         setPropertyFile(fileBacked, propFile);
 
         fileBacked.check();
@@ -134,7 +134,7 @@ public class TestPropertyCache {
 
             final NumberDefinition fileBacked = numberDefinition("hello");
             setOnMissingFile(fileBacked, "FAIL");
-            setOnMissingProperty(fileBacked, "FAIL");
+            setOnMissingFileProperty(fileBacked, "FAIL");
             setPropertyFile(fileBacked, propFile);
 
             fileBacked.check();
@@ -156,7 +156,7 @@ public class TestPropertyCache {
 
         final NumberDefinition fileBacked = numberDefinition("hello");
         setOnMissingFile(fileBacked, "FAIL");
-        setOnMissingProperty(fileBacked, "FAIL");
+        setOnMissingFileProperty(fileBacked, "FAIL");
         setPropertyFile(fileBacked, propFile);
 
         fileBacked.check();
@@ -177,7 +177,7 @@ public class TestPropertyCache {
 
         final NumberDefinition fileBacked = numberDefinition("hello");
         setOnMissingFile(fileBacked, "FAIL");
-        setOnMissingProperty(fileBacked, "CREATE");
+        setOnMissingFileProperty(fileBacked, "CREATE");
         setPropertyFile(fileBacked, propFile);
         fileBacked.check();
         final ValueProvider valueProvider = pc.getValueProvider(fileBacked);
@@ -198,12 +198,12 @@ public class TestPropertyCache {
 
         final NumberDefinition n1 = numberDefinition("hello");
         setOnMissingFile(n1, "FAIL");
-        setOnMissingProperty(n1, "FAIL");
+        setOnMissingFileProperty(n1, "FAIL");
         setPropertyFile(n1, propFile);
 
         final NumberDefinition n2 = numberDefinition("world");
         setOnMissingFile(n2, "FAIL");
-        setOnMissingProperty(n2, "FAIL");
+        setOnMissingFileProperty(n2, "FAIL");
         setPropertyFile(n2, propFile);
 
         n1.check();

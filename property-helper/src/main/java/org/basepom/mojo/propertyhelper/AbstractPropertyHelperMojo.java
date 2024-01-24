@@ -138,8 +138,9 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *
      *         <propertyFile></propertyFile>
      *         <propertyNameInFile></propertyNameInFile>
-     *         <onMissingFile></onMissingFile>
-     *         <onMissingProperty></onMissingProperty>
+     *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
+     *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+     *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </number>
      *     ...
      * </numbers>
@@ -173,8 +174,9 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *
      *         <propertyFile></propertyFile>
      *         <propertyNameInFile></propertyNameInFile>
-     *         <onMissingFile></onMissingFile>
-     *         <onMissingProperty></onMissingProperty>
+     *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
+     *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+     *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </string>
      * </strings>
      * }</pre>
@@ -204,8 +206,9 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *
      *         <propertyFile></propertyFile>
      *         <propertyNameInFile></propertyNameInFile>
-     *         <onMissingFile></onMissingFile>
-     *         <onMissingProperty></onMissingProperty>
+     *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
+     *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+     *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </date>
      * </dates>
      * }</pre>
@@ -239,8 +242,9 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *
      *         <propertyFile></propertyFile>
      *         <propertyNameInFile></propertyNameInFile>
-     *         <onMissingFile></onMissingFile>
-     *         <onMissingProperty></onMissingProperty>
+     *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
+     *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+     *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </macro>
      * </macros>
      * }</pre>
@@ -269,8 +273,9 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *
      *         <propertyFile></propertyFile>
      *         <propertyNameInFile></propertyNameInFile>
-     *         <onMissingFile></onMissingFile>
-     *         <onMissingProperty></onMissingProperty>
+     *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
+     *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+     *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </uuid>
      * </uuids>
      * }</pre>
@@ -419,7 +424,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
                 numberFields.add((NumberField) field);
             }
 
-            var fieldValue = interpolatorFactory.interpolate(field.getFieldName(), IgnoreWarnFail.FAIL, Map.of()).apply(field.getValue());
+            var fieldValue = field.getValue();
             builder.put(field.getFieldName(), fieldValue);
 
             if (field.isExposeAsProperty()) {
@@ -451,7 +456,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
             Set<PropertyResult> propertyResults = propertyGroup.createProperties(values);
             groupMapBuilder.put(propertyGroup.getId(), propertyGroup);
             resultMapBuilder.put(propertyGroup.getId(), propertyResults);
-            });
+        });
 
         var groupMap = groupMapBuilder.build();
         var resultMap = resultMapBuilder.build();

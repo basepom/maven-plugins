@@ -15,7 +15,7 @@
 package org.basepom.mojo.propertyhelper.fields;
 
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setBlankIsValid;
-import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingProperty;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingFileProperty;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingValue;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setValues;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.stringDefinition;
@@ -27,7 +27,6 @@ import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyBackedValueAdapter;
 import org.basepom.mojo.propertyhelper.definitions.DefinitionHelper;
 import org.basepom.mojo.propertyhelper.definitions.StringDefinition;
-import org.basepom.mojo.propertyhelper.fields.StringField;
 
 import java.util.Properties;
 
@@ -191,7 +190,7 @@ public class TestStringField {
         assertThrows(IllegalStateException.class, () -> {
             final StringDefinition f1 = stringDefinition("hello");
             setOnMissingValue(f1, "ignore");
-            setOnMissingProperty(f1, "fail");
+            setOnMissingFileProperty(f1, "fail");
             setBlankIsValid(f1, true);
 
             f1.check();

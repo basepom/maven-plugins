@@ -46,6 +46,10 @@ public final class DefinitionHelper {
         fieldDefinition.setOnMissingProperty(value);
     }
 
+    public static void setOnMissingFileProperty(FieldDefinition<?> fieldDefinition, String value) {
+        fieldDefinition.setOnMissingFileProperty(value);
+    }
+
     public static void setOnMissingFile(FieldDefinition<?> fieldDefinition, String value) {
         fieldDefinition.setOnMissingFile(value);
     }
@@ -53,7 +57,6 @@ public final class DefinitionHelper {
     public static void setPropertyFile(FieldDefinition<?> fieldDefinition, File value) {
         fieldDefinition.propertyFile = value;
     }
-
 
     public static void setInitialValue(FieldDefinition<?> fieldDefinition, String initialValue) {
         fieldDefinition.initialValue = initialValue;

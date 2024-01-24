@@ -14,7 +14,7 @@
 
 package org.basepom.mojo.propertyhelper.fields;
 
-import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingProperty;
+import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingFileProperty;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setValue;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.uuidDefinition;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,7 +24,6 @@ import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyBackedValueAdapter;
 import org.basepom.mojo.propertyhelper.ValueProvider.SingleValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
-import org.basepom.mojo.propertyhelper.fields.UuidField;
 
 import java.util.Properties;
 import java.util.UUID;
@@ -112,7 +111,7 @@ public class TestUuidField {
 
         assertThrows(IllegalStateException.class, () -> {
             final UuidDefinition uuidDefinition = uuidDefinition("hello");
-            setOnMissingProperty(uuidDefinition, "fail");
+            setOnMissingFileProperty(uuidDefinition, "fail");
 
             uuidDefinition.check();
 

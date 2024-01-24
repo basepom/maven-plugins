@@ -57,7 +57,7 @@ public final class ValueCache {
         final String propertyNameInFile = definition.getPropertyNameInFile();
         final boolean hasValue = values.containsKey(propertyNameInFile);
 
-        final boolean createProperty = checkIgnoreWarnFailCreateState(hasValue, definition.getOnMissingProperty(),
+        final boolean createProperty = checkIgnoreWarnFailCreateState(hasValue, definition.getOnMissingFileProperty(),
             () -> format("property '%s' has value '%s'", propertyNameInFile, values.get(propertyNameInFile)),
             () -> format("property '%s' has no value defined", propertyNameInFile));
 

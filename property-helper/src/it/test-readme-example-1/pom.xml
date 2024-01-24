@@ -69,7 +69,7 @@
                                 <propertyNameInFile>build.number</propertyNameInFile>
                                 <propertyFile>${project.basedir}/build.properties</propertyFile>
                                 <onMissingFile>create</onMissingFile>
-                                <onMissingProperty>create</onMissingProperty>
+                                <onMissingFileProperty>create</onMissingFileProperty>
                                 <initialValue>1</initialValue>
                             </number>
                         </numbers>

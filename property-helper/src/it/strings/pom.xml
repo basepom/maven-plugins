@@ -71,7 +71,7 @@
                                 </string>
                                 <string>
                                     <id>null-value</id>
-                                    <onMissingProperty>IGNORE</onMissingProperty>
+                                    <onMissingFileProperty>IGNORE</onMissingFileProperty>
                                     <onMissingFile>IGNORE</onMissingFile>
                                     <onMissingValue>IGNORE</onMissingValue>
                                     <blankIsValid>true</blankIsValid>
@@ -84,7 +84,7 @@
                                 </string>
                                 <string>
                                     <id>prop-default</id>
-                                    <onMissingProperty>IGNORE</onMissingProperty>
+                                    <onMissingFileProperty>IGNORE</onMissingFileProperty>
                                     <propertyFile>strings.properties</propertyFile>
                                     <export>true</export>
                                     <values>

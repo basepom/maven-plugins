@@ -18,6 +18,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import org.basepom.mojo.propertyhelper.Field;
 import org.basepom.mojo.propertyhelper.FieldContext;
+import org.basepom.mojo.propertyhelper.IgnoreWarnFail;
 import org.basepom.mojo.propertyhelper.IgnoreWarnFailCreate;
 import org.basepom.mojo.propertyhelper.ValueCache;
 
@@ -82,10 +83,19 @@ public abstract class FieldDefinition<T> {
     /**
      * What to do when the property is missing from the file.
      */
-    private IgnoreWarnFailCreate onMissingProperty = IgnoreWarnFailCreate.FAIL;
+    private IgnoreWarnFailCreate onMissingFileProperty = IgnoreWarnFailCreate.FAIL;
+
+    public void setOnMissingFileProperty(String onMissingFileProperty) {
+        this.onMissingFileProperty = IgnoreWarnFailCreate.forString(onMissingFileProperty);
+    }
+
+    /**
+     * What to do when a referenced property can not be resolved.
+     */
+    private IgnoreWarnFail onMissingProperty = IgnoreWarnFail.FAIL;
 
     public void setOnMissingProperty(String onMissingProperty) {
-        this.onMissingProperty = IgnoreWarnFailCreate.forString(onMissingProperty);
+        this.onMissingProperty = IgnoreWarnFail.forString(onMissingProperty);
     }
 
     /**
@@ -144,7 +154,11 @@ public abstract class FieldDefinition<T> {
         return onMissingFile;
     }
 
-    public IgnoreWarnFailCreate getOnMissingProperty() {
+    public IgnoreWarnFailCreate getOnMissingFileProperty() {
+        return onMissingFileProperty;
+    }
+
+    public IgnoreWarnFail getOnMissingProperty() {
         return onMissingProperty;
     }
 
@@ -172,11 +186,12 @@ public abstract class FieldDefinition<T> {
             .add("export=" + export)
             .add("propertyNameInFile='" + propertyNameInFile + "'")
             .add("propertyFile=" + propertyFile)
-            .add("onMissingFile='" + onMissingFile + "'")
-            .add("onMissingProperty='" + onMissingProperty + "'")
+            .add("onMissingFile=" + onMissingFile)
+            .add("onMissingFileProperty=" + onMissingFileProperty)
+            .add("onMissingProperty=" + onMissingProperty)
             .add("initialValue='" + initialValue + "'")
             .add("format='" + format + "'")
-            .add("transformers='" + transformers + "'")
+            .add("transformers=" + transformers)
             .toString();
     }
 

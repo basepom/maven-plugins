@@ -60,7 +60,7 @@
                                 </uuid>
                                 <uuid>
                                     <id>prop-default</id>
-                                    <onMissingProperty>IGNORE</onMissingProperty>
+                                    <onMissingFileProperty>IGNORE</onMissingFileProperty>
                                     <propertyFile>uuid.properties</propertyFile>
                                     <export>true</export>
                                     <value>03f87dd5-4bca-4d3c-af54-d02e1acd5563</value>

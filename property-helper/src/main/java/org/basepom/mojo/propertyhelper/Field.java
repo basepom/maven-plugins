@@ -52,7 +52,7 @@ public abstract class Field<T, U extends FieldDefinition<T>> {
 
         return Optional.ofNullable(value)
             .map(fieldDefinition.formatResult())
-            .map(interpolatorFactory.interpolate(getFieldName(), IgnoreWarnFail.FAIL, Map.of()))
+            .map(interpolatorFactory.interpolate(getFieldName(), fieldDefinition.getOnMissingProperty(), Map.of()))
             .map(transformerRegistry.applyTransformers(fieldDefinition.getTransformers()))
             .orElse("");
     }
