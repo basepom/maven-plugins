@@ -52,7 +52,7 @@ public class TestPropertyGroup {
     @Test
     public void testRenderSingle() {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
-        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "#{world}");
+        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "@{world}");
         setProperties(propertyGroupDefinition, propertyDefinition);
 
         PropertyGroup propertyGroup = propertyGroupDefinition.createGroup(FieldContext.forTesting());
@@ -69,7 +69,7 @@ public class TestPropertyGroup {
     public void testRenderEmptyFail() {
         assertThrows(IllegalStateException.class, () -> {
             final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
-            final PropertyDefinition propertyDefinition = propertyDefinition("hello", "#{world}");
+            final PropertyDefinition propertyDefinition = propertyDefinition("hello", "@{world}");
             setProperties(propertyGroupDefinition, propertyDefinition);
 
             PropertyGroup propertyGroup = propertyGroupDefinition.createGroup(FieldContext.forTesting());
@@ -86,7 +86,7 @@ public class TestPropertyGroup {
     @Test
     public void testRenderEmptyOk() {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
-        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-#{world}-hat");
+        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-@{world}-hat");
         setProperties(propertyGroupDefinition, propertyDefinition);
         setOnMissingProperty(propertyGroupDefinition, "ignore");
 
@@ -103,7 +103,7 @@ public class TestPropertyGroup {
     @Test
     public void testRenderIsReluctant() {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
-        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-#{first}-#{world}-hat");
+        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-@{first}-@{world}-hat");
         setProperties(propertyGroupDefinition, propertyDefinition);
         setOnMissingProperty(propertyGroupDefinition, "ignore");
 
@@ -120,7 +120,7 @@ public class TestPropertyGroup {
     @Test
     public void testRenderFriendOfAFriend() throws Exception {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
-        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-#{whatWorld}-#{world}-hat");
+        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-@{whatWorld}-@{world}-hat");
         setProperties(propertyGroupDefinition, propertyDefinition);
         setOnMissingProperty(propertyGroupDefinition, "ignore");
 
@@ -131,7 +131,7 @@ public class TestPropertyGroup {
         Assertions.assertEquals("hello", propertyNames.get(0));
 
         final String propertyValue = propertyGroup.getPropertyValue(propertyDefinition,
-            ImmutableMap.of("whatWorld", "#{first}", "first", "decadent", "world", "rome"));
+            ImmutableMap.of("whatWorld", "@{first}", "first", "decadent", "world", "rome"));
         Assertions.assertEquals("nice-decadent-rome-hat", propertyValue);
     }
 
@@ -139,7 +139,7 @@ public class TestPropertyGroup {
     @Test
     public void testRenderDotsAreCool() {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
-        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-#{foo.bar.world}-hat");
+        final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-@{foo.bar.world}-hat");
         setProperties(propertyGroupDefinition, propertyDefinition);
         setOnMissingProperty(propertyGroupDefinition, "ignore");
 

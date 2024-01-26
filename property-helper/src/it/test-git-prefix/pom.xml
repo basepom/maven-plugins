@@ -82,7 +82,7 @@
                             <strings>
                                 <string>
                                     <id>my.version</id>
-                                    <initialValue>#{git.closest.tag.name}</initialValue>
+                                    <initialValue>@{git.closest.tag.name}</initialValue>
                                     <export>true</export>
                                 </string>
                             </strings>

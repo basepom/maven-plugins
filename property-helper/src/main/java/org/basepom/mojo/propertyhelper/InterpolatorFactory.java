@@ -40,7 +40,7 @@ import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 public final class InterpolatorFactory {
 
     private static final List<String> SYNONYM_PREFIXES = ImmutableList.of("project", "pom");
-    private static final String PREFIX = "#{";
+    private static final String PREFIX = "@{";
     private static final String POSTFIX = "}";
 
     private final Model model;

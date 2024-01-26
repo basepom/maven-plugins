@@ -46,7 +46,7 @@
                                     <property>
                                         <name>build.tag</name>
                                         <value>
-                                            #{build-tag}-#{build-number}-#{build-date}</value>
+                                            @{build-tag}-@{build-number}-@{build-date}</value>
                                     </property>
                                 </properties>
                             </propertyGroup>

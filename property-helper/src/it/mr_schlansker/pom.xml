@@ -57,12 +57,12 @@
                                         </property>
                                         <property>
                                             <name>late_group.os_name</name>
-                                            <value>#{os.name}</value>
+                                            <value>@{os.name}</value>
                                             <transformers>remove_whitespace,lowercase</transformers>
                                         </property>
                                         <property>
                                             <name>really_late_group.os_name</name>
-                                            <value>#{really_late_os_name}</value>
+                                            <value>@{really_late_os_name}</value>
                                             <transformers>remove_whitespace,lowercase</transformers>
                                         </property>
                                     </properties>
@@ -81,7 +81,7 @@
                                     <id>really_late_os_name</id>
                                     <export>true</export>
                                     <values>
-                                        <value>#{os.name}</value>
+                                        <value>@{os.name}</value>
                                     </values>
                                     <transformers>remove_whitespace,lowercase</transformers>
                                 </string>
