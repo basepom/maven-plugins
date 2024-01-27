@@ -60,126 +60,27 @@ public final class RepackMojo extends AbstractMojo {
     private static final PluginLog LOG = new PluginLog(RepackMojo.class);
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    public MavenProject project;
+    MavenProject project;
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    public MavenSession session;
+    MavenSession session;
 
     @Component
-    public MavenProjectHelper projectHelper;
+    MavenProjectHelper projectHelper;
 
     /**
      * The name of the main class. If not specified the first compiled class found that contains a {@code main} method will be used.
      */
     @Parameter(property = "repack.main-class")
-    public String mainClass = null;
+    String mainClass = null;
 
     /**
      * Collection of artifact definitions to include.
      */
-    @Parameter(alias = "includes")
-    public Set<DependencyDefinition> includedDependencies = ImmutableSet.of();
-
-    /**
-     * Collection of artifact definitions to exclude.
-     */
-    @Parameter(alias = "excludedDependencies")
-    public Set<DependencyDefinition> excludedDependencies = ImmutableSet.of();
-
-    /**
-     * Include system scoped dependencies.
-     */
-    @Parameter(defaultValue = "false", property = "repack.include-system-scope")
-    public boolean includeSystemScope = false;
-
-    /**
-     * Include provided scoped dependencies.
-     */
-    @Parameter(defaultValue = "false", property = "repack.include-provided-scope")
-    public boolean includeProvidedScope = false;
-
-    /**
-     * Include optional dependencies
-     */
-    @Parameter(defaultValue = "false", property = "repack.include-optional")
-    public boolean includeOptional = false;
-
-    /**
-     * Directory containing the generated archive.
-     */
-    @Parameter(defaultValue = "${project.build.directory}", property = "repack.output-directory")
-    public File outputDirectory;
-
-    /**
-     * Name of the generated archive.
-     */
-    @Parameter(defaultValue = "${project.build.finalName}", property = "repack.final-name")
-    public String finalName;
-
-    /**
-     * Skip the execution.
-     */
-    @Parameter(defaultValue = "false", property = "repack.skip")
-    public boolean skip = false;
-
-    /**
-     * Silence all non-output and non-error messages.
-     */
-    @Parameter(defaultValue = "false", property = "repack.quiet")
-    public boolean quiet = false;
-
-    /**
-     * Do a summary report.
-     */
-    @Parameter(defaultValue = "true", property = "repack.report")
-    public boolean report = true;
-
-    /**
-     * Classifier to add to the repacked archive. Use the blank string to replace the main artifact.
-     */
-    @Parameter(defaultValue = "repacked", property = "repack.classifier")
-    public String repackClassifier = "repacked";
-
-    /**
-     * Attach the repacked archive to the build cycle.
-     */
-    @Parameter(defaultValue = "true", property = "repack.attach-artifact")
-    public boolean attachRepackedArtifact = true;
-
-    /**
-     * A list of the libraries that must be unpacked at runtime (do not work within the fat jar).
-     */
-    @Parameter
-    public Set<DependencyDefinition> runtimeUnpackedDependencies = ImmutableSet.of();
-
-    /**
-     * A list of optional libraries that should be included even if optional dependencies are not included by default.
-     */
-    @Parameter
-    public Set<DependencyDefinition> optionalDependencies = ImmutableSet.of();
-
-    /**
-     * Timestamp for reproducible output archive entries, either formatted as ISO 8601 (<code>yyyy-MM-dd'T'HH:mm:ssXXX</code>) or an {@code int} representing
-     * seconds since the epoch.
-     */
-    @Parameter(defaultValue = "${project.build.outputTimestamp}", property = "repack.output-timestamp")
-    public String outputTimestamp;
-
-    /**
-     * The type of archive (which corresponds to how the dependencies are laid out inside it). Possible values are {@code JAR}, {@code WAR}, {@code ZIP},
-     * {@code DIR}, {@code NONE}. Defaults to {@code JAR}.
-     */
-    @Parameter(defaultValue = "JAR", property = "repack.layout")
-    public LayoutType layout = LayoutType.JAR;
-
-    /**
-     * The layout factory that will be used to create the executable archive if no explicit layout is set. Alternative layouts implementations can be provided
-     * by 3rd parties.
-     */
-    @Parameter
-    public LayoutFactory layoutFactory = null;
+    private Set<DependencyDefinition> includedDependencies = ImmutableSet.of();
 
     // called by maven
+    @Parameter(alias = "includes")
     public void setIncludedDependencies(final String... includedDependencies) {
         checkNotNull(includedDependencies, "includedDependencies is null");
 
@@ -188,7 +89,13 @@ public final class RepackMojo extends AbstractMojo {
                 .collect(toImmutableSet());
     }
 
+    /**
+     * Collection of artifact definitions to exclude.
+     */
+    private Set<DependencyDefinition> excludedDependencies = ImmutableSet.of();
+
     // called by maven
+    @Parameter(alias = "excludedDependencies")
     public void setExcludedDependencies(final String... excludedDependencies) {
         checkNotNull(excludedDependencies, "excludedDependencies is null");
 
@@ -197,7 +104,73 @@ public final class RepackMojo extends AbstractMojo {
                 .collect(toImmutableSet());
     }
 
+    /**
+     * Include system scoped dependencies.
+     */
+    @Parameter(defaultValue = "false", property = "repack.include-system-scope")
+    boolean includeSystemScope = false;
+
+    /**
+     * Include provided scoped dependencies.
+     */
+    @Parameter(defaultValue = "false", property = "repack.include-provided-scope")
+    boolean includeProvidedScope = false;
+
+    /**
+     * Include optional dependencies
+     */
+    @Parameter(defaultValue = "false", property = "repack.include-optional")
+    boolean includeOptional = false;
+
+    /**
+     * Directory containing the generated archive.
+     */
+    @Parameter(defaultValue = "${project.build.directory}", property = "repack.output-directory")
+    File outputDirectory;
+
+    /**
+     * Name of the generated archive.
+     */
+    @Parameter(defaultValue = "${project.build.finalName}", property = "repack.final-name")
+    String finalName;
+
+    /**
+     * Skip the execution.
+     */
+    @Parameter(defaultValue = "false", property = "repack.skip")
+    boolean skip = false;
+
+    /**
+     * Silence all non-output and non-error messages.
+     */
+    @Parameter(defaultValue = "false", property = "repack.quiet")
+    boolean quiet = false;
+
+    /**
+     * Do a summary report.
+     */
+    @Parameter(defaultValue = "true", property = "repack.report")
+    boolean report = true;
+
+    /**
+     * Classifier to add to the repacked archive. Use the blank string to replace the main artifact.
+     */
+    @Parameter(defaultValue = "repacked", property = "repack.classifier")
+    String repackClassifier = "repacked";
+
+    /**
+     * Attach the repacked archive to the build cycle.
+     */
+    @Parameter(defaultValue = "true", property = "repack.attach-artifact")
+    boolean attachRepackedArtifact = true;
+
+    /**
+     * A list of the libraries that must be unpacked at runtime (do not work within the fat jar).
+     */
+    private Set<DependencyDefinition> runtimeUnpackedDependencies = ImmutableSet.of();
+
     // called by maven
+    @Parameter
     public void setRuntimeUnpackedDependencies(final String... runtimeUnpackedDependencies) {
         checkNotNull(runtimeUnpackedDependencies, "runtimeUnpackDependencies is null");
 
@@ -206,7 +179,13 @@ public final class RepackMojo extends AbstractMojo {
                 .collect(toImmutableSet());
     }
 
+    /**
+     * A list of optional libraries that should be included even if optional dependencies are not included by default.
+     */
+    private Set<DependencyDefinition> optionalDependencies = ImmutableSet.of();
+
     // called by maven
+    @Parameter
     public void setOptionalDependencies(final String... optionalDependencies) {
         checkNotNull(optionalDependencies, "optionalDependencies is null");
 
@@ -214,6 +193,28 @@ public final class RepackMojo extends AbstractMojo {
                 .map(DependencyDefinition::new)
                 .collect(toImmutableSet());
     }
+
+    /**
+     * Timestamp for reproducible output archive entries, either formatted as ISO 8601 (<code>yyyy-MM-dd'T'HH:mm:ssXXX</code>) or an {@code int} representing
+     * seconds since the epoch.
+     */
+    @Parameter(defaultValue = "${project.build.outputTimestamp}", property = "repack.output-timestamp")
+    String outputTimestamp;
+
+    /**
+     * The type of archive (which corresponds to how the dependencies are laid out inside it). Possible values are {@code JAR}, {@code WAR}, {@code ZIP},
+     * {@code DIR}, {@code NONE}. Defaults to {@code JAR}.
+     */
+    @Parameter(defaultValue = "JAR", property = "repack.layout")
+    LayoutType layout = LayoutType.JAR;
+
+    /**
+     * The layout factory that will be used to create the executable archive if no explicit layout is set. Alternative layouts implementations can be provided
+     * by 3rd parties.
+     */
+    @Parameter
+    LayoutFactory layoutFactory = null;
+
 
     @Override
     public void execute() throws MojoExecutionException {

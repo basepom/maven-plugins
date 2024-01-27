@@ -11,13 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: setup build jdk
-        uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
+          java-version: 21
           distribution: temurin
-          java-version: 17
           cache: maven
           server-id: sonatype-nexus-snapshots
           server-username: NEXUS_REPO_USER
@@ -28,30 +27,30 @@ jobs:
           NEXUS_REPO_USER: ${{ secrets.NEXUS_REPO_USER }}
           NEXUS_REPO_PASSWORD: ${{ secrets.NEXUS_REPO_PASSWORD }}
           MAVEN_CONFIG: "-B -fae"
-        run: make deploy
+        run: |
+          make deploy
 
   site:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set git information
+      - name: configure git user
         run: |
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
+          git config --global user.name github-cd-action
+          git config --global user.email github-cd-action@basepom.org
 
-      - name: setup build jdk
-        uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
+          java-version: 21
           distribution: temurin
-          java-version: 17
           cache: maven
           server-id: github
           server-password: SITE_DEPLOY
 
-      - name: deploy documentation
+      - name: publish docs
         env:
           SITE_DEPLOY: ${{ secrets.SITE_DEPLOY_TOKEN  }}
-          MAVEN_CONFIG: "-Dbasepom.it.skip=false -Dbasepom.it.fork-count=1 -B -fae"
+          MAVEN_CONFIG: "-Dbasepom.it.skip=false -B -fae"
         run: make deploy-site
