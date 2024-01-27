@@ -18,13 +18,13 @@
     <parent>
         <groupId>org.basepom.maven</groupId>
         <artifactId>basepom-maven-plugins-root</artifactId>
-        <version>4</version>
+        <version>5-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-scope-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
 
     <name>Dependency Scope Maven Plugin</name>
     <description>This plugin aims to mitigate a particular pesky problem with Maven which is that if you declare a dependency with test scope, that will take precedence over a transitive dependency with compile scope.</description>
