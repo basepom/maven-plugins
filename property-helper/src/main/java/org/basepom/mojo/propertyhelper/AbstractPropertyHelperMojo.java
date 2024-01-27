@@ -97,16 +97,19 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      * <propertyGroups>
      *     <propertyGroup>
      *         <id>...</id>
+     *
      *         <activeOnRelease>true|false</activeOnRelease>
      *         <activeOnSnapshot>true|false</activeOnSnapshot>
      *         <onDuplicateProperty>ignore|warn|fail</onDuplicateProperty>
      *         <onMissingField>ignore|warn|fail</onMissingField>
+     *
      *         <properties>
      *             <property>
-     *                 <name></name>
-     *                 <value></value>
+     *                 <name>...</name>
+     *                 <value>...</value>
      *                 <transformers>...</transformers>
      *             </property>
+     *             ...
      *         </properties>
      *     </propertyGroup>
      *     ...
@@ -130,14 +133,15 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <skip>true|false</skip>
      *         <export>true|false</export>
      *
-     *         <initialValue>...</initialValue>
-     *         <format>...</format>
      *         <fieldNumber>...</fieldNumber>
      *         <increment>...</increment>
+     *         <format>...</format>
+     *         <regexp>...</regexp>
      *         <transformers>...</transformers>
      *
      *         <propertyFile>...</propertyFile>
      *         <propertyNameInFile>...</propertyNameInFile>
+     *         <initialValue>...</initialValue>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
@@ -163,21 +167,24 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <skip>true|false</skip>
      *         <export>true|false</export>
      *
-     *         <initialValue>...</initialValue>
-     *         <format>...</format>
      *         <values>
      *             <value>...</value>
+     *             ...
      *         </values>
      *         <blankIsValid>true|false</blankIsValid>
      *         <onMissingValue>ignore|warn|fail</onMissingValue
+     *         <format>...</format>
+     *         <regexp>...</regexp>
      *         <transformers>...</transformers>
      *
      *         <propertyFile>...</propertyFile>
      *         <propertyNameInFile>...</propertyNameInFile>
+     *         <initialValue>...</initialValue>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </string>
+     *     ...
      * </strings>
      * }</pre>
      */
@@ -198,18 +205,20 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <skip>true|false</skip>
      *         <export>true|false</export>
      *
-     *         <initialValue>...</initialValue>
      *         <value>...</value>
-     *         <format>...</format>
      *         <timezone>...</timezone>
+     *         <format>...</format>
+     *         <regexp>...</regexp>
      *         <transformers>...</transformers>
      *
      *         <propertyFile>...</propertyFile>
      *         <propertyNameInFile>...</propertyNameInFile>
+     *         <initialValue>...</initialValue>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </date>
+     *     ...
      * </dates>
      * }</pre>
      */
@@ -237,16 +246,18 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *             ...
      *         </properties>
      *
-     *         <initialValue>...</initialValue>
      *         <format>...</format>
+     *         <regexp>...</regexp>
      *         <transformers>...</transformers>
      *
      *         <propertyFile>...</propertyFile>
      *         <propertyNameInFile>...</propertyNameInFile>
+     *         <initialValue>...</initialValue>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </macro>
+     *     ...
      * </macros>
      * }</pre>
      */
@@ -267,17 +278,19 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <skip>true|false</skip>
      *         <export>true|false</export>
      *
-     *         <initialValue>...</initialValue>
      *         <value>...</value>
      *         <format>...</format>
+     *         <regexp>...</regexp>
      *         <transformers>...</transformers>
      *
      *         <propertyFile>...</propertyFile>
      *         <propertyNameInFile>...</propertyNameInFile>
+     *         <initialValue>...</initialValue>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
      *     </uuid>
+     *     ...
      * </uuids>
      * }</pre>
      */
@@ -287,6 +300,12 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     }
 
     private List<UuidDefinition> uuidDefinitions = List.of();
+
+    /**
+     * If set to true, goal execution is skipped.
+     */
+    @Parameter(defaultValue = "false")
+    boolean skip;
 
     /**
      * The maven project (effective pom).
@@ -299,13 +318,6 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
 
     @Parameter(required = true, readonly = true, defaultValue = "${project.basedir}")
     File basedir;
-
-    /**
-     * If set to true, goal execution is skipped.
-     */
-    @Parameter(defaultValue = "false")
-    boolean skip;
-
 
     @Inject
     public void setMacroMap(Map<String, MacroType> macroMap) {
@@ -466,7 +478,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
         var groupMap = groupMapBuilder.build();
         var resultMap = resultMapBuilder.build();
 
-        var groupsToAdd = this.activeGroups.isEmpty()
+        var groupsToAdd = this.activeGroups == null
             ? groupMap.keySet()
             : this.activeGroups;
 

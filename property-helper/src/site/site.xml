@@ -17,7 +17,7 @@
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
-        <version>2.0.0-M6</version>
+        <version>2.0.0-M8</version>
     </skin>
     <custom>
         <fluidoSkin>
@@ -33,6 +33,11 @@
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
             <item name="Goals" href="plugin-info.html"/>
+            <item name="Plugin Configuration" href="general_config.html"/>
+            <item name="Using Maven build properties" href="using_build_properties.html" />
+            <item name="Field definitions" href="fields.html" />
+            <item name="Formatting, Regular Expressions and Transformers" href="formatting_regexp.html" />
+            <item name="Property groups" href="property_groups.html" />
             <item name="License" href="https://www.apache.org/licenses/LICENSE-2.0" />
         </menu>
         <menu ref="reports" />

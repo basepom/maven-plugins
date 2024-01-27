@@ -86,12 +86,12 @@ property file by default and must be explicitly configured. The `inc` goal will 
 
 ### plugin configuration
 
-| configuration attribute | allowed values                      | required | default value                           | function                                                                       | 
+| configuration attribute | allowed values                      | required | default value                           | function                                                                       |
 |-------------------------|-------------------------------------|----------|-----------------------------------------|--------------------------------------------------------------------------------|
 | skip                    | `true`, `false`                     | no       | `false`                                 | if true, skip plugin execution                                                 |
 | persist                 | `true`, `false`                     | no       | "get" goal: `false`, "inc" goal: `true` | if true, persist all referenced file properties                                |
 | onDuplicateField        | `ignore`, `warn`, `fail`            | no       | `fail`                                  | action in case a field name is used multiple times                             |
-| activeGroups            | nested list of property group names | no       | (none)                                  | which property groups to activate. If empty, all property groups are activated | 
+| activeGroups            | nested list of property group names | no       | (none)                                  | which property groups to activate. If empty, all property groups are activated |
 
 In addition to these configuration attributes, the plugin also supports `<strings>`, `<numbers>`, `<dates>`, `<uuids>` and `<macros>` which are defined in
 detail below. Each of these attributes
@@ -104,7 +104,6 @@ following example defines
 a field that is set to the groupId and artifactId of the project:
 
 ```xml
-
 <strings>
     <string>
         <id>group_artifact</id>
@@ -127,7 +126,6 @@ the `@{...}` syntax for "late binding" properties that are evaluated when the pl
 The following example accesses the `git.closest.tag.name` property which is created by the `git-commit-id` plugin to define a field:
 
 ```xml
-
 <plugins>
     <plugin>
         <groupId>io.github.git-commit-id</groupId>
@@ -173,18 +171,18 @@ The following example accesses the `git.closest.tag.name` property which is crea
 
 All field types support the following attributes. For `initialValue` and `format`, more details are with the field types below.
 
-| configuration attribute | allowed values                       | required | default value | function                                                                  | 
+| configuration attribute | allowed values                       | required | default value | function                                                                  |
 |-------------------------|--------------------------------------|----------|---------------|---------------------------------------------------------------------------|
 | id                      | any string                           | yes      | -             | Sets the name of the field                                                |
-| skip                    | boolean (`true`,`false`)             | no       | `false`       | skip this field definition completely if set to `true`                    | 
+| skip                    | boolean (`true`,`false`)             | no       | `false`       | skip this field definition completely if set to `true`                    |
 | export                  | boolean (`true`,`false`)             | no       | `false`       | export the field as a build property to the maven build cycle             |
 | propertyFile            | string (filename)                    | no       | (none)        | defines a property file to associate the field with a specific property   |
 | propertyNameInFile      | string (property name)               | no       | value of `id` | defines the property to assciate the field with                           |
 | onMissingFile           | `ignore`, `warn`, `fail`, `create`   | no       | `fail`        | action in case the property file is missing                               |
 | onMissingFileProperty   | `ignore`, `warn`, `fail`, `create`   | no       | `fail`        | action in case the property file exists but does not contain the property |
-| initialValue            | field-dependent (must be legal)      | no       | (none)        | The initial value when creating a property                                | 
-| format                  | formatting information for the field | no       | (none)        | Formatting description for the field. Field specific                      | 
-| regexp                  | apply a regexp to the field          | no       | (none)        | Apply a regular expression to the field                                   | 
+| initialValue            | field-dependent (must be legal)      | no       | (none)        | The initial value when creating a property                                |
+| format                  | formatting information for the field | no       | (none)        | Formatting description for the field. Field specific                      |
+| regexp                  | apply a regexp to the field          | no       | (none)        | Apply a regular expression to the field                                   |
 | transformers            | comma-separated list                 | no       | (none)        | Define transformers for the field value                                   |
 
 ### property backed fields
@@ -196,7 +194,6 @@ be backed by a property in a property file and is loaded when a goal is executed
 Example for a property backed string field:
 
 ```xml
-
 <strings>
     <string>
         <id>property_field</id>
@@ -259,7 +256,7 @@ This defines a property `build_info` that will use the passed in value of the `c
 
 In addition to the common field properties, a string field has the following additional properties:
 
-| configuration attribute | allowed values                                | required | default value | function                                                                                                      | 
+| configuration attribute | allowed values                                | required | default value | function                                                                                                      |
 |-------------------------|-----------------------------------------------|----------|---------------|---------------------------------------------------------------------------------------------------------------|
 | values                  | List of strings, nested as `value` attributes | no       | (none)        | defines one or more values that will be used to set the value of this field if no backing property is defined |
 | blankIsValid            | `true`, `false`                               | no       | `true`        | Skips blank values when evaluating the final value of this field.                                             |
@@ -331,34 +328,35 @@ A numeric field can now be mapped onto part of a property. This is an example wh
 </numbers>
 ```
 
-each of these number fields maps a single part of the full version number (`build.version` in the `build.properties` file) onto a number field. E.g. for a 
-property `build.version=3.14.15`, the `major` field will be `3`, the `minor` field will be `14` and the `patch` field will be `15`. 
+each of these number fields maps a single part of the full version number (`build.version` in the `build.properties` file) onto a number field. E.g. for a
+property `build.version=3.14.15`, the `major` field will be `3`, the `minor` field will be `14` and the `patch` field will be `15`.
 
 Each of the three fields uses a property (`major.increment`, `minor.increment` and `patch.increment`) which should be set to 0. To increment e.g. the patch
-level of the version, run 
+level of the version, run
 
 ```bash
-% mvn -Dpatch.increment=1 propery-helper:inc 
+% mvn -Dpatch.increment=1 propery-helper:inc
 ```
 
 in the project. This will load the properties file, increment the patch field of the `build.version` property and store it back on disk.
 
 In addition to the common field properties, a number field has the following additional properties:
 
-| configuration attribute | allowed values   | required | default value | function                                                                                                                                                                                                 | 
+| configuration attribute | allowed values   | required | default value | function                                                                                                                                                                                                 |
 |-------------------------|------------------|----------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | fieldNumber             | positive integer | no       | -             | Selects a component of the underlying property as the number. The property is split along numeric/non-numeric boundaries and enumerated from left (leftmost field is 0). Only numeric fields are counted |
 | increment               | integer          | no       | 1             | The numeric amount by which a field is changed when calling the `inc` goal. Can be any integer number                                                                                                    |
 
-In addition, unlike all other field types, the default value for a numeric field is not undefined but `0`. 
+In addition, unlike all other field types, the default value for a numeric field is not undefined but `0`.
 
 
 ### date fields
 
 Date fields contain date information such as build dates, timestamps etc. Date fields depend heavily on formatting. If no format is given, the date is written
-in [ISO_DATE_TIME](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_DATE_TIME) with timezone format. 
+in [ISO_DATE_TIME](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_DATE_TIME) with timezone format.
 
 The following example creates a timestamp in the default format and exports it as a build property:
+
 ```xml
 <dates>
     <date>
@@ -369,29 +367,29 @@ The following example creates a timestamp in the default format and exports it a
 ```
 
 When loading a date field from a backing property, the value in the property can be a long value (milliseconds since the epoch, `1970-01-01T00:00:00.000Z`) or
-a formatted date and time value that will be read with a parser that uses the same format definition as the formatter. 
+a formatted date and time value that will be read with a parser that uses the same format definition as the formatter.
 
-Date fields also support a `value` attributes, which is a long value (milliseconds since the epoch). 
+Date fields also support a `value` attributes, which is a long value (milliseconds since the epoch).
 
-When formatting a date (which also defines the date parser), it supports [all letters and symbols](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns) that [DateTimeFormatter.ofPattern()](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html#ofPattern(java.lang.String)) supports. 
+When formatting a date (which also defines the date parser), it supports [all letters and symbols](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns) that [DateTimeFormatter.ofPattern()](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html#ofPattern(java.lang.String)) supports.
 
 In addition to the common field properties, a date field has the following additional properties:
 
 | configuration attribute | allowed values                                                                                                                                | required | default value       | function                                                   |
 |-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------------|------------------------------------------------------------|
 | timezone                | any value supported by [ZoneId.of()](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneId.html#of(java.lang.String)) | no       | system timezone     | Sets the timezone for the date field                       |
-| value                   | long value                                                                                                                                    | no       | current system time | Sets the value for the field if not loaded from a property | 
+| value                   | long value                                                                                                                                    | no       | current system time | Sets the value for the field if not loaded from a property |
 
 
 ### uuid fields
 
-An UUID field contains a unique identifier that can be used as e.g. build identifier, as id for a software package or some other unique id. 
+An UUID field contains a unique identifier that can be used as e.g. build identifier, as id for a software package or some other unique id.
 
 In addition to the common field properties, a uuid field has the following additional properties:
 
 | configuration attribute | allowed values          | required | default value     | function                                                   |
 |-------------------------|-------------------------|----------|-------------------|------------------------------------------------------------|
-| value                   | uuid 36 character value | no       | random UUID value | Sets the value for the field if not loaded from a property | 
+| value                   | uuid 36 character value | no       | random UUID value | Sets the value for the field if not loaded from a property |
 
 ### macro fields
 
@@ -465,7 +463,7 @@ In addition to the common field properties, a macro field has the following addi
 
 String, number, uuid and macro fields support the `format` attribute to format its output. Date fields use specific formatting as described above.
 
-The `format` attribute is used to with [String#format()](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html#format(java.lang.String,java.lang.Object...)) and most be formatted accordingly. The value field must contain a single `%s` placeholder and can use [all formatting characters](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Formatter.html#syntax) related to this placeholder. 
+The `format` attribute is used to with [String#format()](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html#format(java.lang.String,java.lang.Object...)) and most be formatted accordingly. The value field must contain a single `%s` placeholder and can use [all formatting characters](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Formatter.html#syntax) related to this placeholder.
 
 Note that for all fields (even number fields), the placeholder must be `%s` for a string!
 
@@ -474,9 +472,10 @@ Note that for all fields (even number fields), the placeholder must be `%s` for 
 
 All fields support a `regexp` attribute that can be used to apply a regular expression to the output of the field. Regular expressions are applied after formatting and before transformations.
 
-A regular expression *must* match all characters of a field (start with `^` and end with `$`) and contain at least one capture group. 
+A regular expression *must* match all characters of a field (start with `^` and end with `$`) and contain at least one capture group.
 
 This example captures the numeric part from a build tag by using a regular expression:
+
 ```xml
 <strings>
     <string>
@@ -535,11 +534,11 @@ From the initial example:
 
 This configuration defines a single property group `build-tag` with a single property `build.tag`, which is exposed to the maven build properties.
 
-This property is defined as the combination of three separate fields, a date, a uuid and a persistent build number. 
+This property is defined as the combination of three separate fields, a date, a uuid and a persistent build number.
 
-Similar to the different field types, property definitions as part of a property group can contain direct (`${ ... }`) property references or "late binding" property references using `@{...}`. 
+Similar to the different field types, property definitions as part of a property group can contain direct (`${ ... }`) property references or "late binding" property references using `@{...}`.
 
-Property groups can be activated specifically if a build is a snapshot or release build. 
+Property groups can be activated specifically if a build is a snapshot or release build.
 
 A property group can have the following attributes:
 
@@ -566,7 +565,7 @@ The "late binding" property references (`@{...}`) in a property definition can r
 ### transformers
 
 The property helper plugin defines a set of transformers that can be applied to field and property values. Transformers are configured as a comma-separated list
-and will be executed left-to-right. 
+and will be executed left-to-right.
 
 The following transformers are defined:
 
@@ -583,130 +582,159 @@ The following transformers are defined:
 ### complete configuration reference
 
 ```xml
-
 <plugin>
     <groupId>org.basepom.maven</groupId>
     <artifactId>property-helper-maven-plugin</artifactId>
     <configuration>
         <skip>true|false</skip>
+
         <persist>true|false</persist>
+
         <onDuplicateField>ignore|warn|fail</onDuplicateField>
+
         <onMissingProperty>ignore|warn|fail</onMissingProperty>
+
         <propertyGroups>
             <propertyGroup>
                 <id>...</id>
                 <activeOnRelease>true|false</activeOnRelease>
                 <activeOnSnapshot>true|false</activeOnSnapshot>
                 <onDuplicateProperty>ignore|warn|fail</onDuplicateProperty>
-                <onMissingProperty>ignore|warn|fail</onMissingProperty>
+                <onMissingField>ignore|warn|fail</onMissingField>
                 <properties>
                     <property>
-                        <name></name>
-                        <value></value>
+                        <name>...</name>
+                        <value>...</value>
                         <transformers>...</transformers>
                     </property>
+                    ...
                 </properties>
             </propertyGroup>
+            ...
         </propertyGroups>
+
         <activeGroups>
             <activeGroup>...</activeGroup>
+            ...
         </activeGroups>
+
         <dates>
             <date>
-                <timezone></timezone>
-                <value></value>
-
                 <id>...</id>
                 <skip>true|false</skip>
                 <export>true|false</export>
-                <propertyNameInFile></propertyNameInFile>
-                <propertyFile></propertyFile>
+
+                <value>...</value>
+                <timezone>...</timezone>
+
+                <format>...</format>
+                <regexp>...</regexp>
+                <transformers>...</transformers>
+
+                <propertyFile>...</propertyFile>
+                <propertyNameInFile>...</propertyNameInFile>
+                <initialValue>...</initialValue>
                 <onMissingFile>ignore|warn|fail|create</onMissingFile>
                 <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
                 <onMissingProperty>ignore|warn|fail</onMissingProperty>
-                <initialValue></initialValue>
-                <format></format>
-                <transformers>...</transformers>
             </date>
+            ...
         </dates>
+
         <macros>
             <macro>
-                <macroType></macroType>
-                <macroClass></macroClass>
+                <id>...</id>
+                <skip>true|false</skip>
+                <export>true|false</export>
+
+                <macroType>...</macroType>
+                <macroClass>...</macroClass>
                 <properties>
-                    <property></property>
+                    <some-name>some-value</some-name>
+                    ...
                 </properties>
 
-                <id>...</id>
-                <skip>true|false</skip>
-                <export>true|false</export>
-                <propertyNameInFile></propertyNameInFile>
-                <propertyFile></propertyFile>
+                <format>...</format>
+                <regexp>...</regexp>
+                <transformers>...</transformers>
+
+                <propertyFile>...</propertyFile>
+                <propertyNameInFile>...</propertyNameInFile>
+                <initialValue>...</initialValue>
                 <onMissingFile>ignore|warn|fail|create</onMissingFile>
                 <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
                 <onMissingProperty>ignore|warn|fail</onMissingProperty>
-                <initialValue></initialValue>
-                <format></format>
-                <transformers>...</transformers>
             </macro>
+            ...
         </macros>
+
         <numbers>
             <number>
-                <fieldNumber></fieldNumber>
-                <increment></increment>
-
                 <id>...</id>
                 <skip>true|false</skip>
                 <export>true|false</export>
-                <propertyNameInFile></propertyNameInFile>
-                <propertyFile></propertyFile>
+
+                <fieldNumber>...</fieldNumber>
+                <increment>...</increment>
+                <format>...</format>
+                <regexp>...</regexp>
+                <transformers>...</transformers>
+
+                <propertyFile>...</propertyFile>
+                <propertyNameInFile>...</propertyNameInFile>
+                <initialValue>...</initialValue>
                 <onMissingFile>ignore|warn|fail|create</onMissingFile>
                 <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
                 <onMissingProperty>ignore|warn|fail</onMissingProperty>
-                <initialValue></initialValue>
-                <format></format>
-                <transformers>...</transformers>
-
             </number>
+            ...
         </numbers>
+
         <strings>
             <string>
+                <id>...</id>
+                <skip>true|false</skip>
+                <export>true|false</export>
+
                 <values>
-                    <value></value>
+                    <value>...</value>
+                    ...
                 </values>
                 <blankIsValid>true|false</blankIsValid>
                 <onMissingValue>ignore|warn|fail</onMissingValue>
+                <format>...</format>
+                <regexp>...</regexp>
+                <transformers>...</transformers>
 
-                <id>...</id>
-                <skip>true|false</skip>
-                <export>true|false</export>
-                <propertyNameInFile></propertyNameInFile>
-                <propertyFile></propertyFile>
+                <propertyFile>...</propertyFile>
+                <propertyNameInFile>...</propertyNameInFile>
+                <initialValue>...</initialValue>
                 <onMissingFile>ignore|warn|fail|create</onMissingFile>
                 <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
                 <onMissingProperty>ignore|warn|fail</onMissingProperty>
-                <initialValue></initialValue>
-                <format></format>
-                <transformers>...</transformers>
-
             </string>
+            ...
         </strings>
+
         <uuids>
             <uuid>
-                <value></value>
-
                 <id>...</id>
                 <skip>true|false</skip>
                 <export>true|false</export>
-                <propertyNameInFile></propertyNameInFile>
-                <propertyFile></propertyFile>
+
+                <value>...</value>
+                <format>...</format>
+                <regexp>...</regexp>
+                <transformers>...</transformers>
+
+                <propertyFile>...</propertyFile>
+                <propertyNameInFile>...</propertyNameInFile>
+                <initialValue>...</initialValue>
                 <onMissingFile>ignore|warn|fail|create</onMissingFile>
                 <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
                 <onMissingProperty>ignore|warn|fail</onMissingProperty>
-                <initialValue></initialValue>
-                <format></format>
-                <transformers>...</transformers>
             </uuid>
+            ...
         </uuids>
     </configuration>
 </plugin>

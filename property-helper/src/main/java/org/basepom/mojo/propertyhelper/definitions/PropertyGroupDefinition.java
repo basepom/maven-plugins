@@ -57,9 +57,8 @@ public class PropertyGroupDefinition {
      */
     private IgnoreWarnFail onMissingField = IgnoreWarnFail.FAIL;
 
-    public PropertyGroupDefinition setOnMissingField(String onMissingField) {
+    public void setOnMissingField(String onMissingField) {
         this.onMissingField = IgnoreWarnFail.forString(onMissingField);
-        return this;
     }
 
     /**
@@ -68,12 +67,10 @@ public class PropertyGroupDefinition {
     Set<PropertyDefinition> propertyDefinitions = Set.of();
 
     // called by maven
-    public PropertyGroupDefinition setProperties(PropertyDefinition... propertyDefinitions) {
+    public void setProperties(PropertyDefinition... propertyDefinitions) {
         this.propertyDefinitions = ImmutableSet.copyOf(Arrays.asList(propertyDefinitions));
 
         this.propertyDefinitions.forEach(PropertyDefinition::check);
-
-        return this;
     }
 
     public PropertyGroupDefinition() {

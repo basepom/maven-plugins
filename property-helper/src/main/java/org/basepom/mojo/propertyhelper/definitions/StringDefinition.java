@@ -41,10 +41,9 @@ public class StringDefinition extends FieldDefinition<String> {
     /**
      * called by maven
      */
-    public StringDefinition setValues(final List<String> values) {
+    public void setValues(final List<String> values) {
         checkNotNull(values, "values is null");
         this.values = values.stream().map(v -> Objects.requireNonNullElse(v, "")).collect(ImmutableList.toImmutableList());
-        return this;
     }
 
 

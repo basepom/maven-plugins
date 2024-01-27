@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 /**
  * Common properties for a field.
@@ -128,7 +127,7 @@ public abstract class FieldDefinition<T> {
      */
     private List<String> transformers = List.of();
 
-    void setTransformers(String transformers) {
+    public void setTransformers(String transformers) {
         this.transformers = Splitter.on(",")
             .omitEmptyStrings()
             .trimResults()
