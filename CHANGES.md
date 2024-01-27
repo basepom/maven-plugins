@@ -3,10 +3,10 @@
 
 ## 2024-01-27 - Maven Plugins v4
 
-* property-helper-maven-plugin 4.0.0 [CHANGES](main/property-helper/CHANGES.md)
+* property-helper-maven-plugin 4.0.0 [CHANGES](property-helper/CHANGES.md)
 * dependency-management-maven-plugin 1.0.2 - unchanged
 * dependency-scope-maven-plugin 1.0.2 - unchanged
-* repack-maven-plugin 1.0.1 [CHANGES](main/repack/CHANGES.md)
+* repack-maven-plugin 1.0.1 [CHANGES](repack/CHANGES.md)
 
 ## 2023-05-30 - Maven Plugins v3
 
