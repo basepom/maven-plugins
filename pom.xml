@@ -23,7 +23,7 @@
 
     <groupId>org.basepom.maven</groupId>
     <artifactId>basepom-maven-plugins-root</artifactId>
-    <version>4-SNAPSHOT</version>
+    <version>4</version>
     <packaging>pom</packaging>
     <name>Basepom Maven Plugins</name>
 
@@ -54,7 +54,7 @@
         <connection>scm:git:git://github.com/basepom/maven-plugins.git</connection>
         <developerConnection>scm:git:git://github.com/basepom/maven-plugins.git</developerConnection>
         <url>https://github.com/basepom/maven-plugins</url>
-        <tag>HEAD</tag>
+        <tag>maven-plugins-v4</tag>
     </scm>
 
     <issueManagement>
