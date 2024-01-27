@@ -43,19 +43,23 @@ deploy:: MAVEN_CONFIG += -Dbasepom.it.skip=false
 deploy::
 	${MAVEN} clean deploy
 
-release::
-	${MAVEN} clean release:clean release:prepare release:perform
-
 deploy-site::
 	${MAVEN} clean site-deploy
 
+release::
+	${MAVEN} clean release:clean release:prepare release:perform
+
+release-site:: MAVEN_CONFIG += -Pplugin-release
+release-site:: deploy-site
+
 help::
-	@echo " * clean               - clean local build tree"
-	@echo " * install             - build, run static analysis and unit tests, then install in the local repository"
-	@echo " * install-notests     - same as 'install', but skip unit tests"
-	@echo " * install-fast        - same as 'install', but skip unit tests and static analysis"
-	@echo " * tests               - build code and run unit and integration tests"
-	@echo " * run-tests           - run all unit and integration tests except really slow tests"
-	@echo " * deploy-site         - builds and deploys the documentation site"
-	@echo " * deploy              - builds and deploys the current version to the Sonatype OSS repository"
-	@echo " * release             - release a new version to maven central"
+	@echo " * clean           - clean local build tree"
+	@echo " * install         - build, run static analysis and unit tests, then install in the local repository"
+	@echo " * install-notests - same as 'install', but skip unit tests"
+	@echo " * install-fast    - same as 'install', but skip unit tests and static analysis"
+	@echo " * tests           - build code and run unit and integration tests"
+	@echo " * run-tests       - run all unit and integration tests except really slow tests"
+	@echo " * deploy          - builds and deploys the current version to the Sonatype OSS repository"
+	@echo " * deploy-site     - builds and deploys the documentation site"
+	@echo " * release         - release a new version to maven central"
+	@echo " * release-site    - builds and deploys the documentation site for a release"
