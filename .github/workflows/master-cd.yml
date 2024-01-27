@@ -9,11 +9,11 @@ on:
 jobs:
   cd:
     runs-on: ubuntu-latest
-        with:
-          fetch-tags: true
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
 
       - uses: actions/setup-java@v4
         with:
