@@ -82,7 +82,10 @@
                             <strings>
                                 <string>
                                     <id>my.version</id>
-                                    <initialValue>@{git.closest.tag.name}</initialValue>
+                                    <values>
+                                        <value>@{git.closest.tag.name}</value>
+                                    </values>
+                                    <regexp>^.*?(\d+)$</regexp>
                                     <export>true</export>
                                 </string>
                             </strings>

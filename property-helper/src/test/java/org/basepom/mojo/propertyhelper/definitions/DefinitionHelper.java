@@ -104,7 +104,7 @@ public final class DefinitionHelper {
         propertyGroupDefinition.setProperties(propertyDefinitions);
     }
 
-    public static void setOnMissingProperty(PropertyGroupDefinition propertyGroupDefinition, String value) {
-        propertyGroupDefinition.setOnMissingProperty(value);
+    public static void setOnMissingField(PropertyGroupDefinition propertyGroupDefinition, String value) {
+        propertyGroupDefinition.setOnMissingField(value);
     }
 }

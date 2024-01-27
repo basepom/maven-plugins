@@ -33,15 +33,18 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+/**
+ * Represents a macro configuration in the POM.
+ */
 public class MacroDefinition extends FieldDefinition<String> {
 
     /**
-     * Macro type. Field injected by Maven.
+     * Macro type. This value is used to look up a plexus component with this value as hint. Field injected by Maven.
      */
     String macroType = null;
 
     /**
-     * Class for this macro. Field injected by Maven.
+     * Class for this macro. If no macro type is given and this value is provided, the plugin will try to instantiate this class. Field injected by Maven.
      */
     String macroClass = null;
 

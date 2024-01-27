@@ -100,7 +100,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <activeOnRelease>true|false</activeOnRelease>
      *         <activeOnSnapshot>true|false</activeOnSnapshot>
      *         <onDuplicateProperty>ignore|warn|fail</onDuplicateProperty>
-     *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
+     *         <onMissingField>ignore|warn|fail</onMissingField>
      *         <properties>
      *             <property>
      *                 <name></name>
@@ -130,14 +130,14 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <skip>true|false</skip>
      *         <export>true|false</export>
      *
-     *         <initialValue></initialValue>
-     *         <format></format>
-     *         <fieldNumber></fieldNumber>
-     *         <increment></increment>
+     *         <initialValue>...</initialValue>
+     *         <format>...</format>
+     *         <fieldNumber>...</fieldNumber>
+     *         <increment>...</increment>
      *         <transformers>...</transformers>
      *
-     *         <propertyFile></propertyFile>
-     *         <propertyNameInFile></propertyNameInFile>
+     *         <propertyFile>...</propertyFile>
+     *         <propertyNameInFile>...</propertyNameInFile>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
@@ -164,7 +164,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <export>true|false</export>
      *
      *         <initialValue>...</initialValue>
-     *         <format></format>
+     *         <format>...</format>
      *         <values>
      *             <value>...</value>
      *         </values>
@@ -172,8 +172,8 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <onMissingValue>ignore|warn|fail</onMissingValue
      *         <transformers>...</transformers>
      *
-     *         <propertyFile></propertyFile>
-     *         <propertyNameInFile></propertyNameInFile>
+     *         <propertyFile>...</propertyFile>
+     *         <propertyNameInFile>...</propertyNameInFile>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
@@ -198,14 +198,14 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <skip>true|false</skip>
      *         <export>true|false</export>
      *
-     *         <initialValue></initialValue>
-     *         <value></value>
-     *         <format></format>
-     *         <timezone></timezone>
+     *         <initialValue>...</initialValue>
+     *         <value>...</value>
+     *         <format>...</format>
+     *         <timezone>...</timezone>
      *         <transformers>...</transformers>
      *
-     *         <propertyFile></propertyFile>
-     *         <propertyNameInFile></propertyNameInFile>
+     *         <propertyFile>...</propertyFile>
+     *         <propertyNameInFile>...</propertyNameInFile>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
@@ -230,18 +230,19 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <skip>true|false</skip>
      *         <export>true|false</export>
      *
-     *         <macroType></macroType>
-     *         <macroClass></macroClass>
+     *         <macroType>...</macroType>
+     *         <macroClass>...</macroClass>
      *         <properties>
-     *             <property></property>
+     *             <some-name>some-value</some-name>
+     *             ...
      *         </properties>
      *
-     *         <initialValue></initialValue>
-     *         <format></format>
+     *         <initialValue>...</initialValue>
+     *         <format>...</format>
      *         <transformers>...</transformers>
      *
-     *         <propertyFile></propertyFile>
-     *         <propertyNameInFile></propertyNameInFile>
+     *         <propertyFile>...</propertyFile>
+     *         <propertyNameInFile>...</propertyNameInFile>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
@@ -266,13 +267,13 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
      *         <skip>true|false</skip>
      *         <export>true|false</export>
      *
-     *         <initialValue></initialValue>
-     *         <value></value>
-     *         <format></format>
+     *         <initialValue>...</initialValue>
+     *         <value>...</value>
+     *         <format>...</format>
      *         <transformers>...</transformers>
      *
-     *         <propertyFile></propertyFile>
-     *         <propertyNameInFile></propertyNameInFile>
+     *         <propertyFile>...</propertyFile>
+     *         <propertyNameInFile>...</propertyNameInFile>
      *         <onMissingFile>ignore|warn|fail|create</onMissingFile>
      *         <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
      *         <onMissingProperty>ignore|warn|fail</onMissingProperty>
@@ -363,7 +364,7 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     }
 
     @Override
-    public Properties getProperties() {
+    public Properties getProjectProperties() {
         return project.getProperties();
     }
 

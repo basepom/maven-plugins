@@ -68,6 +68,10 @@
                                     <initialValue>0</initialValue>
                                     <export>true</export>
                                 </date>
+                                <date>
+                                    <id>simple</id>
+                                    <export>true</export>
+                                </date>
                             </dates>
                         </configuration>
                     </execution>

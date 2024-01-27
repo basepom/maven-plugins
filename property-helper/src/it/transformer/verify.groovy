@@ -52,11 +52,11 @@ assert value.trim() == val.trim()
 
 def lowercase = properties.getProperty("lowercase", "xxxx")
 assert lowercase != "xxxx"
-assert lowercase.trim() == val.toLowerCase(Locale.ENGLISH).trim()
+assert lowercase.trim() == val.toLowerCase(Locale.getDefault()).trim()
 
 def uppercase = properties.getProperty("uppercase", "xxxx")
 assert uppercase != "xxxx"
-assert uppercase.trim() == val.toUpperCase(Locale.ENGLISH).trim()
+assert uppercase.trim() == val.toUpperCase(Locale.getDefault()).trim()
 
 def remove_whitespace = properties.getProperty("remove_whitespace", "xxxx")
 assert remove_whitespace != "xxxx"

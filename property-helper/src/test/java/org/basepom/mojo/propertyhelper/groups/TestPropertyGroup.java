@@ -16,11 +16,11 @@ package org.basepom.mojo.propertyhelper.groups;
 
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.propertyDefinition;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.propertyGroupDefinition;
-import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingProperty;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setProperties;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.basepom.mojo.propertyhelper.FieldContext;
+import org.basepom.mojo.propertyhelper.definitions.DefinitionHelper;
 import org.basepom.mojo.propertyhelper.definitions.PropertyDefinition;
 import org.basepom.mojo.propertyhelper.definitions.PropertyGroupDefinition;
 
@@ -88,7 +88,7 @@ public class TestPropertyGroup {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
         final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-@{world}-hat");
         setProperties(propertyGroupDefinition, propertyDefinition);
-        setOnMissingProperty(propertyGroupDefinition, "ignore");
+        DefinitionHelper.setOnMissingField(propertyGroupDefinition, "ignore");
 
         PropertyGroup propertyGroup = propertyGroupDefinition.createGroup(FieldContext.forTesting());
 
@@ -105,7 +105,7 @@ public class TestPropertyGroup {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
         final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-@{first}-@{world}-hat");
         setProperties(propertyGroupDefinition, propertyDefinition);
-        setOnMissingProperty(propertyGroupDefinition, "ignore");
+        DefinitionHelper.setOnMissingField(propertyGroupDefinition, "ignore");
 
         PropertyGroup propertyGroup = propertyGroupDefinition.createGroup(FieldContext.forTesting());
 
@@ -122,7 +122,7 @@ public class TestPropertyGroup {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
         final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-@{whatWorld}-@{world}-hat");
         setProperties(propertyGroupDefinition, propertyDefinition);
-        setOnMissingProperty(propertyGroupDefinition, "ignore");
+        DefinitionHelper.setOnMissingField(propertyGroupDefinition, "ignore");
 
         PropertyGroup propertyGroup = propertyGroupDefinition.createGroup(FieldContext.forTesting());
 
@@ -141,7 +141,7 @@ public class TestPropertyGroup {
         final PropertyGroupDefinition propertyGroupDefinition = propertyGroupDefinition("hello-group");
         final PropertyDefinition propertyDefinition = propertyDefinition("hello", "nice-@{foo.bar.world}-hat");
         setProperties(propertyGroupDefinition, propertyDefinition);
-        setOnMissingProperty(propertyGroupDefinition, "ignore");
+        DefinitionHelper.setOnMissingField(propertyGroupDefinition, "ignore");
 
         PropertyGroup propertyGroup = propertyGroupDefinition.createGroup(FieldContext.forTesting());
 

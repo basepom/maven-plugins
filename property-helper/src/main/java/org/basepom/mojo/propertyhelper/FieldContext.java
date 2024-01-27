@@ -24,8 +24,12 @@ import java.util.Properties;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
+/**
+ * All accessible values from the Maven build system for a Field.
+ */
 public interface FieldContext {
 
+    /** Returns a fixed instance for testing. Do not use outside test code. */
     static FieldContext forTesting() {
         return new FieldContext() {
 
@@ -35,7 +39,7 @@ public interface FieldContext {
             }
 
             @Override
-            public Properties getProperties() {
+            public Properties getProjectProperties() {
                 return new Properties();
             }
 
@@ -66,17 +70,46 @@ public interface FieldContext {
         };
     }
 
+    /**
+     * Returns a map with all known macros. Key value is the macro hint as given by the plexus component annotation.
+     * @return A map with all known macros.
+     */
     Map<String, MacroType> getMacros();
 
-    Properties getProperties();
+    /**
+     * Return the maven project properties.
+     * @return A properties object for the project properties.
+     */
+    Properties getProjectProperties();
 
+    /**
+     * Returns a reference to the {@link MavenProject}.
+     * @return A {@link MavenProject} object
+     */
     MavenProject getProject();
 
+    /**
+     * Returns the current maven {@link Settings} object
+     * @return A {@link Settings} object
+     */
     Settings getSettings();
 
+    /**
+     * Returns the base dir for this maven build execution.
+     *
+     * @return A {@link File} object.
+     */
     File getBasedir();
 
+    /**
+     * Returns the {@link InterpolatorFactory} that can interpolate "late resolution" properties.
+     * @return An {@link InterpolatorFactory} reference.
+     */
     InterpolatorFactory getInterpolatorFactory();
 
+    /**
+     * Returns a reference to the {@link TransformerRegistry}.
+     * @return A {@link TransformerRegistry} object.
+     */
     TransformerRegistry getTransformerRegistry();
 }

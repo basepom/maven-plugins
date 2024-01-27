@@ -51,7 +51,7 @@ public class PropertyGroup {
     public String getPropertyValue(final PropertyDefinition propertyDefinition, final Map<String, String> propElements) {
 
         return Optional.ofNullable(propertyDefinition.getValue())
-            .map(context.getInterpolatorFactory().interpolate(propertyDefinition.getName(), propertyGroupDefinition.getOnMissingProperty(), propElements))
+            .map(context.getInterpolatorFactory().interpolate(propertyDefinition.getName(), propertyGroupDefinition.getOnMissingField(), propElements))
             .map(context.getTransformerRegistry().applyTransformers(propertyDefinition.getTransformers()))
             .orElse("");
     }

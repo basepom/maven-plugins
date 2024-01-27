@@ -75,10 +75,14 @@ public class DateDefinition extends FieldDefinition<ZonedDateTime> {
     }
 
     @Override
-    public Function<ZonedDateTime, String> getFormat() {
+    public Function<ZonedDateTime, String> getPreFormat() {
         DateTimeFormatter dateTimeFormatter = getFormatter().orElseGet(this::getFallbackFormatter);
+        return v -> v == null ? "" : dateTimeFormatter.format(v);
+    }
 
-        return dateTimeFormatter::format;
+    @Override
+    public Function<String, String> getPostFormat() {
+        return Function.identity();
     }
 
     public Function<String, ZonedDateTime> getParser() {

@@ -36,4 +36,4 @@ assert properties.size() == 2
 def version = properties.getProperty("my-version", "")
 def expected = properties.getProperty("latest-git", "fail")
 
-assert version.equals(expected)
+assert expected.equals("maven-plugins-v" + version)

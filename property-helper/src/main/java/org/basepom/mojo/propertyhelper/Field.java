@@ -17,9 +17,9 @@ package org.basepom.mojo.propertyhelper;
 
 import org.basepom.mojo.propertyhelper.definitions.FieldDefinition;
 
-import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
@@ -51,8 +51,10 @@ public abstract class Field<T, U extends FieldDefinition<T>> {
     protected String formatResult(T value) {
 
         return Optional.ofNullable(value)
-            .map(fieldDefinition.formatResult())
-            .map(interpolatorFactory.interpolate(getFieldName(), fieldDefinition.getOnMissingProperty(), Map.of()))
+            .map(fieldDefinition.getPreFormat())
+            .map(interpolatorFactory.interpolate(getFieldName(), fieldDefinition.getOnMissingProperty(), ImmutableMap.of()))
+            .map(fieldDefinition.getPostFormat())
+            .map(fieldDefinition.getRegexp())
             .map(transformerRegistry.applyTransformers(fieldDefinition.getTransformers()))
             .orElse("");
     }

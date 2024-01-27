@@ -29,9 +29,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 /**
  * Common properties for a field.
@@ -52,7 +55,7 @@ public abstract class FieldDefinition<T> {
     String id = null;
 
     /**
-     * True skips the parsing of this definition. Field injected by Maven.
+     * <code>True</code> skips the parsing of this definition. Field injected by Maven.
      */
     boolean skip = false;
 
@@ -102,6 +105,18 @@ public abstract class FieldDefinition<T> {
      * The initial value for this field. Field injected by Maven.
      */
     String initialValue = null;
+
+    /**
+     * Regular expression matcher. Field injected by Maven.
+     */
+    private Pattern regexp = null;
+
+    public void setRegexp(String regexp) {
+        checkState(regexp.startsWith("^"), "regular expression must start with '^'!");
+        checkState(regexp.endsWith("$"), "regular expression must end with '$'!");
+
+        this.regexp = Pattern.compile(regexp);
+    }
 
     /**
      * Format for this element. Field injected by Maven.
@@ -162,11 +177,18 @@ public abstract class FieldDefinition<T> {
         return onMissingProperty;
     }
 
-    public Function<T, String> formatResult() {
-        return value -> Optional.ofNullable(value).map(getFormat()).orElse("");
+    public Function<String, String> getRegexp() {
+        return regexp == null ? Function.identity() : v -> {
+            Matcher matcher = regexp.matcher(v);
+            return matcher.matches() ? matcher.group(1) : "";
+        };
     }
 
-    public Function<T, String> getFormat() {
+    public Function<T, String> getPreFormat() {
+        return v -> v == null ? "" : String.valueOf(v);
+    }
+
+    public Function<String, String> getPostFormat() {
         return format == null ? String::valueOf : v -> String.format(format, v);
     }
 

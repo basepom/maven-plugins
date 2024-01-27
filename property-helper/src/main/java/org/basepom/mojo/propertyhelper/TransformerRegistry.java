@@ -80,7 +80,7 @@ public final class TransformerRegistry {
 
         @Override
         public String apply(String value) {
-            return value.toLowerCase(Locale.ENGLISH);
+            return value.toLowerCase(Locale.getDefault());
         }
     }
 
@@ -89,7 +89,7 @@ public final class TransformerRegistry {
 
         @Override
         public String apply(String value) {
-            return value.toUpperCase(Locale.ENGLISH);
+            return value.toUpperCase(Locale.getDefault());
         }
     }
 

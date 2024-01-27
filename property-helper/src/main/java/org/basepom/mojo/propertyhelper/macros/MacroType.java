@@ -20,10 +20,19 @@ import org.basepom.mojo.propertyhelper.definitions.MacroDefinition;
 
 import java.util.Optional;
 
+/**
+ * Macro implementation. All macro classes must implement this interface.
+ */
 public interface MacroType {
 
-    String ROLE = MacroType.class.getName();
-
+    /**
+     * Returns the value for a specific macro invocation.
+     *
+     * @param macroDefinition The macro definition
+     * @param valueProvider A value provider that either provides a property backed value or the initial (default) value
+     * @param context The Field context
+     * @return An {@link Optional} wrapping a string value. If the macro returns {@link Optional#empty()}, the field value will be the empty string
+     */
     Optional<String> getValue(MacroDefinition macroDefinition,
         ValueProvider valueProvider,
         FieldContext context);

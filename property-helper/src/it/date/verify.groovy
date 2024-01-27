@@ -37,7 +37,7 @@ assert file.exists()
 def stream = new FileInputStream(file)
 properties.load(stream)
 
-assert properties.size() == 4
+assert properties.size() == 5
 
 def regular = properties.getProperty("regular", "")
 def regularUtc = properties.getProperty("regular-utc", "")

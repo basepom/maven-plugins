@@ -31,17 +31,17 @@ import com.google.common.annotations.VisibleForTesting;
 
 public class UuidDefinition extends FieldDefinition<String> {
 
+    /**
+     * Value for this uuid. Field injected by Maven.
+     */
+    String value = null;
+
     public UuidDefinition() {}
 
     @VisibleForTesting
     UuidDefinition(String id) {
         super(id);
     }
-
-    /**
-     * Value for this uuid. Field injected by Maven.
-     */
-    String value = null;
 
     public Optional<UUID> getValue() {
         return Optional.ofNullable(value).map(UUID::fromString);

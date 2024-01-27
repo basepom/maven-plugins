@@ -53,17 +53,17 @@ public final class InterpolatorFactory {
         return new InterpolatorFactory(new Model());
     }
 
-    public Function<String, String> interpolate(String name, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties) {
+    public Function<String, String> interpolate(String name, final IgnoreWarnFail onMissingField, final Map<String, String> properties) {
         return value -> {
             try {
-                return interpolate(name, value, onMissingProperty, properties);
+                return interpolate(name, value, onMissingField, properties);
             } catch (Exception e) {
                 throw Sneaky.throwAnyway(e);
             }
         };
     }
 
-    private String interpolate(final String name, final String value, final IgnoreWarnFail onMissingProperty, final Map<String, String> properties)
+    private String interpolate(final String name, final String value, final IgnoreWarnFail onMissingField, final Map<String, String> properties)
         throws IOException, InterpolationException {
         checkNotNull(name, "name is null");
         checkNotNull(value, "value is null");
@@ -87,7 +87,7 @@ public final class InterpolatorFactory {
 
         Matcher matcher = Pattern.compile(Pattern.quote(PREFIX) + ".*?" + Pattern.quote(POSTFIX)).matcher(result);
 
-        checkIgnoreWarnFailState(!matcher.find(), onMissingProperty,
+        checkIgnoreWarnFailState(!matcher.find(), onMissingField,
             () -> format("template %s evaluated to %s", value, result),
             () -> format("could not evaluate %s! (result is %s)", value, result));
 

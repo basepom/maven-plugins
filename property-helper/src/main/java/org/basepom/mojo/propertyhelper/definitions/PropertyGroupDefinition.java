@@ -55,10 +55,10 @@ public class PropertyGroupDefinition {
     /**
      * Action if any property from that group could not be defined. Field injected by Maven.
      */
-    private IgnoreWarnFail onMissingProperty = IgnoreWarnFail.FAIL;
+    private IgnoreWarnFail onMissingField = IgnoreWarnFail.FAIL;
 
-    public PropertyGroupDefinition setOnMissingProperty(String onMissingProperty) {
-        this.onMissingProperty = IgnoreWarnFail.forString(onMissingProperty);
+    public PropertyGroupDefinition setOnMissingField(String onMissingField) {
+        this.onMissingField = IgnoreWarnFail.forString(onMissingField);
         return this;
     }
 
@@ -100,8 +100,8 @@ public class PropertyGroupDefinition {
         return onDuplicateProperty;
     }
 
-    public IgnoreWarnFail getOnMissingProperty() {
-        return onMissingProperty;
+    public IgnoreWarnFail getOnMissingField() {
+        return onMissingField;
     }
 
     public Set<PropertyDefinition> getPropertyDefinitions() {
