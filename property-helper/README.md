@@ -8,19 +8,19 @@ Define, create and manipulate properties for the maven build cycle. This plugin 
 
 ## Configuration
 
-The plugin defines different elements that are combined to form properties:
+The plugin defines different fields that are combined to form properties:
 
-- `string` fields  - provides a string component
-- `number` fields - provide a structured number component
-- `date` fields - provide a formatted date component
-- `uuid` fields - provide a uuid value component
-- `macro` fields - custom code to provide additional components
+- `string` fields  - provides a string field
+- `number` fields - provide a structured number field
+- `date` fields - provide a formatted date field
+- `uuid` fields - provide a uuid value field
+- `macro` fields - custom code to provide specific fields
 
-Each field can be exported directly as a property or combined in a property group. 
+Each field can be exported directly as a property or combined in a property group.
 
 A property group can be activated for release or snapshot builds and aggregates fields into a single property that gets exposed.
 
-Example:
+### Maven plugin configuration example
 
 ```xml
 <configuration>
@@ -30,7 +30,7 @@ Example:
             <properties>
                 <property>
                     <name>build.tag</name>
-                    <value>#{build-tag}-#{build-number}-#{build-date}</value>
+                    <value>@{build-tag}-@{build-number}-@{build-date}</value>
                 </property>
             </properties>
         </propertyGroup>
@@ -53,14 +53,14 @@ Example:
             <propertyNameInFile>build.number</propertyNameInFile>
             <propertyFile>${user.home}/build.properties</propertyFile>
             <onMissingFile>create</onMissingFile>
-            <onMissingProperty>create</onMissingProperty>
+            <onMissingFileProperty>create</onMissingFileProperty>
             <initialValue>1</initialValue>
         </number>
     </numbers>
 </configuration>
 ```
 
-This configuration defines three elements, `build-date`, `build-tag` and `build-number`. They are combined to form a property called `build.tag` which can be referred to in following build steps as `${build.tag}`. 
+This configuration defines three elements, `build-date`, `build-tag` and `build-number`. They are combined to form a property called `build.tag` which can be referred to in following build steps as `${build.tag}`.
 
 The `build-date` element is a date element. As there is no value given or loaded from a file, it uses the current time as its value. By setting the timezone to `UTC`, this timezone will be used.
 
@@ -68,9 +68,46 @@ The `build-date` element is a date element. As there is no value given or loaded
 
 Finally, `build-number` is a number field. It is backed by a property in a property file `build.properties` (which e.g. lives in the home directory of the CI user). Its value is loaded from the `build.number` property in the file (and if the file or the property do not exist, it will create those).
 
-All three values combined form the `build.tag` property which is exported as a property. 
+All three values combined form the `build.tag` property which is exported as a property.
 
 
+## configuration reference
+
+### common field properties
+
+All field types support the following attributes. For `initialValue` and `format`, more details are with the field types below.
+
+| configuration attribute | allowed values                       | required | default value | function                                                                  | 
+|-------------------------|--------------------------------------|----------|---------------|---------------------------------------------------------------------------|
+| id                      | any string                           | yes      | -             | Sets the name of the attribute                                            |
+| skip                    | boolean (`true`,`false`)             | no       | `false`       | whether to skip this field definition                                     |
+| export                  | boolean (`true`,`false`)             | no       | `false`       | export the field as a property to maven                                   |
+| initialValue            | field-dependent (must be legal)      | no       | (none)        | The value to use if no property is defined or not present.                |
+| format                  | formatting information for the field | no       | (none)        | Formatting description for the field. Field specific.                     | 
+| propertyFile            | string (filename)                    | no       | -             | defines a property file to associate the field with a specific property   |
+| propertyNameInFile      | string (property name)               | no       | -             | defines the property to assciate the field with                           |
+| onMissingFile           | `ignore`, `warn`, `fail`, `create`   | no       | `fail`        | action in case the property file is missing.                              |
+| onMissingFileProperty   | `ignore`, `warn`, `fail`, `create`   | no       | `fail`        | action in case the property file exists but does not contain the property |
+| transformers            | comma-separated list                 | no       | (none)        | Define transformers for the field value                                   |
+
+
+### string fields
+
+String fields are the most straightforward field type. They consist of one or more 
+
+### number fields
+
+### date fields
+
+### uuid fields
+
+### macro fields
+
+### property groups
+
+### transformers
+
+### complete configuration reference
 
 
 ```xml
@@ -111,8 +148,9 @@ All three values combined form the `build.tag` property which is exported as a p
                 <export>true|false</export>
                 <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
-                <onMissingFile></onMissingFile>
-                <onMissingProperty></onMissingProperty>
+                <onMissingFile>ignore|warn|fail|create</onMissingFile>
+                <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+                <onMissingProperty>ignore|warn|fail</onMissingProperty>
                 <initialValue></initialValue>
                 <format></format>
                 <transformers>...</transformers>
@@ -131,8 +169,9 @@ All three values combined form the `build.tag` property which is exported as a p
                 <export>true|false</export>
                 <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
-                <onMissingFile></onMissingFile>
-                <onMissingProperty></onMissingProperty>
+                <onMissingFile>ignore|warn|fail|create</onMissingFile>
+                <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+                <onMissingProperty>ignore|warn|fail</onMissingProperty>
                 <initialValue></initialValue>
                 <format></format>
                 <transformers>...</transformers>
@@ -148,8 +187,9 @@ All three values combined form the `build.tag` property which is exported as a p
                 <export>true|false</export>
                 <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
-                <onMissingFile></onMissingFile>
-                <onMissingProperty></onMissingProperty>
+                <onMissingFile>ignore|warn|fail|create</onMissingFile>
+                <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+                <onMissingProperty>ignore|warn|fail</onMissingProperty>
                 <initialValue></initialValue>
                 <format></format>
                 <transformers>...</transformers>
@@ -169,8 +209,9 @@ All three values combined form the `build.tag` property which is exported as a p
                 <export>true|false</export>
                 <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
-                <onMissingFile></onMissingFile>
-                <onMissingProperty></onMissingProperty>
+                <onMissingFile>ignore|warn|fail|create</onMissingFile>
+                <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+                <onMissingProperty>ignore|warn|fail</onMissingProperty>
                 <initialValue></initialValue>
                 <format></format>
                 <transformers>...</transformers>
@@ -186,8 +227,9 @@ All three values combined form the `build.tag` property which is exported as a p
                 <export>true|false</export>
                 <propertyNameInFile></propertyNameInFile>
                 <propertyFile></propertyFile>
-                <onMissingFile></onMissingFile>
-                <onMissingProperty></onMissingProperty>
+                <onMissingFile>ignore|warn|fail|create</onMissingFile>
+                <onMissingFileProperty>ignore|warn|fail|create</onMissingFileProperty>
+                <onMissingProperty>ignore|warn|fail</onMissingProperty>
                 <initialValue></initialValue>
                 <format></format>
                 <transformers>...</transformers>

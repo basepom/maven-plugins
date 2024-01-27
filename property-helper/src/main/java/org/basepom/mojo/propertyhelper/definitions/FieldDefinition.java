@@ -204,14 +204,15 @@ public abstract class FieldDefinition<T> {
             return false;
         }
         FieldDefinition<?> that = (FieldDefinition<?>) o;
-        return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyNameInFile, that.propertyNameInFile)
-            && Objects.equals(propertyFile, that.propertyFile) && Objects.equals(onMissingFile, that.onMissingFile)
-            && Objects.equals(onMissingProperty, that.onMissingProperty) && Objects.equals(initialValue, that.initialValue)
-            && Objects.equals(format, that.format) && Objects.equals(transformers, that.transformers);
+        return skip == that.skip && export == that.export && Objects.equals(id, that.id) && Objects.equals(propertyNameInFile,
+            that.propertyNameInFile) && Objects.equals(propertyFile, that.propertyFile) && onMissingFile == that.onMissingFile
+            && onMissingFileProperty == that.onMissingFileProperty && onMissingProperty == that.onMissingProperty && Objects.equals(initialValue,
+            that.initialValue) && Objects.equals(format, that.format) && Objects.equals(transformers, that.transformers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, skip, export, propertyNameInFile, propertyFile, onMissingFile, onMissingProperty, initialValue, format, transformers);
+        return Objects.hash(id, skip, export, propertyNameInFile, propertyFile, onMissingFile, onMissingFileProperty, onMissingProperty, initialValue, format,
+            transformers);
     }
 }
