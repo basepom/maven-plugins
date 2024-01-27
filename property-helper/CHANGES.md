@@ -1,6 +1,11 @@
-# Changes
+# Changelog
 
 ## Unreleased
+
+## 4.0.0 - 2024-01-27
+
+* Full rewrite of the plugin with modern Java
+* documentation
 
 ## 3.0 - 2022-05-25
 
