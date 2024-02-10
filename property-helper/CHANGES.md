@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## unreleased
+
+* Add support for reproducible builds if `${project.build.outputTimestamp}` is set.
+
 ## 4.0.0 - 2024-01-27
 
 * Full rewrite of the plugin with modern Java

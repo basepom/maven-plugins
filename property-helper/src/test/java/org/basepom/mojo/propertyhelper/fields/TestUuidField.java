@@ -14,17 +14,21 @@
 
 package org.basepom.mojo.propertyhelper.fields;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setOnMissingFileProperty;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.setValue;
 import static org.basepom.mojo.propertyhelper.definitions.DefinitionHelper.uuidDefinition;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.basepom.mojo.propertyhelper.FieldContext;
+import org.basepom.mojo.propertyhelper.RandomUtil;
 import org.basepom.mojo.propertyhelper.ValueCache;
 import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.ValueProvider.PropertyBackedValueAdapter;
 import org.basepom.mojo.propertyhelper.ValueProvider.SingleValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
 
+import java.security.SecureRandom;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -120,5 +124,26 @@ public class TestUuidField {
             final UuidField uf1 = UuidField.forTesting(uuidDefinition, provider);
             Assertions.assertEquals("", uf1.getValue());
         });
+    }
+
+    @Test
+    public void testReproducibleUuid() {
+
+        String seedValue = UUID.randomUUID().toString();
+
+        var random1 = RandomUtil.createRandomFromSeed(seedValue);
+        FieldContext context1 = FieldContext.forTesting(random1);
+
+        UuidDefinition uuidDefinition = uuidDefinition("hello");
+        UuidField field1 = new UuidField(uuidDefinition, ValueProvider.NULL_PROVIDER, context1);
+        String value1 = field1.getValue();
+
+        var random2 = RandomUtil.createRandomFromSeed(seedValue);
+        FieldContext context2 = FieldContext.forTesting(random2);
+
+        UuidField field2 = new UuidField(uuidDefinition, ValueProvider.NULL_PROVIDER, context2);
+        String value2 = field2.getValue();
+
+        assertThat(value1).isEqualTo(value2);
     }
 }

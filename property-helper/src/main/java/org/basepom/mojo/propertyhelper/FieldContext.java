@@ -17,9 +17,11 @@ package org.basepom.mojo.propertyhelper;
 import org.basepom.mojo.propertyhelper.macros.MacroType;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -31,6 +33,11 @@ public interface FieldContext {
 
     /** Returns a fixed instance for testing. Do not use outside test code. */
     static FieldContext forTesting() {
+        return forTesting(new SecureRandom());
+    }
+
+    /** Returns a fixed instance for testing. The Random instance can be set to simulate reproducible builds. */
+    static FieldContext forTesting(Random random) {
         return new FieldContext() {
 
             @Override
@@ -66,6 +73,11 @@ public interface FieldContext {
             @Override
             public TransformerRegistry getTransformerRegistry() {
                 return TransformerRegistry.INSTANCE;
+            }
+
+            @Override
+            public Random getRandom() {
+                return random;
             }
         };
     }
@@ -112,4 +124,9 @@ public interface FieldContext {
      * @return A {@link TransformerRegistry} object.
      */
     TransformerRegistry getTransformerRegistry();
+
+    /**
+     * Returns a {@link java.security.SecureRandom} instance for generating random values.
+     */
+    Random getRandom();
 }

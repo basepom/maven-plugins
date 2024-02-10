@@ -36,6 +36,7 @@ public final class GetMojo extends AbstractPropertyHelperMojo {
     @Parameter(defaultValue = "false")
     boolean persist = false;
 
+
     @Override
     protected void doExecute() throws MojoExecutionException, IOException {
         LOG.atFine().log("Running property-helper:get");

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+* property-helper-maven-plugin x.x.x [CHANGES](property-helper/CHANGES.md)
+* dependency-management-maven-plugin x.x.x - unchanged
+* dependency-scope-maven-plugin x.x.x - unchanged
+* repack-maven-plugin x.x.x [CHANGES](repack/CHANGES.md)
 
 ## 2024-01-27 - Maven Plugins v4
 

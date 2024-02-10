@@ -37,6 +37,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 import javax.inject.Inject;
 
@@ -91,8 +92,8 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     }
 
     /**
-     * Define property groups. A property group contains one or more property definitions. Property groups are active by default
-     * unless they are explicitly listed with {@code <activeGroups>...</activeGroups}.
+     * Define property groups. A property group contains one or more property definitions. Property groups are active by default unless they are explicitly
+     * listed with {@code <activeGroups>...</activeGroups}.
      * <pre>{@code
      * <propertyGroups>
      *     <propertyGroup>
@@ -319,6 +320,15 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     @Parameter(required = true, readonly = true, defaultValue = "${project.basedir}")
     File basedir;
 
+    /**
+     * Timestamp for reproducible output archive entries, either formatted as ISO 8601
+     * <code>yyyy-MM-dd'T'HH:mm:ssXXX</code> or as an int representing seconds since the epoch (like
+     * <a href="https://reproducible-builds.org/docs/source-date-epoch/">SOURCE_DATE_EPOCH</a>).
+     */
+    @Parameter(defaultValue = "${project.build.outputTimestamp}")
+    String outputTimestamp;
+
+
     @Inject
     public void setMacroMap(Map<String, MacroType> macroMap) {
         this.macroMap = ImmutableMap.copyOf(macroMap);
@@ -335,6 +345,8 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     private List<NumberField> numberFields = List.of();
     private Map<String, String> values = Map.of();
 
+    private Random random;
+
     @Override
     public void execute() throws MojoExecutionException {
         this.isSnapshot = project.getArtifact().isSnapshot();
@@ -348,6 +360,8 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
             if (skip) {
                 LOG.atFine().log("skipping plugin execution!");
             } else {
+                this.random = RandomUtil.createRandomFromSeed(outputTimestamp);
+
                 doExecute();
             }
         } catch (IOException e) {
@@ -388,6 +402,11 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
     @Override
     public TransformerRegistry getTransformerRegistry() {
         return transformerRegistry;
+    }
+
+    @Override
+    public Random getRandom() {
+        return random;
     }
 
     protected List<NumberField> getNumbers() {
@@ -505,4 +524,6 @@ public abstract class AbstractPropertyHelperMojo extends AbstractMojo implements
             }
         }
     }
+
+
 }

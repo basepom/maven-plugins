@@ -22,6 +22,7 @@ import org.basepom.mojo.propertyhelper.ValueProvider;
 import org.basepom.mojo.propertyhelper.definitions.UuidDefinition;
 
 import java.util.Optional;
+import java.util.Random;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -30,6 +31,7 @@ import com.google.common.annotations.VisibleForTesting;
 public final class UuidField extends Field<String, UuidDefinition> {
 
     private final ValueProvider valueProvider;
+    private final Random secureRandom;
 
     @VisibleForTesting
     public static UuidField forTesting(UuidDefinition uuidDefinition, ValueProvider valueProvider) {
@@ -41,6 +43,8 @@ public final class UuidField extends Field<String, UuidDefinition> {
         super(uuidDefinition, fieldContext);
 
         this.valueProvider = checkNotNull(valueProvider, "valueProvider is null");
+
+        this.secureRandom = fieldContext.getRandom();
     }
 
     @Override
@@ -55,11 +59,25 @@ public final class UuidField extends Field<String, UuidDefinition> {
         // Only add the value from the provider if it is not null.
         UUID result = propValue.map(UUID::fromString)
             .orElse(fieldDefinition.getValue()
-                .orElse(UUID.randomUUID()));
+                .orElseGet(this::createRandomUUID));
 
         valueProvider.setValue(result.toString());
         return formatResult(result.toString());
     }
+
+    private UUID createRandomUUID() {
+        long upperValue = secureRandom.nextLong();
+        long lowerValue = secureRandom.nextLong();
+
+        // UUID v4 (random) - see https://datatracker.ietf.org/doc/html/rfc4122#section-4.4
+        lowerValue &= 0xff0fffffffffffffL; // clear top four bits of time_hi_and_version
+        lowerValue |= 0x0040000000000000L; // set to 0100 (UUID v4)
+        upperValue &= 0xffffffffffffff3fL; // clear top two bits of clock_seq_hi_and_reserved
+        upperValue |= 0x0000000000000080L; // set to 1 and 0
+
+        return new UUID(upperValue, lowerValue);
+    }
+
 
     @Override
     public String toString() {
