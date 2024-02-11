@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## unreleased
+## 4.1.0 - 2024-02-11
 
 * Add support for reproducible builds if `${project.build.outputTimestamp}` is set.
 

@@ -1,11 +1,17 @@
 # Changelog
 
-## Unreleased
+per plugin changelogs:
 
-* property-helper-maven-plugin x.x.x [CHANGES](property-helper/CHANGES.md)
-* dependency-management-maven-plugin x.x.x - unchanged
-* dependency-scope-maven-plugin x.x.x - unchanged
-* repack-maven-plugin x.x.x [CHANGES](repack/CHANGES.md)
+* [property-helper-maven-plugin](property-helper/CHANGES.md)
+* [repack-maven-plugin](repack/CHANGES.md)
+
+
+## 2024-02-11 - Maven Plugins v5
+
+* property-helper-maven-plugin 4.1.0 [CHANGES](property-helper/CHANGES.md)
+* dependency-management-maven-plugin 1.0.3 - only dependency updates
+* dependency-scope-maven-plugin 1.0.3 - only dependency updates
+* repack-maven-plugin 1.0.2 - only dependency updates
 
 ## 2024-01-27 - Maven Plugins v4
 
