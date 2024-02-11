@@ -12,6 +12,7 @@ Define, create and manipulate properties for the maven build cycle. This plugin 
 * [Formatting, Regular Expressions and Transformers](formatting_regexp.html)
 * [Property groups](property_groups.html)
 
+
 The plugin has two goals:
 
 - [property-helper:get](get-mojo.html) - load and save property files, define fields, combine fields to property groups and new properties, export these to the maven build
@@ -27,9 +28,11 @@ The plugin defines different fields that are combined to form properties:
 - `uuid` fields - provide a uuid value field
 - `macro` fields - custom code to provide specific fields
 
-Each field can be exported directly as a property or combined in a property group.
+Each field can be exported directly as a build property or combined to form a property group which then is exported as a build property.
 
 A property group can be activated for release or snapshot builds and aggregates fields into a single property that gets exposed.
+
+Reproducible builds are supported if the `${project.build.outputTimestamp}` is set.
 
 ### Maven plugin configuration example
 

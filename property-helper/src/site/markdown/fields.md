@@ -233,6 +233,9 @@ In addition to the common field properties, any uuid field has the following add
 | value                   | uuid 36 character value | no       | random UUID value | Sets the value for the field if not loaded from a property |
 
 
+When the `${project.build.outputTimestamp}` property is set, a reproducible build is requested. In that case, as long as the same configuration and the same timestamp is used, the random value for an UUID field will be the same.
+
+
 ### Macro fields
 
 Unlike all the other field types above (`string`, `number`, `date`, `uuid`), a macro field does not define a specific structure but executes custom code and provides the result as a field value.
