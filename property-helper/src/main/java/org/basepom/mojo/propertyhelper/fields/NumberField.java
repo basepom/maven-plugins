@@ -57,6 +57,7 @@ public final class NumberField extends Field<String, NumberDefinition> {
     }
 
     @Override
+    @SuppressWarnings("PMD.LambdaCanBeMethodReference") // https://github.com/pmd/pmd/issues/5043
     public String getValue() {
         parse();
 
@@ -114,13 +115,13 @@ public final class NumberField extends Field<String, NumberDefinition> {
 
     private Optional<Long> value() {
         return fieldDefinition.getFieldNumber()
-            .map(fieldNumber -> numberIndex.get(fieldNumber))
+            .map(numberIndex::get)
             .flatMap(NumberElement::getLongValue);
     }
 
     private void set(long value) {
         Optional<NumberElement> numberElement = fieldDefinition.getFieldNumber()
-            .map(fieldNumber -> numberIndex.get(fieldNumber));
+            .map(numberIndex::get);
 
         if (numberElement.isPresent()) {
             numberElement.get().setLongValue(value);

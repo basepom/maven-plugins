@@ -46,7 +46,7 @@
         <basepom.site.scm.skip-deploy>false</basepom.site.scm.skip-deploy>
 
         <!-- stick with spring-boot 2.x, 3.x requires java 17 -->
-        <dep.spring-boot-loader-tools.version>2.6.15</dep.spring-boot-loader-tools.version>
+        <dep.spring-boot-loader-tools.version>2.7.18</dep.spring-boot-loader-tools.version>
     </properties>
 
     <dependencies>

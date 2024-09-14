@@ -154,7 +154,7 @@ public class DependencyScopeMojo extends AbstractMojo {
 
                 try {
                     Set<Dependency> runtimeDependencies = artifactDescriptor.getDependencies().stream().filter(DependencyScopeMojo::dependencyRequiredAtRuntime)
-                            .filter(dependency -> !context.isExcluded(dependency)).collect(ImmutableSet.toImmutableSet());
+                        .filter(dependency -> !context.isExcluded(dependency)).collect(ImmutableSet.toImmutableSet());
 
                     if (runtimeDependencies.isEmpty()) {
                         future.set(ImmutableSet.of());
@@ -175,8 +175,8 @@ public class DependencyScopeMojo extends AbstractMojo {
                             getLog().warn("Could not find project version for dependency " + dependency + ". This is probably a bug in the plugin");
                         }
                         ListenableFuture<Set<DependencyViolation>> subfuture =
-                                subcontext.map(traversalContext -> findViolations(traversalContext))
-                                        .orElseGet(() -> Futures.immediateFuture(ImmutableSet.of()));
+                            subcontext.map(DependencyScopeMojo.this::findViolations)
+                                .orElseGet(() -> Futures.immediateFuture(ImmutableSet.of()));
 
                         Futures.addCallback(subfuture, new FutureCallback<>() {
 
@@ -218,7 +218,7 @@ public class DependencyScopeMojo extends AbstractMojo {
             buildingRequest.setProject(project);
 
             return dependencyGraphBuilder.buildDependencyGraph(buildingRequest, artifact ->
-                    !Artifact.SCOPE_PROVIDED.equals(artifact.getScope()) && !Artifact.SCOPE_SYSTEM.equals(artifact.getScope()));
+                !Artifact.SCOPE_PROVIDED.equals(artifact.getScope()) && !Artifact.SCOPE_SYSTEM.equals(artifact.getScope()));
         } catch (DependencyGraphBuilderException e) {
             throw new MojoExecutionException("Error building dependency graph", e);
         }
@@ -254,7 +254,7 @@ public class DependencyScopeMojo extends AbstractMojo {
             logger.accept("Found a problem with test-scoped dependency " + dependencyViolation.getKey());
             for (DependencyViolation violation : dependencyViolation.getValue()) {
                 logger.accept("Scope " + violation.getDependency().getScope() + " was expected by artifact " + asString(
-                        violation.getSource().currentArtifact()));
+                    violation.getSource().currentArtifact()));
 
                 if (verbose) {
                     logger.accept("");
@@ -284,7 +284,7 @@ public class DependencyScopeMojo extends AbstractMojo {
         if (useParallelDependencyResolution) {
             getLog().debug("Using parallel dependency resolution");
             return MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(Math.min(Runtime.getRuntime().availableProcessors() * 5, 20),
-                    new ThreadFactoryBuilder().setNameFormat("dependency-project-builder-%s").setDaemon(true).build()));
+                new ThreadFactoryBuilder().setNameFormat("dependency-project-builder-%s").setDaemon(true).build()));
         } else {
             getLog().debug("Using single-threaded dependency resolution");
             return MoreExecutors.newDirectExecutorService();
@@ -354,6 +354,6 @@ public class DependencyScopeMojo extends AbstractMojo {
 
     private static org.eclipse.aether.artifact.Artifact toAether(Artifact artifact) {
         return new DefaultArtifact(artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier(), artifact.getType(), artifact.getVersion(), null,
-                artifact.getFile());
+            artifact.getFile());
     }
 }
