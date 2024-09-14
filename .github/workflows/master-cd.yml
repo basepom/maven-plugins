@@ -29,7 +29,7 @@ jobs:
         env:
           NEXUS_REPO_USER: ${{ secrets.NEXUS_REPO_USER }}
           NEXUS_REPO_PASSWORD: ${{ secrets.NEXUS_REPO_PASSWORD }}
-          MAVEN_ARGS: "-Dbasepom.it.skip=false -Dbasepom.it.fork-count=1 -B -fae"
+          MAVEN_ARGS: "-Dbasepom.it.skip=false -B -fae"
         run: |
           make deploy
 
@@ -38,6 +38,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+          fetch-depth: 0
 
       - name: configure git user
         run: |
@@ -55,6 +58,6 @@ jobs:
       - name: publish docs
         env:
           SITE_DEPLOY: ${{ secrets.SITE_DEPLOY_TOKEN  }}
-          MAVEN_ARGS: "-Dbasepom.it.fork-count=1 -B -fae"
+          MAVEN_ARGS: "-B -fae"
         run: |
           make deploy-site
