@@ -42,8 +42,9 @@ run-tests::
 deploy::
 	${MAVEN} clean deploy
 
-deploy-site::
-	${MAVEN} clean install site-deploy
+deploy-site:: MAVEN_ARGS += -Dbasepom.it.skip=false
+deploy-site:: install
+	${MAVEN} site-deploy
 
 release::
 	${MAVEN} clean release:clean release:prepare release:perform

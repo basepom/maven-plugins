@@ -29,7 +29,7 @@ jobs:
         env:
           NEXUS_REPO_USER: ${{ secrets.NEXUS_REPO_USER }}
           NEXUS_REPO_PASSWORD: ${{ secrets.NEXUS_REPO_PASSWORD }}
-          MAVEN_CONFIG: "-B -fae"
+          MAVEN_ARGS: "-B -fae"
         run: |
           make deploy
 
@@ -55,5 +55,6 @@ jobs:
       - name: publish docs
         env:
           SITE_DEPLOY: ${{ secrets.SITE_DEPLOY_TOKEN  }}
-          MAVEN_CONFIG: "-Dbasepom.it.skip=false -B -fae"
-        run: make deploy-site
+          MAVEN_ARGS: "-B -fae"
+        run: |
+          make deploy-site
